@@ -306,13 +306,54 @@ agent loop holds no provider-specific behavior:
 | `maxAgentRounds` | `8` | Sequential model↔tool rounds in one node invocation. |
 | `llmTimeoutMs` | unbounded | Wall-clock budget for one model request. Applied per attempt, so a retrying `llmConfig` spends it once per try. |
 | `emptyHistorySeed` | `"Start"` | Message that seeds a newly entered history space, because some providers reject a system-only request. `null` sends the system prompt alone. |
-| `emptyResponseRecovery` | 2 retries + nudge | Retry policy for a model turn with neither text nor a tool call (Gemini can emit one after a file attachment). `null` accepts the empty turn as final. |
+| `emptyResponseRecovery` | 2 retries + nudge | Retry policy for an *unexplained* empty model turn (Gemini can emit one after a file attachment). `null` accepts the empty turn as final. |
 
 A timeout surfaces as a normal turn failure naming the model and the budget, so
 it is recorded in the session document like any other provider error. Nodes that
 call the gateway directly can forward the same policy with
 `this.llmCallOptions()`, which every `LlmGateway` method accepts as its trailing
 `LlmCallOptions` argument alongside an optional `signal`.
+
+### Empty model responses
+
+A turn with neither text nor a tool call is not always the same event, so
+`emptyResponseRecovery` is not applied blindly. The framework first reads the
+provider's own reason out of the message metadata — Gemini's `finishReason`,
+OpenAI's `finish_reason`, Anthropic's `stop_reason`, or a Gemini
+`promptFeedback.blockReason` — and maps it to a provider-neutral category:
+
+| Category | Provider reasons | Nudge? |
+| --- | --- | --- |
+| `blocked` | `SAFETY`, `content_filter`, `RECITATION`, `BLOCKLIST`, `PROHIBITED_CONTENT`, `SPII`, `refusal` | No. Retrying re-trips the same filter. |
+| `truncated` | `MAX_TOKENS`, `length` | No. The output hit a token cap. |
+| `malformed_tool_call` | `MALFORMED_FUNCTION_CALL` | Yes. A retry can produce a valid call. |
+| `complete` | `STOP`, `end_turn`, `tool_use` | Yes. The empty body is the model's own choice. |
+| `unspecified` | `OTHER`, `FINISH_REASON_UNSPECIFIED`, or no metadata at all | Yes. This is the case the nudge exists for. |
+
+Every empty turn records a session warning naming the category and the raw
+provider value, so a filtered conversation is diagnosable rather than looking
+like a silent retry loop.
+
+Once retries are exhausted or the reason rules them out, the node decides what
+the user sees. `onEmptyModelResponse` receives the classified reason and returns
+the replacement text; the default throws `EmptyModelResponseError` rather than
+answering with an empty message:
+
+```typescript
+// ExploreNode
+protected override onEmptyModelResponse(
+  context: EmptyModelResponseContext<HotelGraphStateType>,
+): string | Promise<string> {
+  if (context.reason.category === "blocked") {
+    return "I can't help with that request, but I can still find you a hotel. What city and dates are you looking at?";
+  }
+  return super.onEmptyModelResponse(context);
+}
+```
+
+Delegating to `super` for the categories the node does not recognize keeps a
+truncated or unexplained empty turn a loud failure instead of silently
+answering with the safety copy.
 
 `WeatherNode.getLlmConfig()` returns a complete, statically checked
 `google:gemini-3.5-flash` configuration. Parameter-only overrides use

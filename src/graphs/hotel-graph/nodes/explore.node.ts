@@ -6,6 +6,7 @@ import {
   Tool,
   type ConversationNodeRunResult,
   type ConversationToolResult,
+  type EmptyModelResponseContext,
   type GraphLlmConfigOverride,
   type GraphNodeUpdate,
   type ToolDefinition,
@@ -64,6 +65,20 @@ export class ExploreNode extends ConversationNode<
       retries: 3,
       reasoningEffort: "low",
     });
+  }
+
+  /**
+   * A travel conversation can trip a provider's content filter, and no nudge
+   * recovers from that. Answer in the node's own voice instead of failing the
+   * turn, and leave every other empty turn to the framework default.
+   */
+  protected override onEmptyModelResponse(
+    context: EmptyModelResponseContext<HotelGraphStateType>,
+  ): string | Promise<string> {
+    if (context.reason.category === "blocked") {
+      return "I can't help with that request, but I can still find you a hotel. What city and dates are you looking at?";
+    }
+    return super.onEmptyModelResponse(context);
   }
 
   @Tool("capture_choices")

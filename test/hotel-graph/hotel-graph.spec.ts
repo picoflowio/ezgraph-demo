@@ -105,6 +105,39 @@ describe("HotelGraph tool arguments", () => {
   });
 });
 
+describe("HotelGraph empty model responses", () => {
+  it("answers a safety-blocked turn instead of nudging or failing", async () => {
+    const gateway = new BlockedGateway("SAFETY");
+    const graph = new HotelGraph(gateway);
+    const logs = createSessionLogs();
+
+    const state = await withSessionLogs(logs, () =>
+      invoke(graph, undefined, "something the provider refuses"),
+    );
+
+    assert.equal(gateway.agentCalls, 1, "a blocked turn must not be retried");
+    assert.equal(state.currentNode, "ExploreNode");
+    assert.match(state.response, /can't help with that request/i);
+    assert.equal(logs.warnings.length, 1);
+    assert.match(
+      String(logs.warnings[0]?.empty_model_response),
+      /category=blocked provider=SAFETY/,
+    );
+    assert.equal(logs.warnings[0]?.retried, false);
+  });
+
+  it("still fails a turn the node does not claim", async () => {
+    const graph = new HotelGraph(new BlockedGateway("MAX_TOKENS"));
+
+    await assert.rejects(
+      withSessionLogs(createSessionLogs(), () =>
+        invoke(graph, undefined, "plan a very long itinerary"),
+      ),
+      /empty response \(category=truncated/,
+    );
+  });
+});
+
 describe("HotelGraph session policy", () => {
   it("keeps a reservation session that is still inside the idle window", async () => {
     const graph = new HotelGraph(new HotelScriptedGateway());
@@ -268,6 +301,31 @@ class MalformedCriteriaGateway extends HotelScriptedGateway {
       }
     }
     return super.agent(systemPrompt, history, tools, config);
+  }
+}
+
+/** Returns an empty candidate carrying the provider's own reason for it. */
+class BlockedGateway extends HotelScriptedGateway {
+  agentCalls = 0;
+
+  constructor(private readonly finishReason: string) {
+    super();
+  }
+
+  override async agent(
+    _systemPrompt: string,
+    _history: readonly BaseMessage[],
+    _tools: readonly LlmGatewayTool[],
+    config?: GraphLlmConfig,
+  ): Promise<ModelResult<AIMessage>> {
+    this.agentCalls += 1;
+    return result(
+      new AIMessage({
+        content: "",
+        response_metadata: { finish_reason: this.finishReason },
+      }),
+      config ?? HotelGraph.getGraphDefinition().llmConfig,
+    );
   }
 }
 
