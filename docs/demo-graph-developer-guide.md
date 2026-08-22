@@ -776,6 +776,25 @@ Errors are appended to the session document even when a graph update cannot be
 saved. The E2E test injects a provider failure, verifies the recorded error, and
 then successfully retries the same session.
 
+### Cancelling a turn
+
+`run()` accepts the caller's `AbortSignal`, which an HTTP adapter can wire to
+the request's own abort event:
+
+```ts
+const result = await engine.run({
+  graphName,
+  sessionId,
+  userMessage,
+  signal: request.signal,
+});
+```
+
+The signal reaches every model call the turn makes, combined with the graph's
+own `llmTimeoutMs` budget. It is delivered through the turn context rather than
+handed to a node, because graph and node objects are shared across sessions and
+cannot hold request state; see the node pitfall below.
+
 ### Customize session restoration with `onRestoreSessionDoc()`
 
 [`DemoGraph`](../src/graphs/demo-graph/demo-graph.ts#L127) overrides the
@@ -858,6 +877,51 @@ npm run test:demo-graph
 It requires the corresponding Google and OpenAI credentials and grades response
 meaning rather than fixed wording. Keep domain transitions and stored state
 covered by deterministic tests; use live evaluations for prompt behavior.
+
+### Scripting turns without a hand-written gateway
+
+`ezgraph/testing` supplies the two pieces every deterministic graph test needs,
+so a new test does not start by implementing five `LlmGateway` methods.
+`ScriptedGateway` queues model turns in the order the graph will consume them,
+and `createTurnHarness` drives real `GraphEngine.run()` turns against an
+in-memory store — the full path, including the turn lease, restore policy, and
+persistence:
+
+```ts
+import { createTurnHarness, scriptedGateway } from "ezgraph/testing";
+
+const gateway = scriptedGateway()
+  .callsTool("capture_choices", { json: JSON.stringify(criteria) })
+  .text("Here are nine matching hotels.");
+const harness = createTurnHarness<HotelGraphStateType>({
+  graph: HotelGraph,
+  gateway,
+});
+
+const turn = await harness.send("find a hotel in Portland");
+
+assert.equal(turn.currentNode, "PresentNode");
+assert.equal(turn.state?.nodes.PresentNode?.hotelFound?.length, 9);
+assert.equal(gateway.drained, true);
+await harness.close();
+```
+
+Each turn returns `status`, `response`, `completed`, the hydrated `state`,
+`currentNode`, the persisted `document`, and that turn's `warnings` and
+`errors`, so assertions read the same values production would. `gateway.calls`
+records what each node actually asked for — system prompt, history, offered
+tool names, resolved model config, and cancellation policy.
+
+Other queue entries cover the paths that are awkward to fake by hand:
+`.empty("SAFETY")` produces an empty candidate carrying provider metadata,
+`.fail()` raises a provider error, `.callsTools([...])` emits a parallel batch,
+and `.toolDecision()` answers the gateway's `toolCall` method. A queue that runs
+dry names the call that went unanswered rather than failing generically.
+
+Application-specific gateways such as `test/support/scripted-llm-gateway.ts`
+remain useful: scripting *business* answers across a long scenario is the
+application's job. Reach for the framework helpers when a test is about graph
+mechanics rather than domain wording.
 
 ## 9. Add a new conversational stage
 
@@ -953,6 +1017,13 @@ patches; the runtime tests prove that topology and session behavior agree.
   should win when both effects occur in the same tool batch.
 - **Persisting the tool context implicitly.** Context is per-turn. Commit
   durable values with `.withState(...)` in the selected outcome.
+- **Storing turn data on the node itself.** One node instance serves every
+  session and every concurrent turn, so `this.lastAnswer = ...` would leak
+  between unrelated conversations. Nodes are frozen after construction, so that
+  assignment now throws a `TypeError` instead of corrupting a stranger's
+  session. Per-turn values belong in the tool context or graph state;
+  constructor-assigned configuration is still fine, and a `#private` field is
+  available for memoization that genuinely does not depend on the session.
 - **Mutating restored nested state.** Clone it in
   `createContext()` and use typed `.withContext(...)` effects.
 - **Sharing every history.** Earlier answers can be misread as current-stage
