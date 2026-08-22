@@ -1,0 +1,38 @@
+{
+  "$schema": "../../ezgraph/npmlib/model-catalog.schema.json",
+  "version": 1,
+  "profiles": {
+    "openai.future-reasoning": {
+      "provider": "openai",
+      "family": "reasoning",
+      "paramsSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["retries"],
+        "properties": {
+          "retries": { "type": "integer", "minimum": 0 },
+          "maxOutputTokens": { "type": "integer", "minimum": 1 },
+          "reasoningEffort": {
+            "enum": ["minimal", "low", "medium", "high"]
+          },
+          "forceToolCalls": { "type": "boolean" }
+        }
+      },
+      "parameterMappings": {
+        "retries": "maxRetries",
+        "maxOutputTokens": "maxTokens",
+        "reasoningEffort": "reasoningEffort",
+        "forceToolCalls": null
+      }
+    }
+  },
+  "models": {
+    "openai:future-reasoning-model": {
+      "profile": "openai.future-reasoning"
+    },
+    "openai:deployment-alias": {
+      "profile": "openai.future-reasoning",
+      "providerModel": "actual-provider-model-id"
+    }
+  }
+}

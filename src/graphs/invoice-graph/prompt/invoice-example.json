@@ -1,0 +1,88 @@
+{
+    "vendor_name": "ACME Inc",
+    "vendor_id": "bdfe173e-9d5e-4f2a-a2fb-273954d21444",
+    "bill_number": "INV-2025-019",
+    "bill_date": "2025-06-03",
+    "due_date": "2025-06-16",
+    "ship_date": "2025-08-04",
+    "po_number": "24-WGM-035",
+    "po_id": "ecfe173e-9d5e-4f2a-a2fb-273954d21456",
+    "vendor_order_number": "SO4312",
+    "account_number": "a845",
+    "payment_terms": "40% Deposit, 60% Before Dispatch",
+    "banking_info": {
+        "banking_instutition": "Bank of America",
+        "wire": {
+            "banking_account": "87654321098",
+            "banking_routing": "026009593",
+            "swift": "BOFAUS3N"
+        },
+        "ach": {
+            "banking_account": "87654321099",
+            "banking_routing": "026009597",
+            "swift": "BOFAUS3N"
+        }
+    },
+    "payment_instructions": "For card payments, please complete and return the linked form / For check payment, make checks payable to Pacific Horizon Group and send to the address above",
+    "notes": "Please confirm receipt within 3 business days.",
+    "currency": "USD",
+    "bill_to_address": {
+        "company_name": "Marriott",
+        "address_line_1": "10400 Fernwood Road",
+        "address_line_2": "Suite 400",
+        "city": "Bethesda",
+        "state": "Maryland",
+        "zip": 20817
+    },
+    "ship_to_address": {
+        "company_name": "Marriott",
+        "address_line_1": "10400 Fernwood Road",
+        "address_line_2": "Suite 400",
+        "city": "Bethesda",
+        "state": "Maryland",
+        "zip": 20817
+    },
+    "invoice_items": [
+        {
+            "spec_tag": "FCH-003B.F4",
+            "description": "Upholstery for lounge chair CH-003B",
+            "quantity": 30,
+            "overage": 1.3,
+            "units": "YD",
+            "unit_price": 9.50,
+            "discount": 0.00,
+            "extended_price": 285.00,
+            "fob": "South Carolina"
+        },
+        {
+            "spec_tag": "TAB-100D.T1",
+            "description": "Dining table base, powder-coated steel",
+            "quantity": 10,
+            "overage": 0.0,
+            "units": "EA",
+            "unit_price": 245.00,
+            "discount": 0.00,
+            "extended_price": 2450.00,
+            "fob": "Georgia"
+        },
+        {
+            "spec_tag": "LGT-500W.L2",
+            "description": "Wall sconce light, brushed brass finish",
+            "quantity": 20,
+            "overage": 0.0,
+            "units": "EA",
+            "unit_price": 128.00,
+            "discount": 0.00,
+            "extended_price": 2560.00,
+            "fob": "Texas"
+        }
+    ],
+    "subtotal": 5295.00,
+    "packing_fee": 1523.25,
+    "freight": 0.00,
+    "sales_tax": 483.45,
+    "sales_tax_rate": 0.00675,
+    "total": 7301.70,
+    "prepayment": 2000.00,
+    "balance_due": 5301.70
+}

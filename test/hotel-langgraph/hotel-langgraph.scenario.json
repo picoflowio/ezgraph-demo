@@ -1,0 +1,92 @@
+{
+  "graphName": "HotelLanggraph",
+  "judgeModel": "gpt-4o",
+  "judgeMinScore": 0.75,
+  "turns": [
+    {
+      "label": "portland eligibility prompt",
+      "input": "Hi",
+      "expectedResponse": "The assistant should explain that it can help with Hilton hotel bookings in the Portland, Oregon metropolitan area and ask whether the user is looking to book there.",
+      "completed": false
+    },
+    {
+      "label": "date range prompt",
+      "input": "yes",
+      "expectedResponse": "The assistant should proceed with the Portland hotel booking flow and ask for the stay date range. It should indicate that the start date must be after the current date and that the checkout date must be after check-in.",
+      "completed": false
+    },
+    {
+      "label": "price range prompt",
+      "input": "8/1/2027 to 8/8/2027",
+      "expectedResponse": "The assistant should accept August 1 to August 8, 2027 as the stay date range and ask for a nightly price range or budget.",
+      "completed": false
+    },
+    {
+      "label": "room type prompt",
+      "input": "max 700",
+      "expectedResponse": "The assistant should record a maximum budget of 700 per night with no minimum required and ask what room type the user prefers, such as one bed, two beds, or suite.",
+      "completed": false
+    },
+    {
+      "label": "amenities prompt",
+      "input": "suite",
+      "expectedResponse": "The assistant should record suite as the room preference and ask what amenities the user wants. It may show example amenities such as free WiFi, free breakfast, parking, pool, fitness center, or pet friendly.",
+      "completed": false
+    },
+    {
+      "label": "distance prompt",
+      "input": "free wifi, parking",
+      "expectedResponse": "The assistant should record free WiFi and free parking as desired amenities and ask whether the user cares about distance to the airport or city center.",
+      "completed": false
+    },
+    {
+      "label": "search confirmation prompt",
+      "input": "none",
+      "expectedResponse": "The assistant should record no distance preference, summarize the search criteria, and ask whether to search hotels or make changes.",
+      "completed": false
+    },
+    {
+      "label": "hotel list after initial search",
+      "input": "search",
+      "expectedResponse": "The assistant should search for hotels and present a numbered list of matching hotel options with hotel names and total prices. It should also indicate that the user can book, re-run or change the search, or compare hotel features.",
+      "completed": false
+    },
+    {
+      "label": "hotel list after room change",
+      "input": "change to a 2 bed rooms, search",
+      "expectedResponse": "The assistant should update the room preference to two beds, search again, and present a numbered list of matching hotels with names and total prices. It should still offer booking, changing search criteria, or comparison.",
+      "completed": false
+    },
+    {
+      "label": "price comparison table",
+      "input": "compare hotel 2,5,8 on price",
+      "expectedResponse": "For the August 1 through August 8, 2027 stay, the assistant should compare Hampton Inn Portland-Airport, Hampton Inn Portland/Clackamas, and Hampton Inn Sherwood Portland by price. It should return a comparison table or structured comparison including those hotel names, 2027 daily prices or total prices, and ask whether the user wants another comparison or is ready to book.",
+      "completed": false
+    },
+    {
+      "label": "amenities comparison reuses chosen hotels",
+      "input": "compare on amenities",
+      "expectedResponse": "For the August 1 through August 8, 2027 stay, the assistant should not ask the user to choose hotels again. It should reuse Hampton Inn Portland-Airport, Hampton Inn Portland/Clackamas, and Hampton Inn Sherwood Portland from the previous comparison and compare them by amenities, then ask whether the user wants another comparison or is ready to book.",
+      "completed": false,
+      "minScore": 0.8
+    },
+    {
+      "label": "new two-hotel price comparison",
+      "input": "compare hotels 2,5 on price",
+      "expectedResponse": "For the August 1 through August 8, 2027 stay, the assistant should compare Hampton Inn Portland-Airport and Hampton Inn Portland/Clackamas by price, returning a table or structured comparison with 2027 prices for those two hotels and asking whether the user wants another comparison or is ready to book.",
+      "completed": false
+    },
+    {
+      "label": "resume booking from comparison",
+      "input": "resume booking",
+      "expectedResponse": "The assistant should leave comparison mode and return to the hotel selection list or booking flow, showing the available hotels or asking the user which hotel they want to book.",
+      "completed": false
+    },
+    {
+      "label": "booking confirmation",
+      "input": "8",
+      "expectedResponse": "The assistant should book hotel number 8 from the presented list, provide a confirmation number, and thank the user for choosing Hilton.",
+      "completed": true
+    }
+  ]
+}

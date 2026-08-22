@@ -1,0 +1,3 @@
+"ezgraph": "link:../ezgraph/npmlib/staging/minified-local",
+"ezgraph": "link:../ezgraph/npmlib/staging/lib",
+"ezgraph": "link:../ezgraph/npmlib/staging/npm",

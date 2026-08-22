@@ -1,0 +1,37 @@
+{
+  "currentDate": null,
+  "amenities": [
+    "freeWiFi",
+    "nonSmoking",
+    "freeBreakfast",
+    "freeParking",
+    "airportShuttle",
+    "roomService",
+    "fitnessCenter",
+    "petFriendly",
+
+    "digitalKey",
+    "boutique",
+    "onSiteRestaurant",
+    "indoorPool",
+    "businessCenter",
+    "meetingRoom",
+    "evCharging",
+    "connectingRooms",
+    "eveningReception",
+    "concierge",
+    "streaming",
+    "kitchen",
+    "tennis",
+    "outdoorPool",
+    "newHotel"
+  ],
+  "roomType": ["one bed", "two beds", "suite"],
+  "cAmenities": [],
+  "cRoomType": [],
+  "cPriceRange": { "min": null, "max": null },
+  "cDistance": {"cityCenter":null,"airport":null},
+  "cDate": { "start": null, "end": null },
+  "cDateArray": [],
+  "hotelFound":[]
+}

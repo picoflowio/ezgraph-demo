@@ -1,0 +1,583 @@
+{
+  "_id": {
+    "$oid": "6a6a29e2c4c87e9eb1b401d4"
+  },
+  "version": 1,
+  "id": "demo-graph-eval-d147bb17-7a76-4269-b311-6a1b7265f29d",
+  "graph": {
+    "name": "DemoGraph",
+    "currentNode": "end",
+    "config": {},
+    "status": "completed",
+    "response": "The address has been successfully recorded. Your profile collection and conversation are now complete."
+  },
+  "histories": {
+    "default": [
+      {
+        "type": "human",
+        "data": {
+          "content": "Hi",
+          "id": "0e3f16e6-bcc3-4532-841e-a0e9eafb4748"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": "Hello! As your personal travel assistant, I can help you compare current-day temperatures. Please note that this demo only supports LA and NYC. \n\nWhich of these cities would you like to compare today?",
+          "id": "ff5ae694-aca1-41bf-a8aa-edfc3f298616"
+        }
+      },
+      {
+        "type": "human",
+        "data": {
+          "content": "PDX,PHX",
+          "id": "6ab6b37a-3ecf-4532-bc5e-6c23b2034330"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": "I'm sorry, but PDX and PHX are unsupported. This demo only supports temperature comparisons for LA and NYC. \n\nPlease provide supported city names, specifically LA or NYC. Which of these would you like to compare?",
+          "id": "51eb9641-02a7-4eae-a704-225872d4bb91"
+        }
+      },
+      {
+        "type": "human",
+        "data": {
+          "content": "LA,NYC",
+          "id": "e85abeff-d0ba-41a3-b17c-9e825882dd48"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": [
+            {
+              "thoughtSignature": "EtsCCtgCARFNMg+WanUKucR31h3XfNAHuwSGU5r3B0Nsn93E0Lymin6LATOJtgMWiFxhxruGjly3lwdrw3rmQ30j8j7/P4aCoyOyPiLEvWSIxgKLK7Z9hFHDMuOSVVZh+co5RxWGnTFh5034sbSeNrfSw2u9qy/1a0z1dA6pnVQFDfQxI1eNnnHYKXsN30e4/nUDHLLJpcgMHNpAwDRI++ZH6iuDJFvRIQVIRzXh7IM+5fs7nmxxWoHRaEDDvojrF82bjBofEZDXLyaALq5ZbpCUGCFimvq+AZl9YQ8pOEAHPDKXOgIvbNJAF9UlpjJ8qPz1XmvU8W8CezzJi08ztl2O0GPGKG/kXg7YqlcpCIXkIUwMz/YV4QjHDrFoe3jPO4aclOTz6JtUqon5AoaAh6S6bEIfTX+9tT9EiXBU+bXEr4Yjo/0JeihiqMztlDgraYJZ+dHxk4ex9/pnlJc=",
+              "type": "functionCall",
+              "functionCall": {
+                "name": "getCityTemperature",
+                "args": {
+                  "city": "LA"
+                },
+                "id": "rxerbjqi"
+              }
+            },
+            {
+              "type": "functionCall",
+              "functionCall": {
+                "name": "getCityTemperature",
+                "args": {
+                  "city": "NYC"
+                },
+                "id": "aer1dl3y"
+              }
+            }
+          ],
+          "tool_calls": [
+            {
+              "type": "tool_call",
+              "id": "rxerbjqi",
+              "name": "getCityTemperature",
+              "args": {
+                "city": "LA"
+              },
+              "thoughtSignature": "EtsCCtgCARFNMg+WanUKucR31h3XfNAHuwSGU5r3B0Nsn93E0Lymin6LATOJtgMWiFxhxruGjly3lwdrw3rmQ30j8j7/P4aCoyOyPiLEvWSIxgKLK7Z9hFHDMuOSVVZh+co5RxWGnTFh5034sbSeNrfSw2u9qy/1a0z1dA6pnVQFDfQxI1eNnnHYKXsN30e4/nUDHLLJpcgMHNpAwDRI++ZH6iuDJFvRIQVIRzXh7IM+5fs7nmxxWoHRaEDDvojrF82bjBofEZDXLyaALq5ZbpCUGCFimvq+AZl9YQ8pOEAHPDKXOgIvbNJAF9UlpjJ8qPz1XmvU8W8CezzJi08ztl2O0GPGKG/kXg7YqlcpCIXkIUwMz/YV4QjHDrFoe3jPO4aclOTz6JtUqon5AoaAh6S6bEIfTX+9tT9EiXBU+bXEr4Yjo/0JeihiqMztlDgraYJZ+dHxk4ex9/pnlJc="
+            },
+            {
+              "type": "tool_call",
+              "id": "aer1dl3y",
+              "name": "getCityTemperature",
+              "args": {
+                "city": "NYC"
+              },
+              "thoughtSignature": null
+            }
+          ],
+          "id": "13b6b25e-330d-4f20-be33-f026e8f8270f"
+        }
+      },
+      {
+        "type": "tool",
+        "data": {
+          "content": "{\"temperature\":72}",
+          "tool_call_id": "rxerbjqi",
+          "name": "getCityTemperature",
+          "id": "38123588-8b92-411a-b05a-7e9e7983e171"
+        }
+      },
+      {
+        "type": "tool",
+        "data": {
+          "content": "{\"temperature\":83}",
+          "tool_call_id": "aer1dl3y",
+          "name": "getCityTemperature",
+          "id": "ad25ec98-76b7-4253-a5d1-776fb023aeee"
+        }
+      }
+    ],
+    "favorites": [
+      {
+        "type": "human",
+        "data": {
+          "content": "Start",
+          "id": "5b3d0b2f-7730-488c-b6c2-045f4fd93f30"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": "LA and NYC are supported. To get to know you better, could you please tell me your favorite color (red, blue, or white), your favorite movie, and your favorite season (spring, summer, autumn, or winter)?",
+          "id": "a68eb712-c980-4426-ac85-863bc18968c6"
+        }
+      },
+      {
+        "type": "human",
+        "data": {
+          "content": "blue, Star Wars, summer",
+          "id": "14542907-ce5f-4ceb-9782-3ba34cb50869"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": [
+            {
+              "thoughtSignature": "EjQKMgERTTIPm/geYYq9ArQaTr4vLPfcvTV+HvhMli1esi9RHyFYIrHg0P/YaFL2zMJ4wikU",
+              "type": "functionCall",
+              "functionCall": {
+                "name": "recordFavorites",
+                "args": {
+                  "favoriteMovie": "Star Wars",
+                  "favoriteSeason": "summer",
+                  "favoriteColor": "blue"
+                },
+                "id": "v5MOidiR"
+              }
+            }
+          ],
+          "tool_calls": [
+            {
+              "type": "tool_call",
+              "id": "v5MOidiR",
+              "name": "recordFavorites",
+              "args": {
+                "favoriteMovie": "Star Wars",
+                "favoriteSeason": "summer",
+                "favoriteColor": "blue"
+              },
+              "thoughtSignature": "EjQKMgERTTIPm/geYYq9ArQaTr4vLPfcvTV+HvhMli1esi9RHyFYIrHg0P/YaFL2zMJ4wikU"
+            }
+          ],
+          "id": "e69d8af6-1fae-4265-beed-8e32ab0e3d80"
+        }
+      },
+      {
+        "type": "tool",
+        "data": {
+          "content": "{\"accepted\":true,\"favorites\":{\"favoriteColor\":\"blue\",\"favoriteMovie\":\"Star Wars\",\"favoriteSeason\":\"summer\"},\"missing\":[]}",
+          "tool_call_id": "v5MOidiR",
+          "name": "recordFavorites",
+          "id": "fd91b810-d32e-47f1-893d-837408c11322"
+        }
+      }
+    ],
+    "name": [
+      {
+        "type": "human",
+        "data": {
+          "content": "Start",
+          "id": "2b33ebad-05ee-486c-98b4-c176fcceca95"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": "I have recorded your favorites. Could you please provide your full name?",
+          "id": "d4143069-7bec-4695-bdf9-a115599fdf6a"
+        }
+      },
+      {
+        "type": "human",
+        "data": {
+          "content": "John Doe",
+          "id": "fe679143-49a5-474e-8be6-c6f14afcf6dd"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": [
+            {
+              "thoughtSignature": "EjQKMgERTTIPG7jAO20Ke6+4C9ZmvnZtwkPNk9CysJ1AQG3rSQ+lcBryKF3IhaZwg1qz9qsv",
+              "type": "functionCall",
+              "functionCall": {
+                "name": "recordName",
+                "args": {
+                  "name": "John Doe"
+                },
+                "id": "8yI8bI11"
+              }
+            }
+          ],
+          "tool_calls": [
+            {
+              "type": "tool_call",
+              "id": "8yI8bI11",
+              "name": "recordName",
+              "args": {
+                "name": "John Doe"
+              },
+              "thoughtSignature": "EjQKMgERTTIPG7jAO20Ke6+4C9ZmvnZtwkPNk9CysJ1AQG3rSQ+lcBryKF3IhaZwg1qz9qsv"
+            }
+          ],
+          "id": "bd6aef2d-53e2-4ace-8ac7-cb00502a49fa"
+        }
+      },
+      {
+        "type": "tool",
+        "data": {
+          "content": "{\"accepted\":false,\"name\":\"John Doe\",\"reason\":\"That name is not accepted.\"}",
+          "tool_call_id": "8yI8bI11",
+          "name": "recordName",
+          "id": "b94b341a-c63c-432d-9de3-ed0751f1f896"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": "The name \"John Doe\" cannot be accepted. Could you please provide another full name?",
+          "id": "3bb59a96-75d0-4872-a632-1ff69b5cb42f"
+        }
+      },
+      {
+        "type": "human",
+        "data": {
+          "content": "John Wick",
+          "id": "304b575d-6f19-4679-9d26-09d3dc6bbe06"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": [
+            {
+              "thoughtSignature": "EjQKMgERTTIPcYNkiuwPdX71BqgellRg7QzI3xEIPTTpAcUo9Q4n8kSa8Z3nAFSq14oY1aet",
+              "type": "functionCall",
+              "functionCall": {
+                "name": "recordName",
+                "args": {
+                  "name": "John Wick"
+                },
+                "id": "b26oUVCo"
+              }
+            }
+          ],
+          "tool_calls": [
+            {
+              "type": "tool_call",
+              "id": "b26oUVCo",
+              "name": "recordName",
+              "args": {
+                "name": "John Wick"
+              },
+              "thoughtSignature": "EjQKMgERTTIPcYNkiuwPdX71BqgellRg7QzI3xEIPTTpAcUo9Q4n8kSa8Z3nAFSq14oY1aet"
+            }
+          ],
+          "id": "43e6ba79-38aa-44a5-9afb-13f77e75953d"
+        }
+      },
+      {
+        "type": "tool",
+        "data": {
+          "content": "{\"accepted\":true,\"name\":\"John Wick\"}",
+          "tool_call_id": "b26oUVCo",
+          "name": "recordName",
+          "id": "36c9ea1f-6a26-4666-aad8-9dd08882cff3"
+        }
+      }
+    ],
+    "isolated": [
+      {
+        "type": "human",
+        "data": {
+          "content": "Start",
+          "id": "771c4471-46f8-41d7-8000-a34054a8e08b"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": [
+            {
+              "thoughtSignature": "EjQKMgERTTIPLIC5DXsQbzWdvoQiqlvrWjdTfF0B1VMTgke7BqumKhxnTJhXx4ZfzBRjvbEh",
+              "type": "functionCall",
+              "functionCall": {
+                "name": "recordMovieIdea",
+                "args": {
+                  "summary": "In a future where teenagers can upload their consciousness into a virtual playground called 'The Echo,' a group of friends discovers a hidden layer of the code that allows them to manifest digital objects into the real world, only to realize that something from the digital realm is trying to break out.",
+                  "title": "Echo Breach",
+                  "releaseYear": 2026,
+                  "genre": "Sci-Fi / Adventure",
+                  "rating": 8.5
+                },
+                "id": "6Yrpi5Wv"
+              }
+            }
+          ],
+          "tool_calls": [
+            {
+              "type": "tool_call",
+              "id": "6Yrpi5Wv",
+              "name": "recordMovieIdea",
+              "args": {
+                "summary": "In a future where teenagers can upload their consciousness into a virtual playground called 'The Echo,' a group of friends discovers a hidden layer of the code that allows them to manifest digital objects into the real world, only to realize that something from the digital realm is trying to break out.",
+                "title": "Echo Breach",
+                "releaseYear": 2026,
+                "genre": "Sci-Fi / Adventure",
+                "rating": 8.5
+              },
+              "thoughtSignature": "EjQKMgERTTIPLIC5DXsQbzWdvoQiqlvrWjdTfF0B1VMTgke7BqumKhxnTJhXx4ZfzBRjvbEh"
+            }
+          ],
+          "id": "f2504aeb-3f4e-4765-b7a5-456de3f46865"
+        }
+      },
+      {
+        "type": "tool",
+        "data": {
+          "content": "{\"accepted\":true,\"movieIdea\":{\"title\":\"Echo Breach\",\"genre\":\"Sci-Fi / Adventure\",\"releaseYear\":2026,\"rating\":8.5,\"summary\":\"In a future where teenagers can upload their consciousness into a virtual playground called 'The Echo,' a group of friends discovers a hidden layer of the code that allows them to manifest digital objects into the real world, only to realize that something from the digital realm is trying to break out.\"}}",
+          "tool_call_id": "6Yrpi5Wv",
+          "name": "recordMovieIdea",
+          "id": "4e8a6ff4-4991-472f-a2cb-218f552e1dc0"
+        }
+      }
+    ],
+    "dob": [
+      {
+        "type": "human",
+        "data": {
+          "content": "Start",
+          "id": "01f1327b-0de4-4c7a-a113-afc3687c90e8"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": "Could you please provide your date of birth?",
+          "id": "98bb7c6a-e65b-43a6-a3a5-ebf2ab1a8f41"
+        }
+      },
+      {
+        "type": "human",
+        "data": {
+          "content": "1/1/2000",
+          "id": "b0744525-963f-4509-9526-6bedeb77c269"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": [
+            {
+              "thoughtSignature": "EjQKMgERTTIPXbXYfjAWxwsx8E757wlTUdhGD1B+QulYyDw0Topc4jWV5qnCZ+mvaxDOcpBy",
+              "type": "functionCall",
+              "functionCall": {
+                "name": "recordDateOfBirth",
+                "args": {
+                  "month": 1,
+                  "year": 2000,
+                  "day": 1
+                },
+                "id": "cMv3AUTT"
+              }
+            }
+          ],
+          "tool_calls": [
+            {
+              "type": "tool_call",
+              "id": "cMv3AUTT",
+              "name": "recordDateOfBirth",
+              "args": {
+                "month": 1,
+                "year": 2000,
+                "day": 1
+              },
+              "thoughtSignature": "EjQKMgERTTIPXbXYfjAWxwsx8E757wlTUdhGD1B+QulYyDw0Topc4jWV5qnCZ+mvaxDOcpBy"
+            }
+          ],
+          "id": "783d1abf-d139-4fca-b46c-2836e6885f03"
+        }
+      },
+      {
+        "type": "tool",
+        "data": {
+          "content": "{\"accepted\":true,\"dob\":{\"year\":2000,\"month\":1,\"day\":1}}",
+          "tool_call_id": "cMv3AUTT",
+          "name": "recordDateOfBirth",
+          "id": "ca26943c-f6ce-4815-9803-0516c5adaddd"
+        }
+      }
+    ],
+    "address": [
+      {
+        "type": "human",
+        "data": {
+          "content": "Start",
+          "id": "3e7f0d4b-2498-4f7f-8f0b-289bf1bf8aaf"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": "Thank you, your date of birth has been accepted. Could you please provide your complete US mailing address?",
+          "id": "3cad1f3d-bde5-4fe9-8b56-f13d616f013b"
+        }
+      },
+      {
+        "type": "human",
+        "data": {
+          "content": "123 K St. Portland, OR 97006",
+          "id": "f1cad202-0b27-4e6e-be4a-30e55b1ee6c7"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": [
+            {
+              "thoughtSignature": "EjQKMgERTTIP9D5VZ3IzmK2RAt7xcs6ZNKHizIRjKgvFgV5RHfYQAIdtO2T9xpKJal4Wov6C",
+              "type": "functionCall",
+              "functionCall": {
+                "name": "recordAddress",
+                "args": {
+                  "state": "OR",
+                  "city": "Portland",
+                  "street": "123 K St.",
+                  "zip": "97006"
+                },
+                "id": "xh9IgTig"
+              }
+            }
+          ],
+          "tool_calls": [
+            {
+              "type": "tool_call",
+              "id": "xh9IgTig",
+              "name": "recordAddress",
+              "args": {
+                "state": "OR",
+                "city": "Portland",
+                "street": "123 K St.",
+                "zip": "97006"
+              },
+              "thoughtSignature": "EjQKMgERTTIP9D5VZ3IzmK2RAt7xcs6ZNKHizIRjKgvFgV5RHfYQAIdtO2T9xpKJal4Wov6C"
+            }
+          ],
+          "id": "a4087d13-7741-43d1-b60a-8e00f9489512"
+        }
+      },
+      {
+        "type": "tool",
+        "data": {
+          "content": "{\"accepted\":true,\"address\":{\"street\":\"123 K St.\",\"city\":\"Portland\",\"state\":\"OR\",\"zip\":\"97006\"}}",
+          "tool_call_id": "xh9IgTig",
+          "name": "recordAddress",
+          "id": "f623fcc9-510e-4c78-97bb-02fc9c3586e2"
+        }
+      },
+      {
+        "type": "ai",
+        "data": {
+          "content": "The address has been successfully recorded. Your profile collection and conversation are now complete.",
+          "id": "6f14a0e1-2a09-4398-a5ea-99eb72244168"
+        }
+      }
+    ]
+  },
+  "model": "google:gemini-3.1-flash-lite",
+  "parameters": {
+    "retries": 3,
+    "temperature": 0.2
+  },
+  "tokens": {
+    "input_tokens": 4500,
+    "output_tokens": 892,
+    "thinking_tokens": 371,
+    "tool_input_tokens": 0,
+    "cached_input_tokens": 0,
+    "total_tokens": 5392
+  },
+  "errors": [],
+  "warnings": [],
+  "createdAt": "2026-07-29T16:27:14.176Z",
+  "modifiedAt": "2026-07-29T16:27:26.826Z",
+  "nodes": {
+    "weather": {
+      "weather": {
+        "LA": 72,
+        "NYC": 83
+      }
+    },
+    "fooLogic": {
+      "fooData": "fooValue"
+    },
+    "gooLogic": {
+      "gooData": "gooValue"
+    },
+    "favorites": {
+      "favorites": {
+        "favoriteColor": "blue",
+        "favoriteMovie": "Star Wars",
+        "favoriteSeason": "summer"
+      }
+    },
+    "name": {
+      "name": "John Wick"
+    },
+    "inContext": {
+      "movieIdea": {
+        "title": "Echo Breach",
+        "genre": "Sci-Fi / Adventure",
+        "releaseYear": 2026,
+        "rating": 8.5,
+        "summary": "In a future where teenagers can upload their consciousness into a virtual playground called 'The Echo,' a group of friends discovers a hidden layer of the code that allows them to manifest digital objects into the real world, only to realize that something from the digital realm is trying to break out."
+      }
+    },
+    "concur1": {
+      "result": "The first concurrent follow-up task is complete."
+    },
+    "concur2": {
+      "result": "The second concurrent follow-up task is now complete."
+    },
+    "concur3": {
+      "result": "The third concurrent follow-up task is complete."
+    },
+    "concur4": {
+      "result": "The fourth concurrent follow-up task is now complete."
+    },
+    "concurrentTasks": {
+      "results": [
+        "The first concurrent follow-up task is complete.",
+        "The second concurrent follow-up task is now complete.",
+        "The third concurrent follow-up task is complete.",
+        "The fourth concurrent follow-up task is now complete."
+      ]
+    },
+    "dob": {
+      "dob": {
+        "year": 2000,
+        "month": 1,
+        "day": 1
+      }
+    },
+    "address": {
+      "address": {
+        "street": "123 K St.",
+        "city": "Portland",
+        "state": "OR",
+        "zip": "97006"
+      }
+    }
+  }
+}

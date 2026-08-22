@@ -1,0 +1,857 @@
+[{
+  "name": "The Porter Portland, Curio Collection by Hilton",
+  "address": "1355 SW 2nd Ave. Portland, Oregon 97201 USA",
+  "amenities": {
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "boutique": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "businessCenter": true
+  },
+  "level": 120,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 12.4,
+    "cityCenter": 0.5
+  }
+},
+{
+  "name": "Hilton Portland Downtown",
+  "address": "1921 SW Sixth Avenue Portland, Oregon 97204 USA",
+  "amenities": {
+    "nonSmoking": true,
+    "digitalKey": true,
+    "evCharging": true,
+    "onSiteRestaurant": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "meetingRoom": true,
+    "connectingRooms": true
+  },
+  "level": 128,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 13,
+    "cityCenter": 0.8
+  }
+},
+{
+  "name": "The Duniway Portland, a Hilton Hotel",
+  "address": "545 SW Taylor Portland, Oregon 97204 USA",
+  "amenities": {
+    "connectingRooms": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "meetingRoom": true
+  },
+  "level": 150,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 12,
+    "cityCenter": 0
+  }
+},
+{
+  "name": "Embassy Suites by Hilton Portland Downtown",
+  "address": "319 SW Pine Street Portland, Oregon 97204-2726 USA",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "eveningReception": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "evCharging": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 145,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 11.9,
+    "cityCenter": 0.9
+  }
+},
+{
+  "name": "The Benson Portland, Curio Collection by Hilton",
+  "address": "309 SW Broadway Portland, Oregon 97205 USA",
+  "amenities": {
+    "connectingRooms": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "concierge": true,
+    "boutique": true,
+    "onSiteRestaurant": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "meetingRoom": true
+  },
+  "level": 132,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 12,
+    "cityCenter": 0.6
+  }
+},
+{
+  "name": "Canopy by Hilton Portland Pearl District",
+  "address": "425 NW 9th Ave, Portland, OR 97209",
+  "amenities": {
+    "connectingRooms": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "boutique": true,
+    "onSiteRestaurant": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "meetingRoom": true
+  },
+  "level": 141,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 12,
+    "cityCenter": 0
+  }
+},
+{
+  "name": "Hampton Inn & Suites Portland-Pearl District",
+  "address": "354 NW 9th Ave, Portland, OR 97209",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "evCharging": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 125,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 12,
+    "cityCenter": 0
+  }
+},
+{
+  "name": "River's Edge Hotel Portland, Tapestry Collection by Hilton",
+  "address": "455 S Hamilton Ct, Portland, OR 97239",
+  "amenities": {
+    "connectingRooms": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "boutique": true,
+    "onSiteRestaurant": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 125,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 14,
+    "cityCenter": 3
+  }
+},
+{
+  "name": "DoubleTree by Hilton Hotel Portland",
+  "address": "1000 NE Multnomah St, Portland, OR 97232",
+  "amenities": {
+    "connectingRooms": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "streaming": true,
+    "onSiteRestaurant": true,
+    "outdoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 128,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 10.5,
+    "cityCenter": 2
+  }
+},
+{
+  "name": "Home2 Suites by Hilton Portland Airport OR",
+  "address": "7001 NE 82nd Ave, Portland, OR 97220",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "airportShuttle": true,
+    "kitchen": true,
+    "evCharging": true,
+    "streaming": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true
+  },
+  "level": 135,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 2.5,
+    "cityCenter": 11.1
+  }
+},
+{
+  "name": "Tru by Hilton Portland Airport",
+  "address": "7077 NE 82nd Ave, Portland, OR 97220",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "concierge": true,
+    "airportShuttle": true,
+    "evCharging": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true
+  },
+  "level": 100,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 2.4,
+    "cityCenter": 11
+  }
+},
+{
+  "name": "Hampton Inn & Suites Portland Tigard",
+  "address": "11799 SW 69th Ave, Tigard, OR 97223",
+  "amenities": {
+    "freeBreakfast": true,
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "evCharging": true,
+    "streaming": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 116,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 19,
+    "cityCenter": 8.5
+  }
+},
+{
+  "name": "Embassy Suites by Hilton Portland Tigard",
+  "address": "9000 SW Washington Square Rd, Tigard, OR 97223",
+  "amenities": {
+    "freeBreakfast": true,
+    "eveningReception": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "concierge": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 141,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 23,
+    "cityCenter": 12.2
+  }
+},
+{
+  "name": "DoubleTree by Hilton Hotel Portland - Tigard",
+  "address": "9575 SW Locust St, Tigard, OR 97223",
+  "amenities": {
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "concierge": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "meetingRoom": true
+  },
+  "level": 103,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 22,
+    "cityCenter": 11
+  }
+},
+{
+  "name": "Embassy Suites by Hilton Portland Airport",
+  "address": "7900 NE 82nd Ave, Portland, OR 97220",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "eveningReception": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "airportShuttle": true,
+    "streaming": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 137,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 2,
+    "cityCenter": 11.6
+  }
+},
+{
+  "name": "Hampton Inn Portland-Airport",
+  "address": "8633 NE Airport Way, Portland, OR 97220",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "airportShuttle": true,
+    "streaming": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true
+  },
+  "level": 133,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 0.1,
+    "cityCenter": 11.5
+  }
+},
+{
+  "name": "Hilton Garden Inn Portland/Lake Oswego",
+  "address": "14850 Kruse Oaks Dr, Lake Oswego, OR 97035",
+  "amenities": {
+    "connectingRooms": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "concierge": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "meetingRoom": true
+  },
+  "level": 120,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 20,
+    "cityCenter": 8
+  }
+},
+{
+  "name": "Homewood Suites by Hilton Vancouver-Portland",
+  "address": "701 SE Columbia Shores Blvd, Vancouver, WA 98661",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "tennis": true,
+    "kitchen": true,
+    "outdoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 200,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 10.5,
+    "cityCenter": 1.5
+  }
+},
+{
+  "name": "Homewood Suites by Hilton Portland Airport",
+  "address": "11936 NE Glenn Widing Dr, Portland, OR 97220",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "airportShuttle": true,
+    "kitchen": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true
+  },
+  "level": 137,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 2,
+    "cityCenter": 10
+  }
+},
+{
+  "name": "Hilton Garden Inn Portland Airport",
+  "address": "12048 NE Airport Way, Portland, OR 97220",
+  "amenities": {
+    "connectingRooms": true,
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "airportShuttle": true,
+    "onSiteRestaurant": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 128,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 3,
+    "cityCenter": 10.7
+  }
+},
+{
+  "name": "Hilton Garden Inn Beaverton",
+  "address": "15520 NW Gateway Ct, Beaverton, OR 97006",
+  "amenities": {
+    "connectingRooms": true,
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "streaming": true,
+    "onSiteRestaurant": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 102,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 22,
+    "cityCenter": 10
+  }
+},
+{
+  "name": "Homewood Suites by Hilton Hillsboro/Beaverton",
+  "address": "15525 NW Gateway Ct, Beaverton, OR 97006",
+  "amenities": {
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "kitchen": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true
+  },
+  "level": 133,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 22,
+    "cityCenter": 9
+  }
+},
+{
+  "name": "Hilton Vancouver Washington",
+  "address": "301 W 6th St, Vancouver, WA 98660",
+  "amenities": {
+    "connectingRooms": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "concierge": true,
+    "streaming": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 175,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 12,
+    "cityCenter": 0.5
+  }
+},
+{
+  "name": "Hampton Inn Portland/Clackamas",
+  "address": "9040 SE Adams St, Clackamas, OR 97015",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "evCharging": true,
+    "streaming": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 115,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 11.4,
+    "cityCenter": 8
+  }
+},
+{
+  "name": "Tru by Hilton Aloha Beaverton",
+  "address": "17363 SW Tualatin Valley Hwy, Beaverton, OR 97006",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "newHotel": true,
+    "streaming": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true
+  },
+  "level": 116,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 23,
+    "cityCenter": 10.5
+  }
+},
+{
+  "name": "Hampton Inn Portland East",
+  "address": "3039 NE 181st Ave, Portland, OR 97230",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "evCharging": true,
+    "streaming": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 119,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 6.9,
+    "cityCenter": 12
+  }
+},
+{
+  "name": "Home2 Suites by Hilton Portland Hillsboro",
+  "address": "9790 NE Tanasbourne Drive Hillsboro, Oregon 97124 USA",
+  "amenities": {
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "kitchen": true,
+    "streaming": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 125,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 23.9,
+    "cityCenter": 11.4
+  }
+},
+{
+  "name": "Hampton Inn & Suites Portland/Hillsboro-Evergreen Park",
+  "address": "9399 NE Tanasbourne Drive Hillsboro, Oregon 97124 USA",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "streaming": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true
+  },
+  "level": 123,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 24,
+    "cityCenter": 11.2
+  }
+},
+{
+  "name": "Embassy Suites by Hilton Portland Hillsboro, Oregon",
+  "address": "9355 NE Tanasbourne Drive Hillsboro, Oregon 97124 USA",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "eveningReception": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "streaming": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "roomService": true,
+    "meetingRoom": true
+  },
+  "level": 149,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 24,
+    "cityCenter": 11.7
+  }
+},
+{
+  "name": "Hampton Inn & Suites Portland/Vancouver",
+  "address": "315 SE Olympia Drive Vancouver, Washington 98684 USA",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "airportShuttle": true,
+    "kitchen": true,
+    "evCharging": true,
+    "streaming": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 190,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 7,
+    "cityCenter": 7
+  }
+},
+{
+  "name": "Hampton Inn Sherwood Portland",
+  "address": "22000 SW Meinecke Parkway Sherwood, Oregon 97140 USA",
+  "amenities": {
+    "connectingRooms": true,
+    "freeBreakfast": true,
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "streaming": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 108,
+  "roomType": [
+    "one bed",
+    "two beds",
+    "suite"
+  ],
+  "nearby": {
+    "airport": 34,
+    "cityCenter": 17.5
+  }
+},
+{
+  "name": "Hilton Garden Inn Wilsonville Portland",
+  "address": "30800 SW Parkway Avenue Wilsonville, Oregon 97070 USA",
+  "amenities": {
+    "freeParking": true,
+    "freeWiFi": true,
+    "nonSmoking": true,
+    "digitalKey": true,
+    "streaming": true,
+    "onSiteRestaurant": true,
+    "indoorPool": true,
+    "fitnessCenter": true,
+    "petFriendly": true,
+    "businessCenter": true,
+    "meetingRoom": true
+  },
+  "level": 122,
+  "roomType": [
+    "one bed",
+    "two beds"
+  ],
+  "nearby": {
+    "airport": 30,
+    "cityCenter": 18
+  }
+}]

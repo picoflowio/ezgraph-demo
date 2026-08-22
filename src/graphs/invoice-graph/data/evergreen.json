@@ -1,0 +1,88 @@
+ {
+    "vendor_name": "Evergreen Supply Co.",
+    "vendor_id": "a3bc182f-7e2b-4e99-a6cc-1938c456a1b2",
+    "bill_number": "INV-2025-044",
+    "bill_date": "2025-07-02",
+    "due_date": "2025-07-15",
+    "ship_date": "2025-09-01",
+    "po_number": "24-EGS-042",
+    "po_id": "b4dc193f-7e2b-4e99-a6cc-1938c456a1c7",
+    "vendor_order_number": "SO4821",
+    "account_number": "b973",
+    "payment_terms": "30% Deposit, 70% Net 15",
+    "banking_info": {
+        "banking_instutition": "Wells Fargo Bank",
+        "wire": {
+            "banking_account": "91234876543",
+            "banking_routing": "121042882",
+            "swift": "WFBIUS6S"
+        },
+        "ach": {
+            "banking_account": "91234876545",
+            "banking_routing": "121042884",
+            "swift": "WFBIUS6S"
+        }
+    },
+    "payment_instructions": "Credit card payments must be submitted via the secure link provided / For checks, please issue to Evergreen Supply Co. and mail to our California office",
+    "notes": "Final quantities are based on approved shop drawings.",
+    "currency": "USD",
+    "bill_to_address": {
+        "company_name": "Hyatt Hotels",
+        "address_line_1": "150 North Riverside Plaza",
+        "address_line_2": "18th Floor",
+        "city": "Chicago",
+        "state": "Illinois",
+        "zip": 60606
+    },
+    "ship_to_address": {
+        "company_name": "Hyatt Hotels",
+        "address_line_1": "150 North Riverside Plaza",
+        "address_line_2": "18th Floor",
+        "city": "Chicago",
+        "state": "Illinois",
+        "zip": 60606
+    },
+    "invoice_items": [
+        {
+            "spec_tag": "CHR-101C.G2",
+            "description": "Custom lounge chair in graphite fabric",
+            "quantity": 24,
+            "overage": 1.2,
+            "units": "EA",
+            "unit_price": 135.50,
+            "discount": 0.00,
+            "extended_price": 3252.00,
+            "fob": "California"
+        },
+        {
+            "spec_tag": "DSK-204M.W1",
+            "description": "Maple writing desk with inset leather top",
+            "quantity": 12,
+            "overage": 0.0,
+            "units": "EA",
+            "unit_price": 410.00,
+            "discount": 0.00,
+            "extended_price": 4920.00,
+            "fob": "Oregon"
+        },
+        {
+            "spec_tag": "RUG-350X.R7",
+            "description": "Area rug 8x10, hand-tufted wool",
+            "quantity": 6,
+            "overage": 0.0,
+            "units": "EA",
+            "unit_price": 560.00,
+            "discount": 0.00,
+            "extended_price": 3360.00,
+            "fob": "Pennsylvania"
+        }
+    ],
+    "subtotal": 11532.00,
+    "packing_fee": 1678.00,
+    "freight": 225.00,
+    "sales_tax": 793.98,
+    "sales_tax_rate": 0.0065,
+    "total": 14128.98,
+    "prepayment": 3000.00,
+    "balance_due": 11128.98
+}

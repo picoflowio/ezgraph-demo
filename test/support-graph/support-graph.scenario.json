@@ -1,0 +1,64 @@
+{
+  "graphName": "SupportGraph",
+  "judgeModel": "gpt-4o",
+  "judgeMinScore": 0.75,
+  "turns": [
+    {
+      "label": "identity request",
+      "input": "Hi, I need help with an order I placed.",
+      "expectedResponse": "The assistant should acknowledge the request and ask for the order number together with either the email address on the order or the shipping ZIP code. It must not ask what is wrong with the items yet.",
+      "completed": false
+    },
+    {
+      "label": "order verified",
+      "input": "It's NW-100412 and the email is dana.whitfield@example.com",
+      "expectedResponse": "The assistant should confirm it found order NW-100412, indicate the order was delivered on July 3, 2027, and offer further help. It may mention the carrier or tracking number.",
+      "completed": false
+    },
+    {
+      "label": "return stage asks for a reason",
+      "input": "I want to return the rain jacket.",
+      "expectedResponse": "The assistant should move into the return flow for the Timberline 3L Rain Jacket and ask why the customer is returning it. It must not state, estimate, or promise any refund amount, and must not say whether the return is approved.",
+      "completed": false
+    },
+    {
+      "label": "approval gate presents the breakdown",
+      "input": "It's too big for me.",
+      "expectedResponse": "The assistant should present a refund breakdown showing a net refund of $289.00 to the Visa ending 4021, explain that this amount needs the customer's approval because it exceeds the agent approval limit, and ask the customer to explicitly confirm or decline. It must not say the refund has already been issued and must not give an RMA number.",
+      "completed": false,
+      "minScore": 0.8
+    },
+    {
+      "label": "declining leaves nothing committed",
+      "input": "Actually, hold off for now.",
+      "expectedResponse": "The assistant should confirm that nothing was refunded and no return was created, then offer alternatives such as returning a different item or ending the return request. It must not report an RMA number or a completed refund.",
+      "completed": false,
+      "minScore": 0.8
+    },
+    {
+      "label": "auto approved refund is reported",
+      "input": "Fine, send back the merino base layers instead, I no longer need them.",
+      "expectedResponse": "The assistant should confirm the return of the Cascade Merino Base Layer, give an RMA number in the form RMA followed by six digits, and state a refund of $136.00 to the Visa ending 4021. It should then ask whether anything else is needed.",
+      "completed": false,
+      "minScore": 0.8
+    },
+    {
+      "label": "billing stage identifies the charge",
+      "input": "One more thing, the charge on this order looks wrong to me.",
+      "expectedResponse": "The assistant should move into the billing flow and reference the charge on the order, CH-88301 for $439.95 posted on June 28, 2027, and ask the customer what is wrong with it or ask them to confirm that is the charge in question. It must not promise a credit, a reversal, or a timeline.",
+      "completed": false
+    },
+    {
+      "label": "escalation ticket opened",
+      "input": "Yes, CH-88301. I was only expecting to pay for the jacket and the base layers, not that much.",
+      "expectedResponse": "The assistant should confirm a billing case was opened and give a ticket identifier in the form ESC followed by five digits, and say the billing team will review it. It must not promise that the charge will be reversed or credited.",
+      "completed": false
+    },
+    {
+      "label": "case closed with a recap",
+      "input": "That's everything, thanks.",
+      "expectedResponse": "The assistant should close the case with a recap that names the RMA number and the $136.00 refund to the Visa ending 4021, names the ESC ticket identifier, and thanks the customer.",
+      "completed": true
+    }
+  ]
+}

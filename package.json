@@ -1,0 +1,57 @@
+{
+  "name": "ezgraph-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A public NestJS consumer example for ezgraph.",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "nest build",
+    "clean": "rm -rf ./dist/ ./node_modules/",
+    "start": "npm run build && npm run start:prod",
+    "start:prod": "node --enable-source-maps --disable-warning=ExperimentalWarning dist/main.js",
+    "start:debug": "npm run build && node --inspect-brk=9229 --enable-source-maps --disable-warning=ExperimentalWarning dist/main.js",
+    "typecheck": "tsc --project tsconfig.contract.json",
+    "test": "node --import tsx --test test/**/*.spec.ts",
+    "test:unit": "node --import tsx --test test/unit/*.spec.ts",
+    "test:e2e": "node --import tsx --test test/e2e/*.spec.ts",
+    "test:demo-graph": "node --import tsx --test test/demo-graph/*.eval.ts",
+    "test:hotel-graph": "node --import tsx --test test/hotel-graph/*.spec.ts",
+    "test2:hotel-graph": "SESSION_STORE=mongodb HOTEL_GRAPH_TEST_USE_ENV=1 HOTEL_GRAPH_KEEP_SESSIONS=1 node --import tsx --test test/hotel-graph/hotel-graph.e2e.spec.ts",
+    "test:hotel-langgraph": "node --import tsx --test test/hotel-langgraph/hotel-langgraph.live.eval.ts",
+    "test2:hotel-langgraph": "SESSION_STORE=mongodb HOTEL_LANGGRAPH_KEEP_SESSIONS=1 node --import tsx --test test/hotel-langgraph/hotel-langgraph.live.eval.ts",
+    "test:hotel-langgraph:unit": "node --import tsx --test test/hotel-langgraph/hotel-langgraph.spec.ts test/hotel-langgraph/hotel-langgraph.e2e.spec.ts",
+    "test:invoice-graph": "node --import tsx --test test/invoice-graph/*.eval.ts",
+    "test:support-graph": "node --import tsx --test test/support-graph/support-graph.spec.ts",
+    "test2:support-graph": "node --import tsx --test test/support-graph/support-graph.e2e.spec.ts"
+  },
+  "dependencies": {
+    "@fastify/static": "9.3.0",
+    "@langchain/core": "1.2.3",
+    "@langchain/google": "0.2.1",
+    "@langchain/langgraph": "1.4.8",
+    "@langchain/openai": "1.5.3",
+    "@nestjs/common": "11.1.28",
+    "@nestjs/config": "4.0.4",
+    "@nestjs/core": "11.1.28",
+    "@nestjs/platform-fastify": "11.1.28",
+    "@nestjs/swagger": "11.4.6",
+    "dotenv": "17.4.2",
+    "ezgraph": "link:../ezgraph/npmlib/staging/lib",
+    "fastify": "5.10.0",
+    "mongodb": "6.21.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "11.0.24",
+    "@nestjs/testing": "11.1.28",
+    "@types/node": "22.20.1",
+    "tsx": "4.23.1",
+    "typescript": "5.9.3"
+  }
+}
