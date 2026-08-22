@@ -176,7 +176,7 @@ describe("AiController / DemoGraph", () => {
       .get(GraphEngine)
       .getSession<DemoGraphStateType>(session);
     assert(stored);
-    assert.equal(stored.version, 14);
+    assert.equal(stored.version, 16);
     assert.equal(stored.graph.id, "DemoGraph");
     assert.deepEqual(stored.graph.model, {
       name: "google:gemini-3.1-flash-lite",
@@ -189,11 +189,7 @@ describe("AiController / DemoGraph", () => {
       family: "chat",
       params: { retries: 3, temperature: 0.2 },
     });
-    assert.deepEqual(stored.graph.nodes.FavoritesNode?.model, {
-      name: "glm:glm-5.1",
-      family: "chat",
-      params: { retries: 3, temperature: 0.2 },
-    });
+    assert.equal(stored.graph.nodes.FavoritesNode?.model, undefined);
     assert.deepEqual(stored.graph.nodes.WeatherNode?.weather, {
       LA: 72,
       NYC: 83,

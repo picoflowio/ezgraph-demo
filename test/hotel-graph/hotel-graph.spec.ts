@@ -6,7 +6,9 @@ import {
   type BaseMessage,
 } from "@langchain/core/messages";
 import {
+  createSessionLogs,
   modelExecution,
+  withSessionLogs,
   type GraphLlmConfig,
   type LlmGateway,
   type LlmGatewayTool,
@@ -80,6 +82,26 @@ describe("HotelGraph", () => {
       "Hampton Inn Sherwood Portland",
     );
     assert.match(state.response, /confirmation number is \d{6}/i);
+  });
+});
+
+describe("HotelGraph tool arguments", () => {
+  it("rejects a malformed criteria payload and lets the model retry", async () => {
+    const gateway = new MalformedCriteriaGateway();
+    const graph = new HotelGraph(gateway);
+    const logs = createSessionLogs();
+
+    const state = await withSessionLogs(logs, () =>
+      invoke(graph, undefined, "search with these criteria"),
+    );
+
+    assert.equal(gateway.captureAttempts, 2);
+    assert.equal(state.currentNode, "PresentNode");
+    assert.equal(state.nodes.PresentNode?.hotelFound?.length, 9);
+    assert.equal(logs.warnings.length, 1);
+    assert.equal(logs.warnings[0]?.node, "ExploreNode");
+    assert.equal(logs.warnings[0]?.tool, "capture_choices");
+    assert.match(String(logs.warnings[0]?.tool_call), /^json: /);
   });
 });
 
@@ -223,6 +245,29 @@ class HotelScriptedGateway implements LlmGateway {
       );
     }
     throw new Error(`Unexpected hotel test stage for input '${input}'.`);
+  }
+}
+
+/** Sends an unparseable criteria payload once before submitting valid criteria. */
+class MalformedCriteriaGateway extends HotelScriptedGateway {
+  captureAttempts = 0;
+
+  override async agent(
+    systemPrompt: string,
+    history: readonly BaseMessage[],
+    tools: readonly LlmGatewayTool[],
+    config?: GraphLlmConfig,
+  ): Promise<ModelResult<AIMessage>> {
+    if (tools.some(({ name }) => name === "capture_choices")) {
+      this.captureAttempts += 1;
+      if (this.captureAttempts === 1) {
+        return result(
+          toolCall("capture-bad", "capture_choices", { json: '{"cDate":' }),
+          config ?? HotelGraph.getGraphDefinition().llmConfig,
+        );
+      }
+    }
+    return super.agent(systemPrompt, history, tools, config);
   }
 }
 

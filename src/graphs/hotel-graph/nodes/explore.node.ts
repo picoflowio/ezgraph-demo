@@ -50,7 +50,10 @@ export class ExploreNode extends ConversationNode<
           json: z
             .string()
             .min(2)
-            .describe("The complete HotelJSON object as JSON"),
+            .describe("The complete HotelJSON object as JSON")
+            .refine(isJsonObject, {
+              message: "must be a JSON object",
+            }),
         }),
       },
     ];
@@ -68,18 +71,9 @@ export class ExploreNode extends ConversationNode<
     { json }: { json: string },
     context: ExploreContext,
   ): Promise<ConversationToolResult> {
-    let submitted: unknown;
-    try {
-      submitted = JSON.parse(json);
-    } catch {
-      return {
-        output: {
-          accepted: false,
-          error: "The search criteria must be valid JSON.",
-        },
-      };
-    }
-
+    // The tool schema rejects anything that is not a JSON object, so the model
+    // never reaches this handler with a payload that fails to parse.
+    const submitted = JSON.parse(json) as Record<string, unknown>;
     const normalized = this.normalizeCriteria(submitted, context.criteria);
     if ("error" in normalized) {
       return { output: { accepted: false, error: normalized.error } };
@@ -162,10 +156,9 @@ export class ExploreNode extends ConversationNode<
   }
 
   private normalizeCriteria(
-    value: unknown,
+    value: Record<string, unknown>,
     current: HotelSearchCriteria,
   ): { criteria: HotelSearchCriteria } | { error: string } {
-    if (!isRecord(value)) return { error: "HotelJSON must be an object." };
     const date = isRecord(value.cDate) ? value.cDate : {};
     const start = stringOrNull(date.start);
     const end = stringOrNull(date.end);
@@ -216,6 +209,14 @@ export class ExploreNode extends ConversationNode<
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function isJsonObject(value: string): boolean {
+  try {
+    return isRecord(JSON.parse(value));
+  } catch {
+    return false;
+  }
 }
 
 function stringArray(value: unknown): string[] {
