@@ -710,8 +710,10 @@ For every successful turn, `GraphEngine` restores the session, appends the new
 message to the active history, resets per-request response flags, invokes the
 compiled graph, and persists the resulting state. Reuse the same `SESSION_ID`
 header to continue. A session cannot silently switch graphs. Once completed, a
-later run returns `"This conversation is already complete."` without invoking
-the graph.
+later run does not invoke the graph: a `chat` graph returns 200 with
+`"This conversation is already complete."`, and a `json` graph returns 409 with
+`code: "SESSION_COMPLETED"` because its success body is the graph's own result
+object, which a rejected turn never produced.
 
 Errors are appended to the session document even when a graph update cannot be
 saved. The E2E test injects a provider failure, verifies the recorded error, and
