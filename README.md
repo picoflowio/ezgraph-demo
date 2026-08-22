@@ -107,6 +107,7 @@ export class DemoGraph extends BaseGraph<DemoGraphStateType> {
         temperature: 0.2,
       }),
       endNode: GRAPH_END_NODE,
+      maxAgentRounds: 8,
     };
   }
 
@@ -254,15 +255,16 @@ requests.
 EZGraph persists one versioned document per session. On each successful turn,
 the session manager behind `GraphEngine` saves the graph name, current node,
 histories, node-local values, config, model metadata, token totals, logs,
-lifecycle status, and expiry. The next request restores that state before
-invoking the graph. `BaseGraph.onRestoreSessionDoc()` applies the default
-expiry check; a graph may override it to migrate a document or use a different
-retention policy before state is restored.
+lifecycle status, and timestamps. The next request restores that state before
+invoking the graph. `BaseGraph.onRestoreSessionDoc()` keeps the document by
+default. Override it on the graph class to expire, reset, or reshape a session.
+`createdAt` / `modifiedAt` are the time facts; use `this.idleMs(session)` when
+the policy is idle-based.
 
 ```ts
 protected override async onRestoreSessionDoc(session: SessionDocument<MyState>) {
-  if (this.canMigrate(session)) return this.migrate(session);
-  return await super.onRestoreSessionDoc(session);
+  if (this.idleMs(session) >= 30 * 60_000) return null;
+  return session;
 }
 ```
 

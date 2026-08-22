@@ -30,6 +30,7 @@ export class DemoGraph extends BaseGraph<DemoGraphStateType> {
         temperature: 0.2,
       }),
       endNode: GRAPH_END_NODE,
+      maxAgentRounds: 8,
       historySpaces: [
         [WeatherNode, "default"],
         [FavoritesNode, "favorites"],
@@ -143,10 +144,9 @@ export class DemoGraph extends BaseGraph<DemoGraphStateType> {
   protected async onRestoreSessionDoc(
     sessionDoc: SessionDocument<DemoGraphStateType>,
   ): Promise<SessionDocument<DemoGraphStateType> | null> {
-    // Example of restoring a session document. This is where you could
-    // implement logic to validate or modify the session state before
-    // resuming the graph. Returning null would indicate that the session
-    // cannot be restored.
+    // Graph-owned policy. The framework default keeps the document; return
+    // null here to start a new run for this session id (for example after
+    // a long idle).
     return sessionDoc;
   }
 }

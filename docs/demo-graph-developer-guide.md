@@ -284,6 +284,7 @@ static getGraphDefinition(): GraphDefinition {
       temperature: 0.2,
     }),
     endNode: GRAPH_END_NODE,
+    maxAgentRounds: 8,
     historySpaces: [
       [WeatherNode, "default"],
       [FavoritesNode, "favorites"],
@@ -730,25 +731,11 @@ protected async onRestoreSessionDoc(
 ```
 
 The hook runs after a persisted document is loaded and before the graph resumes
-it. The demo currently returns the document unchanged, so it preserves the
-framework's normal restore behavior, including the default expiry check. Use
-this hook when the graph needs to validate restored state, migrate an older
-document shape, or apply graph-specific restore policy. Return the updated
-document to continue with the changes, or `null` to reject the persisted
-document and start a fresh run for that session ID.
-
-When overriding the hook, call `super.onRestoreSessionDoc(sessionDoc)` unless
-the graph intentionally replaces the base expiry behavior:
-
-```ts
-protected override async onRestoreSessionDoc(
-  sessionDoc: SessionDocument<DemoGraphStateType>,
-) {
-  const restored = await super.onRestoreSessionDoc(sessionDoc);
-  if (!restored) return null;
-  return this.migrateIfNeeded(restored);
-}
-```
+it. The framework default keeps the document; there is no stored `expireAfter`
+field. Use this hook when the graph needs to expire an idle session, validate
+restored state, or reshape a document. `this.idleMs(sessionDoc)` is the idle
+helper. Return the updated document to continue, or `null` to start a fresh
+run for that session ID.
 
 ### Run the demo locally
 

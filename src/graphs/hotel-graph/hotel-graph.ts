@@ -6,6 +6,7 @@ import {
   TerminateSessionNode,
   type GraphDefinition,
   type LlmGateway,
+  type SessionDocument,
 } from "ezgraph";
 import {
   HotelGraphState,
@@ -14,6 +15,8 @@ import {
 import { CompareNode } from "./nodes/compare.node.js";
 import { ExploreNode } from "./nodes/explore.node.js";
 import { PresentNode } from "./nodes/present.node.js";
+
+const DEFAULT_IDLE_MS = 30 * 60_000;
 
 /** Portland Hilton search, comparison, and booking workflow ported from HotelFlow. */
 export class HotelGraph extends BaseGraph<HotelGraphStateType> {
@@ -35,6 +38,16 @@ export class HotelGraph extends BaseGraph<HotelGraphStateType> {
     super(llmGateway, HotelGraph.getGraphDefinition());
   }
 
+  /** Idle reservation chats start over; booking state is not kept indefinitely. */
+  protected override async onRestoreSessionDoc(
+    sessionDoc: SessionDocument<HotelGraphStateType>,
+  ): Promise<SessionDocument<HotelGraphStateType> | null> {
+    if (this.idleMs(sessionDoc) >= readMs("HOTEL_GRAPH_IDLE_MS", DEFAULT_IDLE_MS)) {
+      return null;
+    }
+    return sessionDoc;
+  }
+
   protected buildGraph() {
     const graph = this.createStateGraph(HotelGraphState);
     graph.registerTurnNodes(
@@ -47,4 +60,9 @@ export class HotelGraph extends BaseGraph<HotelGraphStateType> {
     graph.addEdge(TerminateSessionNode, END);
     return graph.compile();
   }
+}
+
+function readMs(name: string, fallback: number): number {
+  const value = Number(process.env[name]);
+  return Number.isFinite(value) && value > 0 ? value : fallback;
 }

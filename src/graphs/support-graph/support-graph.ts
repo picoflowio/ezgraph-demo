@@ -60,17 +60,16 @@ export class SupportGraph extends BaseGraph<SupportGraphStateType> {
   /**
    * The support-specific session policy.
    *
-   * A support case is not a chat session, so it gets a working window instead
-   * of the framework default. More importantly, an unanswered irreversible
-   * action must not wait forever: a refund gate held past its hold window is
-   * released, its stale confirmation transcript is dropped, and the customer
-   * resumes at the hub rather than mid-approval.
+   * A support case is not a chat session, so it gets its own idle window.
+   * More importantly, an unanswered irreversible action must not wait forever:
+   * a refund gate held past its hold window is released, its stale
+   * confirmation transcript is dropped, and the customer resumes at the hub
+   * rather than mid-approval.
    */
   protected override async onRestoreSessionDoc(
     sessionDoc: SessionDocument<SupportGraphStateType>,
   ): Promise<SessionDocument<SupportGraphStateType> | null> {
-    const modifiedAt = Date.parse(sessionDoc.modifiedAt);
-    const idleMs = Number.isFinite(modifiedAt) ? Date.now() - modifiedAt : 0;
+    const idleMs = this.idleMs(sessionDoc);
     if (idleMs >= readMs("SUPPORT_GRAPH_IDLE_MS", DEFAULT_IDLE_MS)) return null;
 
     const holdingApproval =

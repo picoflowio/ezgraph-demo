@@ -477,13 +477,13 @@ itself.
    enumerate both start and end dates. A stay from August 1 to August 8 is
    normally seven nights, but either backend can price eight dates. Prompt
    wording and semantic judging cannot correct a wrong total.
-3. **Concurrent turns can overwrite each other.** Both systems upsert a whole
-   session document without a revision, compare-and-swap condition, lock, or
-   idempotency policy. Two requests for the same session can race.
-4. **The default 50-second expiration is unsuitable for normal users.** Both
-   implementations default `SESSION_EXPIRATION` to 50,000 milliseconds. A user
-   pausing for a minute may lose the resumable conversation unless deployment
-   configuration changes it.
+3. **Concurrent turns can overwrite each other in HotelLanggraph.** HotelGraph
+   sessions now use a turn lease plus revision compare-and-swap. HotelLanggraph
+   still upserts a whole document without a revision or lock.
+4. **HotelLanggraph still defaults to a 50-second expiration.** HotelGraph no
+   longer stores `expireAfter`; idle policy lives on the graph class (30
+   minutes by default, `HOTEL_GRAPH_IDLE_MS`). HotelLanggraph still writes
+   `expireAfter` from `SESSION_EXPIRATION` (50,000 ms).
 5. **Sensitive chat data needs governance.** Both documents retain conversation
    histories and search preferences. Neither application demonstrates field
    redaction, encryption policy, access controls, retention jobs, or audit

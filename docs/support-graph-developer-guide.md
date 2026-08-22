@@ -135,8 +135,8 @@ gate out of that one fact.
 - **`llmGateway.structured()`** — one Zod-validated model call, no tool loop,
   no user-facing text;
 - a **human-in-the-loop confirmation gate** for an irreversible refund;
-- a **real `onRestoreSessionDoc()` policy** that replaces the framework's
-  default expiry and releases stale approval holds;
+- a **real `onRestoreSessionDoc()` policy** that expires idle sessions and
+  releases stale approval holds;
 - the **`undefined` deletion marker** for clearing node local state;
 - a deterministic policy backend that owns every amount and every eligibility
   decision, with the model unable to override either;
@@ -879,9 +879,9 @@ decided the money; nothing was committed.
 
 ## 8. Session policy with `onRestoreSessionDoc()`
 
-`BaseGraph` applies a default expiration policy. Override the hook to replace it,
-migrate a document, or reject a session. Returning `null` discards the session
-and starts fresh for that ID.
+`BaseGraph.onRestoreSessionDoc` keeps the document by default. Override the hook
+to expire, reset, or reshape a session. Returning `null` starts a fresh run for
+that ID. Use `this.idleMs(sessionDoc)` for idle-based policy.
 
 SupportGraph overrides it for two reasons:
 
@@ -889,8 +889,7 @@ SupportGraph overrides it for two reasons:
 protected override async onRestoreSessionDoc(
   sessionDoc: SessionDocument<SupportGraphStateType>,
 ): Promise<SessionDocument<SupportGraphStateType> | null> {
-  const modifiedAt = Date.parse(sessionDoc.modifiedAt);
-  const idleMs = Number.isFinite(modifiedAt) ? Date.now() - modifiedAt : 0;
+  const idleMs = this.idleMs(sessionDoc);
   if (idleMs >= readMs("SUPPORT_GRAPH_IDLE_MS", DEFAULT_IDLE_MS)) return null;
 
   const holdingApproval =

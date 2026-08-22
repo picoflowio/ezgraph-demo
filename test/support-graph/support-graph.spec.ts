@@ -206,7 +206,8 @@ function heldApprovalSession(
 ): SessionDocument<SupportGraphStateType> {
   const modifiedAt = new Date(Date.now() - idleMs).toISOString();
   return {
-    version: 14,
+    version: 16,
+    revision: 0,
     id: "support-policy-session",
     status: "in_progress",
     tokens: {
@@ -219,7 +220,6 @@ function heldApprovalSession(
     },
     errors: [],
     warnings: [],
-    expireAfter: 60 * 60_000,
     createdAt: modifiedAt,
     modifiedAt,
     graph: {

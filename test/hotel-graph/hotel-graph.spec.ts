@@ -12,6 +12,7 @@ import {
   type LlmGatewayTool,
   type LlmGatewayToolCall,
   type ModelResult,
+  type SessionDocument,
 } from "ezgraph";
 import { HotelGraph } from "../../src/graphs/hotel-graph/hotel-graph.js";
 import type { HotelGraphStateType } from "../../src/graphs/hotel-graph/hotel-graph.state.js";
@@ -81,6 +82,57 @@ describe("HotelGraph", () => {
     assert.match(state.response, /confirmation number is \d{6}/i);
   });
 });
+
+describe("HotelGraph session policy", () => {
+  it("keeps a reservation session that is still inside the idle window", async () => {
+    const graph = new HotelGraph(new HotelScriptedGateway());
+    const restored = await graph.restoreSessionDoc(hotelSession(60_000));
+    assert.ok(restored);
+    assert.equal(restored.graph.currentNode, "PresentNode");
+  });
+
+  it("starts a new run after the hotel idle window", async () => {
+    const graph = new HotelGraph(new HotelScriptedGateway());
+    assert.equal(await graph.restoreSessionDoc(hotelSession(45 * 60_000)), null);
+  });
+});
+
+function hotelSession(
+  idleMs: number,
+): SessionDocument<HotelGraphStateType> {
+  const modifiedAt = new Date(Date.now() - idleMs).toISOString();
+  return {
+    version: 16,
+    revision: 0,
+    id: "hotel-policy-session",
+    status: "in_progress",
+    tokens: {
+      input_tokens: 0,
+      output_tokens: 0,
+      thinking_tokens: 0,
+      tool_input_tokens: 0,
+      cached_input_tokens: 0,
+      total_tokens: 0,
+    },
+    errors: [],
+    warnings: [],
+    createdAt: modifiedAt,
+    modifiedAt,
+    graph: {
+      id: "HotelGraph",
+      schemaVersion: 1,
+      currentNode: "PresentNode",
+      config: {},
+      histories: {},
+      model: {
+        name: "openai:gpt-4o",
+        family: "chat",
+        params: { retries: 3 },
+      },
+      nodes: {},
+    },
+  };
+}
 
 async function invoke(
   graph: HotelGraph,
