@@ -298,6 +298,22 @@ static getGraphDefinition(): GraphDefinition {
 }
 ```
 
+The definition also owns the rest of the conversation policy, so the shared
+agent loop holds no provider-specific behavior:
+
+| Field | Default | Purpose |
+| --- | --- | --- |
+| `maxAgentRounds` | `8` | Sequential model↔tool rounds in one node invocation. |
+| `llmTimeoutMs` | unbounded | Wall-clock budget for one model request. Applied per attempt, so a retrying `llmConfig` spends it once per try. |
+| `emptyHistorySeed` | `"Start"` | Message that seeds a newly entered history space, because some providers reject a system-only request. `null` sends the system prompt alone. |
+| `emptyResponseRecovery` | 2 retries + nudge | Retry policy for a model turn with neither text nor a tool call (Gemini can emit one after a file attachment). `null` accepts the empty turn as final. |
+
+A timeout surfaces as a normal turn failure naming the model and the budget, so
+it is recorded in the session document like any other provider error. Nodes that
+call the gateway directly can forward the same policy with
+`this.llmCallOptions()`, which every `LlmGateway` method accepts as its trailing
+`LlmCallOptions` argument alongside an optional `signal`.
+
 `WeatherNode.getLlmConfig()` returns a complete, statically checked
 `google:gemini-3.5-flash` configuration. Parameter-only overrides use
 `{ params: { ... } }` and retain the selected model.
