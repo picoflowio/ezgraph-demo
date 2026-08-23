@@ -1,3 +1,22 @@
+# ezgraph-demo
+
+Public NestJS + Fastify consumer for EZGraph. The same Sequoia Auto Insurance
+quoting chatbot is implemented twice — `src/graphs/quote-graph` on EZGraph and
+`src/graphs/quote-langgraph` on raw LangGraph — plus `src/graphs/expense-graph`
+for receipt extraction.
+
+```bash
+git clone https://github.com/ezgraphio/ezgraph-demo.git
+cd ezgraph-demo
+npm install
+npm run test:quote-graph
+```
+
+Walk `src/graphs/quote-graph/` after the unit tests pass. They need no provider
+key; the live e2e file skips without `OPENAI_API_KEY`.
+
+EZGraph does not depend on NestJS or Fastify; this repo is one way to host it.
+
 # EZGraph
 
 **EZGraph is a framework-independent TypeScript library that makes it practical
@@ -9,12 +28,10 @@ This repository is a NestJS and Fastify consumer application. NestJS owns the
 HTTP and dependency-injection setup; EZGraph does not depend on either
 framework.
 
-For a concrete side-by-side comparison, the API exposes the same Hilton hotel
-chatbot as `HotelGraph` (EZGraph) and `HotelLanggraph` (direct LangGraph). See
-[HotelGraph and HotelLanggraph comparison](./docs/hotel-langgraph-comparison.md)
-for the self-contained implementations and the orchestration each version owns.
-`HotelGraph` is available through `/ai/*`; `HotelLanggraph` is available
-through `/ai-langgraph/*`.
+For a concrete side-by-side comparison, the API exposes the same Sequoia Auto
+Insurance quoting chatbot as `QuoteGraph` (EZGraph) and `QuoteLanggraph`
+(direct LangGraph). `QuoteGraph` is available through `/ai/*`;
+`QuoteLanggraph` is available through `/ai-langgraph/*`.
 
 LangGraph is a strong, intentionally low-level runtime for stateful agent
 workflows. Its graph model—state, nodes, edges, conditional routing, and
