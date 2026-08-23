@@ -52,6 +52,34 @@
       {
         "include": "graphs/support-graph/data/**/*",
         "outDir": "dist"
+      },
+      {
+        "include": "graphs/quote-graph/prompt/*.md",
+        "outDir": "dist"
+      },
+      {
+        "include": "graphs/quote-graph/data/**/*",
+        "outDir": "dist"
+      },
+      {
+        "include": "graphs/quote-langgraph/prompt/*.md",
+        "outDir": "dist"
+      },
+      {
+        "include": "graphs/quote-langgraph/data/**/*",
+        "outDir": "dist"
+      },
+      {
+        "include": "graphs/expense-graph/prompt/*.md",
+        "outDir": "dist"
+      },
+      {
+        "include": "graphs/expense-graph/prompt/*.json",
+        "outDir": "dist"
+      },
+      {
+        "include": "graphs/expense-graph/data/**/*",
+        "outDir": "dist"
       }
     ]
   }

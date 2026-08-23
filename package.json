@@ -45,7 +45,7 @@
     "@nestjs/platform-fastify": "11.1.28",
     "@nestjs/swagger": "11.4.6",
     "dotenv": "17.4.2",
-    "ezgraph": "link:../ezgraph/npmlib/staging/lib",
+    "ezgraph": "link:../ezgraph2/npmlib/staging/lib",
     "fastify": "5.10.0",
     "mongodb": "6.21.0",
     "reflect-metadata": "0.2.2",
