@@ -7,9 +7,7 @@ import {
 } from "@nestjs/platform-fastify";
 import { GraphEngine } from "ezgraph";
 import { AppModule } from "../../src/app.module.js";
-import { HotelLanggraph } from "../../src/graphs/hotel-langgraph/hotel-langgraph.js";
 import { QuoteLanggraph } from "../../src/graphs/quote-langgraph/quote-langgraph.js";
-import { hotelTestModelFactory } from "../hotel-langgraph/hotel-langgraph-test-model.js";
 import { quoteTestModelFactory } from "./quote-langgraph-test-model.js";
 
 describe("AiLanggraphController / QuoteLanggraph", () => {
@@ -19,8 +17,6 @@ describe("AiLanggraphController / QuoteLanggraph", () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(GraphEngine)
       .useValue(new GraphEngine())
-      .overrideProvider(HotelLanggraph)
-      .useValue(new HotelLanggraph(hotelTestModelFactory))
       .overrideProvider(QuoteLanggraph)
       .useValue(new QuoteLanggraph(quoteTestModelFactory))
       .compile();
@@ -39,10 +35,7 @@ describe("AiLanggraphController / QuoteLanggraph", () => {
       method: "GET",
       url: "/ai-langgraph/graphs",
     });
-    assert.deepEqual(JSON.parse(graphs.payload), [
-      "HotelLanggraph",
-      "QuoteLanggraph",
-    ]);
+    assert.deepEqual(JSON.parse(graphs.payload), ["QuoteLanggraph"]);
 
     const first = await server.inject({
       method: "POST",

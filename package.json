@@ -17,21 +17,11 @@
     "typecheck": "tsc --project tsconfig.contract.json",
     "test": "node --import tsx --test test/**/*.spec.ts",
     "test:unit": "node --import tsx --test test/unit/*.spec.ts",
-    "test:e2e": "node --import tsx --test test/e2e/*.spec.ts",
-    "test:demo-graph": "node --import tsx --test test/demo-graph/*.eval.ts",
     "test:expense-graph": "SESSION_STORE=mongodb node --import tsx --test test/expense-graph/*.eval.ts",
-    "test:hotel-graph": "node --import tsx --test test/hotel-graph/*.spec.ts",
-    "test2:hotel-graph": "SESSION_STORE=mongodb HOTEL_GRAPH_TEST_USE_ENV=1 HOTEL_GRAPH_KEEP_SESSIONS=1 node --import tsx --test test/hotel-graph/hotel-graph.e2e.spec.ts",
-    "test:hotel-langgraph": "node --import tsx --test test/hotel-langgraph/hotel-langgraph.live.eval.ts",
-    "test2:hotel-langgraph": "SESSION_STORE=mongodb HOTEL_LANGGRAPH_KEEP_SESSIONS=1 node --import tsx --test test/hotel-langgraph/hotel-langgraph.live.eval.ts",
-    "test:hotel-langgraph:unit": "node --import tsx --test test/hotel-langgraph/hotel-langgraph.spec.ts test/hotel-langgraph/hotel-langgraph.e2e.spec.ts",
-    "test:invoice-graph": "node --import tsx --test test/invoice-graph/*.eval.ts",
     "test:quote-graph": "node --import tsx --test test/quote-graph/*.spec.ts",
     "test:quote-langgraph": "node --import tsx --test test/quote-langgraph/quote-langgraph.live.eval.ts",
     "test2:quote-langgraph": "SESSION_STORE=mongodb QUOTE_LANGGRAPH_KEEP_SESSIONS=1 node --import tsx --test test/quote-langgraph/quote-langgraph.live.eval.ts",
-    "test:quote-langgraph:unit": "node --import tsx --test test/quote-langgraph/quote-langgraph.spec.ts test/quote-langgraph/quote-langgraph.e2e.spec.ts",
-    "test:support-graph": "node --import tsx --test test/support-graph/support-graph.spec.ts",
-    "test2:support-graph": "node --import tsx --test test/support-graph/support-graph.e2e.spec.ts"
+    "test:quote-langgraph:unit": "node --import tsx --test test/quote-langgraph/quote-langgraph.spec.ts test/quote-langgraph/quote-langgraph.e2e.spec.ts"
   },
   "dependencies": {
     "@fastify/static": "9.3.0",

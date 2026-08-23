@@ -16,12 +16,11 @@ import {
   ApiRunBodyDto,
   ApiRunResponseDto,
 } from "./api-types.js";
-import { HotelLanggraph } from "../graphs/hotel-langgraph/hotel-langgraph.js";
 import { QuoteLanggraph } from "../graphs/quote-langgraph/quote-langgraph.js";
 
 const SESSION_ID = "SESSION_ID";
 
-type PureLanggraph = HotelLanggraph | QuoteLanggraph;
+type PureLanggraph = QuoteLanggraph;
 
 /** HTTP boundary for the direct-LangGraph comparison graphs only. */
 @ApiTags("ai-langgraph")
@@ -29,11 +28,8 @@ type PureLanggraph = HotelLanggraph | QuoteLanggraph;
 export class AiLanggraphController {
   private readonly graphs: readonly PureLanggraph[];
 
-  constructor(
-    @Inject(HotelLanggraph) hotelLanggraph: HotelLanggraph,
-    @Inject(QuoteLanggraph) quoteLanggraph: QuoteLanggraph,
-  ) {
-    this.graphs = [hotelLanggraph, quoteLanggraph];
+  constructor(@Inject(QuoteLanggraph) quoteLanggraph: QuoteLanggraph) {
+    this.graphs = [quoteLanggraph];
   }
 
   @Post("run")

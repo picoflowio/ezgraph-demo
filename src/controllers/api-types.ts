@@ -4,7 +4,7 @@ export class ApiRunBodyDto {
   @ApiProperty({ example: "Hi", required: false })
   message?: string;
 
-  @ApiProperty({ example: "DemoGraph" })
+  @ApiProperty({ example: "QuoteGraph" })
   graphName!: string;
 
   @ApiProperty({ example: {}, required: false })
@@ -18,11 +18,11 @@ export class ApiRunResponseDto {
   @ApiProperty({ example: false })
   completed!: boolean;
 
-  @ApiProperty({ example: "Please enter LA and NYC." })
+  @ApiProperty({ example: "I can help you get a Sequoia auto quote." })
   message!: string;
 
   @ApiProperty({
-    example: "Please enter LA and NYC.",
+    example: "I can help you get a Sequoia auto quote.",
     description: "Legacy 0-charlie alias for message.",
     required: false,
   })

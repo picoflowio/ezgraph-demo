@@ -10,50 +10,6 @@
         "outDir": "dist"
       },
       {
-        "include": "graphs/invoice-graph/prompt/*.md",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/invoice-graph/prompt/*.json",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/invoice-graph/data/**/*",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/hotel-graph/prompt/*.md",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/hotel-graph/prompt/*.json",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/hotel-graph/data/**/*",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/hotel-langgraph/prompt/*.md",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/hotel-langgraph/prompt/*.json",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/hotel-langgraph/data/**/*",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/support-graph/prompt/*.md",
-        "outDir": "dist"
-      },
-      {
-        "include": "graphs/support-graph/data/**/*",
-        "outDir": "dist"
-      },
-      {
         "include": "graphs/quote-graph/prompt/*.md",
         "outDir": "dist"
       },
