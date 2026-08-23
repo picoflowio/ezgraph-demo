@@ -5,10 +5,13 @@ import { AiController } from "./controllers/ai-controller.js";
 import { AiLanggraphController } from "./controllers/ai-langgraph-controller.js";
 import { HealthController } from "./controllers/health-controller.js";
 import { DemoGraph } from "./graphs/demo-graph/demo-graph.js";
+import { ExpenseGraph } from "./graphs/expense-graph/expense-graph.js";
 import { HotelGraph } from "./graphs/hotel-graph/hotel-graph.js";
 import { InvoiceGraph } from "./graphs/invoice-graph/invoice-graph.js";
+import { QuoteGraph } from "./graphs/quote-graph/quote-graph.js";
 import { SupportGraph } from "./graphs/support-graph/support-graph.js";
 import { HotelLanggraph } from "./graphs/hotel-langgraph/hotel-langgraph.js";
+import { QuoteLanggraph } from "./graphs/quote-langgraph/quote-langgraph.js";
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true })],
@@ -19,7 +22,14 @@ import { HotelLanggraph } from "./graphs/hotel-langgraph/hotel-langgraph.js";
       inject: [ConfigService],
       useFactory: (config: ConfigService) =>
         GraphEngine.create({
-          graphs: [DemoGraph, HotelGraph, InvoiceGraph, SupportGraph],
+          graphs: [
+            DemoGraph,
+            ExpenseGraph,
+            HotelGraph,
+            InvoiceGraph,
+            QuoteGraph,
+            SupportGraph,
+          ],
           // Register built-in providers explicitly; only specify what the app uses.
           providers: [
             ...ModelProvider.createBuiltinAdapters({
@@ -53,15 +63,24 @@ import { HotelLanggraph } from "./graphs/hotel-langgraph/hotel-langgraph.js";
       provide: HotelLanggraph,
       useFactory: () => HotelLanggraph.createFromEnvironment(),
     },
+    {
+      provide: QuoteLanggraph,
+      useFactory: () => QuoteLanggraph.createFromEnvironment(),
+    },
   ],
 })
 export class AppModule implements OnApplicationShutdown {
   constructor(
     @Inject(GraphEngine) private readonly graphEngine: GraphEngine,
     @Inject(HotelLanggraph) private readonly hotelLanggraph: HotelLanggraph,
+    @Inject(QuoteLanggraph) private readonly quoteLanggraph: QuoteLanggraph,
   ) {}
 
   async onApplicationShutdown(): Promise<void> {
-    await Promise.all([this.graphEngine.close(), this.hotelLanggraph.close()]);
+    await Promise.all([
+      this.graphEngine.close(),
+      this.hotelLanggraph.close(),
+      this.quoteLanggraph.close(),
+    ]);
   }
 }

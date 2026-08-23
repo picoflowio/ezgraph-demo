@@ -1,0 +1,63 @@
+{
+    "hotel_name": "Harbor Pine Inn",
+    "hotel_address": "45 Wharf Street, Portland, ME 04101",
+    "hotel_phone": "(207) 555-0142",
+    "folio_number": "HP-10331",
+    "guest_name": "Alex Chen",
+    "room_number": "208",
+    "room_type": "Queen Standard",
+    "check_in_date": "2025-11-02",
+    "check_out_date": "2025-11-04",
+    "nights": 2,
+    "currency": "USD",
+    "line_items": [
+        {
+            "date": "2025-11-02",
+            "description": "Room Charge",
+            "category": "room",
+            "amount": 145.00
+        },
+        {
+            "date": "2025-11-02",
+            "description": "Lodging Tax (9%)",
+            "category": "tax",
+            "amount": 13.05
+        },
+        {
+            "date": "2025-11-02",
+            "description": "Wharf Bistro - Dinner",
+            "category": "food_beverage",
+            "amount": 41.80
+        },
+        {
+            "date": "2025-11-03",
+            "description": "Room Charge",
+            "category": "room",
+            "amount": 145.00
+        },
+        {
+            "date": "2025-11-03",
+            "description": "Lodging Tax (9%)",
+            "category": "tax",
+            "amount": 13.05
+        },
+        {
+            "date": "2025-11-03",
+            "description": "Self Parking",
+            "category": "parking",
+            "amount": 20.00
+        }
+    ],
+    "room_subtotal": 290.00,
+    "tax_total": 26.10,
+    "incidentals_subtotal": 61.80,
+    "total": 377.90,
+    "payments": [
+        {
+            "date": "2025-11-04",
+            "method": "Mastercard ****8811",
+            "amount": 377.90
+        }
+    ],
+    "balance_due": 0.00
+}

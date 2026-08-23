@@ -1,0 +1,122 @@
+[
+  {
+    "id": "2017-toyota-corolla-le",
+    "year": 2017,
+    "make": "Toyota",
+    "model": "Corolla",
+    "trim": "LE",
+    "bodyStyle": "sedan",
+    "riskGroup": 1,
+    "msrp": 18500
+  },
+  {
+    "id": "2019-toyota-camry-le",
+    "year": 2019,
+    "make": "Toyota",
+    "model": "Camry",
+    "trim": "LE",
+    "bodyStyle": "sedan",
+    "riskGroup": 2,
+    "msrp": 24000
+  },
+  {
+    "id": "2019-toyota-camry-se",
+    "year": 2019,
+    "make": "Toyota",
+    "model": "Camry",
+    "trim": "SE",
+    "bodyStyle": "sedan",
+    "riskGroup": 2,
+    "msrp": 26000
+  },
+  {
+    "id": "2019-toyota-camry-xse",
+    "year": 2019,
+    "make": "Toyota",
+    "model": "Camry",
+    "trim": "XSE",
+    "bodyStyle": "sedan",
+    "riskGroup": 3,
+    "msrp": 29500
+  },
+  {
+    "id": "2022-toyota-rav4-xle",
+    "year": 2022,
+    "make": "Toyota",
+    "model": "RAV4",
+    "trim": "XLE",
+    "bodyStyle": "suv",
+    "riskGroup": 2,
+    "msrp": 29500
+  },
+  {
+    "id": "2021-honda-civic-lx",
+    "year": 2021,
+    "make": "Honda",
+    "model": "Civic",
+    "trim": "LX",
+    "bodyStyle": "sedan",
+    "riskGroup": 2,
+    "msrp": 22500
+  },
+  {
+    "id": "2021-honda-civic-si",
+    "year": 2021,
+    "make": "Honda",
+    "model": "Civic",
+    "trim": "Si",
+    "bodyStyle": "sedan",
+    "riskGroup": 4,
+    "msrp": 28000
+  },
+  {
+    "id": "2023-honda-cr-v-ex",
+    "year": 2023,
+    "make": "Honda",
+    "model": "CR-V",
+    "trim": "EX",
+    "bodyStyle": "suv",
+    "riskGroup": 2,
+    "msrp": 32500
+  },
+  {
+    "id": "2020-ford-f-150-xlt",
+    "year": 2020,
+    "make": "Ford",
+    "model": "F-150",
+    "trim": "XLT",
+    "bodyStyle": "truck",
+    "riskGroup": 3,
+    "msrp": 38500
+  },
+  {
+    "id": "2022-tesla-model-3-long-range",
+    "year": 2022,
+    "make": "Tesla",
+    "model": "Model 3",
+    "trim": "Long Range",
+    "bodyStyle": "sedan",
+    "riskGroup": 4,
+    "msrp": 46000
+  },
+  {
+    "id": "2018-subaru-outback-premium",
+    "year": 2018,
+    "make": "Subaru",
+    "model": "Outback",
+    "trim": "Premium",
+    "bodyStyle": "wagon",
+    "riskGroup": 1,
+    "msrp": 26500
+  },
+  {
+    "id": "2023-bmw-m340i",
+    "year": 2023,
+    "make": "BMW",
+    "model": "M340i",
+    "trim": "Base",
+    "bodyStyle": "sedan",
+    "riskGroup": 5,
+    "msrp": 56500
+  }
+]

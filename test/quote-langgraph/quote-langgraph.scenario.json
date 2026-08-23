@@ -1,0 +1,97 @@
+{
+  "graphName": "QuoteLanggraph",
+  "judgeModel": "gpt-4o",
+  "judgeMinScore": 0.75,
+  "turns": [
+    {
+      "label": "driver stage greeting",
+      "input": "Hi, I'd like a quote for my car insurance.",
+      "expectedResponse": "The assistant should welcome the customer to the car-insurance quoting flow and start collecting driver details, asking for the driver's full name and possibly the date of birth. It must not ask about the vehicle or coverage yet.",
+      "completed": false
+    },
+    {
+      "label": "name and birth date",
+      "input": "Jamie Rivera, born April 12, 1993.",
+      "expectedResponse": "The assistant should accept the name and date of birth and ask for the next missing driver details: the license state and license status, possibly also the years licensed.",
+      "completed": false
+    },
+    {
+      "label": "driver capture advances to vehicle",
+      "input": "Licensed in Oregon, valid license, for about 10 years.",
+      "expectedResponse": "The assistant now has all driver details. It should briefly restate or confirm them and move on to the vehicle, asking for the vehicle's model year, make, and model.",
+      "completed": false
+    },
+    {
+      "label": "trim disambiguation",
+      "input": "It's a 2019 Toyota Camry.",
+      "expectedResponse": "Several 2019 Toyota Camry trims exist, so the assistant should list the available trims LE, SE, and XSE and ask which one the customer drives. It must not silently pick one.",
+      "completed": false
+    },
+    {
+      "label": "resolved vehicle asks usage",
+      "input": "The SE trim.",
+      "expectedResponse": "The assistant should confirm the 2019 Toyota Camry SE and ask about vehicle use details: ownership (own, finance, or lease), annual mileage, and/or overnight parking. Asking for one, some, or all of these in a single message is acceptable.",
+      "completed": false
+    },
+    {
+      "label": "ownership and mileage",
+      "input": "I finance it and drive about 12,000 miles a year.",
+      "expectedResponse": "The assistant should accept the financing and mileage answers and ask where the car is usually parked overnight: garage, driveway, or street.",
+      "completed": false
+    },
+    {
+      "label": "vehicle capture advances to history",
+      "input": "In my driveway.",
+      "expectedResponse": "The vehicle stage is complete. The assistant should move on to driving and insurance history, asking whether the driver currently has insurance, whether coverage lapsed in the past year, or about accidents, tickets, or claims in the last five years.",
+      "completed": false
+    },
+    {
+      "label": "insurance status",
+      "input": "I'm insured today and had no lapse in the past year.",
+      "expectedResponse": "The assistant should record the insured status with no lapse and ask about incidents in the last five years, such as at-fault accidents, not-at-fault accidents, moving violations, or comprehensive claims.",
+      "completed": false
+    },
+    {
+      "label": "history capture advances to coverage",
+      "input": "Just one speeding ticket in March 2026, nothing else.",
+      "expectedResponse": "The assistant should record the single moving violation from March 2026 and move on to coverage preferences, asking about the liability level (state-minimum, standard, or premium) and possibly deductibles.",
+      "completed": false
+    },
+    {
+      "label": "liability selection",
+      "input": "Standard liability, please.",
+      "expectedResponse": "The assistant should accept standard liability and ask about collision and comprehensive deductibles ($250, $500, or $1000) or about optional extras. Because the vehicle is financed, it may note that both collision and comprehensive are required.",
+      "completed": false
+    },
+    {
+      "label": "lender rule blocks liability-only",
+      "input": "Can I skip collision and comprehensive entirely?",
+      "expectedResponse": "The assistant must explain that a financed vehicle cannot be liability-only because the lender requires both collision and comprehensive coverage, and ask the customer to choose deductibles instead. It must not proceed with liability-only coverage.",
+      "completed": false
+    },
+    {
+      "label": "deductibles and extras",
+      "input": "Fine, $500 deductibles for both, and add rental reimbursement but no roadside.",
+      "expectedResponse": "The assistant should accept the $500 collision and comprehensive deductibles plus rental reimbursement and ask for the coverage start date, which must be within the next 60 days.",
+      "completed": false
+    },
+    {
+      "label": "coverage capture presents quote tiers",
+      "input": "Start it on June 15.",
+      "expectedResponse": "The coverage selection is complete, so the assistant should present the quote: numbered tiers (a cheaper saver option, the customer's selected coverage, and a fuller-protection shield option) each with a monthly premium in U.S. dollars. It should offer to adjust, accept, or rework the coverage.",
+      "completed": false
+    },
+    {
+      "label": "deductible what-if adjustment",
+      "input": "What would it cost if both deductibles were $1000?",
+      "expectedResponse": "The assistant should present updated quote tiers where the customer's selected coverage now carries $1000 collision and comprehensive deductibles, with monthly premiums in U.S. dollars, and offer to adjust further, accept a tier, or rework the coverage. The saver tier also uses $1000 deductibles, while the shield tier intentionally keeps lower $250 deductibles because it is the fuller-protection option; showing $250 deductibles on shield is correct, not a mistake.",
+      "completed": false
+    },
+    {
+      "label": "acceptance completes the quote",
+      "input": "Accept my selected option, please.",
+      "expectedResponse": "The assistant should confirm the selected tier is locked in, state the monthly premium in U.S. dollars and the coverage start date, and provide a quote reference number starting with QT-.",
+      "completed": true
+    }
+  ]
+}

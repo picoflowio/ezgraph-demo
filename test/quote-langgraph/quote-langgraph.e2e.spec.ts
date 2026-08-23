@@ -9,10 +9,10 @@ import { GraphEngine } from "ezgraph";
 import { AppModule } from "../../src/app.module.js";
 import { HotelLanggraph } from "../../src/graphs/hotel-langgraph/hotel-langgraph.js";
 import { QuoteLanggraph } from "../../src/graphs/quote-langgraph/quote-langgraph.js";
-import { quoteTestModelFactory } from "../quote-langgraph/quote-langgraph-test-model.js";
-import { hotelTestModelFactory } from "./hotel-langgraph-test-model.js";
+import { hotelTestModelFactory } from "../hotel-langgraph/hotel-langgraph-test-model.js";
+import { quoteTestModelFactory } from "./quote-langgraph-test-model.js";
 
-describe("AiLanggraphController / HotelLanggraph", () => {
+describe("AiLanggraphController / QuoteLanggraph", () => {
   let app: NestFastifyApplication;
 
   before(async () => {
@@ -33,7 +33,7 @@ describe("AiLanggraphController / HotelLanggraph", () => {
 
   after(async () => app.close());
 
-  it("maps HotelLanggraph through its dedicated API and cleans up its session", async () => {
+  it("maps QuoteLanggraph through the shared pure-LangGraph API", async () => {
     const server = app.getHttpAdapter().getInstance();
     const graphs = await server.inject({
       method: "GET",
@@ -48,7 +48,10 @@ describe("AiLanggraphController / HotelLanggraph", () => {
       method: "POST",
       url: "/ai-langgraph/run",
       headers: { "content-type": "application/json" },
-      payload: JSON.stringify({ graphName: "HotelLanggraph", message: "Hi" }),
+      payload: JSON.stringify({
+        graphName: "QuoteLanggraph",
+        message: "Hi, I'd like a car insurance quote.",
+      }),
     });
     assert.equal(first.statusCode, 200);
     const firstBody = JSON.parse(first.payload) as {
@@ -59,7 +62,7 @@ describe("AiLanggraphController / HotelLanggraph", () => {
     };
     assert.equal(firstBody.success, true);
     assert.equal(firstBody.completed, false);
-    assert.match(firstBody.message, /Portland/i);
+    assert.match(firstBody.message, /Sequoia/i);
     assert.equal(first.headers.session_id, firstBody.session);
 
     const second = await server.inject({
@@ -69,13 +72,18 @@ describe("AiLanggraphController / HotelLanggraph", () => {
         "content-type": "application/json",
         SESSION_ID: firstBody.session,
       },
-      payload: JSON.stringify({ graphName: "HotelLanggraph", message: "yes" }),
+      payload: JSON.stringify({
+        graphName: "QuoteLanggraph",
+        message: "Jamie Rivera, born 1993-04-12, licensed in Oregon 10 years, valid.",
+      }),
     });
     assert.equal(second.statusCode, 200);
-    assert.equal(
-      (JSON.parse(second.payload) as { session: string }).session,
-      firstBody.session,
-    );
+    const secondBody = JSON.parse(second.payload) as {
+      session: string;
+      message: string;
+    };
+    assert.equal(secondBody.session, firstBody.session);
+    assert.match(secondBody.message, /vehicle/i);
 
     const ended = await server.inject({
       method: "POST",
@@ -86,6 +94,25 @@ describe("AiLanggraphController / HotelLanggraph", () => {
     assert.equal(
       (JSON.parse(ended.payload) as { success: boolean }).success,
       true,
+    );
+    assert.equal(
+      await app.get(QuoteLanggraph).hasSession(firstBody.session),
+      false,
+    );
+  });
+
+  it("rejects an unregistered graph name", async () => {
+    const server = app.getHttpAdapter().getInstance();
+    const response = await server.inject({
+      method: "POST",
+      url: "/ai-langgraph/run",
+      headers: { "content-type": "application/json" },
+      payload: JSON.stringify({ graphName: "QuoteGraph", message: "Hi" }),
+    });
+    assert.equal(response.statusCode, 400);
+    assert.match(
+      (JSON.parse(response.payload) as { message: string }).message,
+      /not registered/i,
     );
   });
 });

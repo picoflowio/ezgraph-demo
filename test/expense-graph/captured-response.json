@@ -1,0 +1,93 @@
+{
+    "hotel_name": "GRAND SEQUOIA HOTEL",
+    "hotel_address": "1200 Canyon Rim Drive, Bend, OR 97701",
+    "hotel_phone": "(541) 555-0188",
+    "folio_number": "GS-88214",
+    "guest_name": "Jamie Rivera",
+    "room_number": "412",
+    "room_type": "Deluxe King",
+    "check_in_date": "2027-05-10",
+    "check_out_date": "2027-05-13",
+    "nights": 3,
+    "currency": "USD",
+    "line_items": [
+        {
+            "date": "2027-05-10",
+            "description": "Room Charge",
+            "category": "room",
+            "amount": 189
+        },
+        {
+            "date": "2027-05-10",
+            "description": "Occupancy Tax (14%)",
+            "category": "tax",
+            "amount": 26.46
+        },
+        {
+            "date": "2027-05-10",
+            "description": "Sequoia Grill - Dinner",
+            "category": "food_beverage",
+            "amount": 54.25
+        },
+        {
+            "date": "2027-05-11",
+            "description": "Room Charge",
+            "category": "room",
+            "amount": 189
+        },
+        {
+            "date": "2027-05-11",
+            "description": "Occupancy Tax (14%)",
+            "category": "tax",
+            "amount": 26.46
+        },
+        {
+            "date": "2027-05-11",
+            "description": "Valet Parking",
+            "category": "parking",
+            "amount": 35
+        },
+        {
+            "date": "2027-05-11",
+            "description": "Minibar",
+            "category": "minibar",
+            "amount": 18.5
+        },
+        {
+            "date": "2027-05-12",
+            "description": "Room Charge",
+            "category": "room",
+            "amount": 189
+        },
+        {
+            "date": "2027-05-12",
+            "description": "Occupancy Tax (14%)",
+            "category": "tax",
+            "amount": 26.46
+        },
+        {
+            "date": "2027-05-12",
+            "description": "Sequoia Grill - Breakfast",
+            "category": "food_beverage",
+            "amount": 22.75
+        },
+        {
+            "date": "2027-05-12",
+            "description": "Cascade Spa - Massage",
+            "category": "spa",
+            "amount": 85
+        }
+    ],
+    "room_subtotal": 567,
+    "tax_total": 79.38,
+    "incidentals_subtotal": 215.5,
+    "total": 861.88,
+    "payments": [
+        {
+            "date": "2027-05-13",
+            "method": "Visa ****4242",
+            "amount": 861.88
+        }
+    ],
+    "balance_due": 0
+}
