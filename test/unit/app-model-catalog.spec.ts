@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { langChainModelInitialization } from "ezgraph";
+import { langChainModelInitialization } from "@picoflow/ezgraph";
 import { AppModelCatalog } from "../../src/config/app-model-catalog.js";
 
 describe("application model catalog", () => {

@@ -9,7 +9,7 @@ import {
   FastifyAdapter,
   type NestFastifyApplication,
 } from "@nestjs/platform-fastify";
-import { GraphEngine } from "ezgraph";
+import { GraphEngine } from "@picoflow/ezgraph";
 import { AppModule } from "../../src/app.module.js";
 import { QuoteGraph } from "../../src/graphs/quote-graph/quote-graph.js";
 import type { QuoteGraphStateType } from "../../src/graphs/quote-graph/quote-graph.state.js";

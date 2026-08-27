@@ -7,7 +7,7 @@ import {
   type ConversationToolResult,
   type GraphNodeUpdate,
   type ToolDefinition,
-} from "ezgraph";
+} from "@picoflow/ezgraph";
 import { VehicleCatalog } from "../backend/vehicle-catalog.js";
 import type {
   QuoteGraphStateType,

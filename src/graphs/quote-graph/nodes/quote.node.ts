@@ -8,7 +8,7 @@ import {
   type GraphLlmConfigOverride,
   type GraphNodeUpdate,
   type ToolDefinition,
-} from "ezgraph";
+} from "@picoflow/ezgraph";
 import { quoteNow } from "../backend/quote-clock.js";
 import {
   RatingEngine,

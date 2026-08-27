@@ -7,7 +7,7 @@ import {
   type GraphDefinition,
   type LlmGateway,
   type SessionDocument,
-} from "ezgraph";
+} from "@picoflow/ezgraph";
 import {
   QuoteGraphState,
   type QuoteGraphStateType,

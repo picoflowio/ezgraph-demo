@@ -1,3 +1,6 @@
 "ezgraph": "link:../ezgraph/npmlib/staging/minified-local",
 "ezgraph": "link:../ezgraph/npmlib/staging/lib",
 "ezgraph": "link:../ezgraph/npmlib/staging/npm",
+"@picoflow/ezgraph": "file:../ezgraph/npmlib/staging/lib",
+"@picoflow/ezgraph": "file:../ezgraph/npmlib/staging/minified-local"
+"@picoflow/ezgraph": "link:../ezgraph/npmlib/staging/minified-local",

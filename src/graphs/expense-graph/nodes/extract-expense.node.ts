@@ -14,7 +14,7 @@ import {
   type GraphNodeUpdate,
   type ToolDefinition,
   type LlmFile,
-} from "ezgraph";
+} from "@picoflow/ezgraph";
 import type { ExpenseGraphStateType } from "../expense-graph.state.js";
 import { extractExpensePrompt } from "../prompt/expense-prompt.js";
 

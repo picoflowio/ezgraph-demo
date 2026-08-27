@@ -14,7 +14,7 @@ import {
   type LlmGatewayToolCall,
   type ModelResult,
   type SessionDocument,
-} from "ezgraph";
+} from "@picoflow/ezgraph";
 import {
   RatingEngine,
   validateCoverageSelection,

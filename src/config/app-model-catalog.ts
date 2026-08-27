@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
-import { ModelCatalog } from "ezgraph";
+import { ModelCatalog } from "@picoflow/ezgraph";
 import { AppModelProviders } from "./app-model-providers.js";
 
 /** Application model extensions, validated once when the application starts. */
 export const AppModelCatalog = ModelCatalog.create(
   {
-    $schema: "../../node_modules/ezgraph/model-catalog.schema.json",
+    $schema: "../../node_modules/@picoflow/ezgraph/model-catalog.schema.json",
     version: 1,
     profiles: {
       "glm.chat": {

@@ -1,4 +1,4 @@
-import { ModelProviderRegistry } from "ezgraph";
+import { ModelProviderRegistry } from "@picoflow/ezgraph";
 
 const DEFAULT_GLM_BASE_URL = "https://api.z.ai/api/paas/v4";
 

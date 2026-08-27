@@ -1,5 +1,5 @@
-import { createGraphStateAnnotation } from "ezgraph";
-import type { NodeStateValue } from "ezgraph";
+import { createGraphStateAnnotation } from "@picoflow/ezgraph";
+import type { NodeStateValue } from "@picoflow/ezgraph";
 import { DriverNode } from "./nodes/driver.node.js";
 
 export type DriverProfile = {

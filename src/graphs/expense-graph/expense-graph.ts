@@ -5,7 +5,7 @@ import {
   ModelCatalog,
   type GraphDefinition,
   type LlmGateway,
-} from "ezgraph";
+} from "@picoflow/ezgraph";
 import {
   ExpenseGraphState,
   type ExpenseGraphStateType,

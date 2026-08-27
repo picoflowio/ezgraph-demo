@@ -1,6 +1,6 @@
 import { Inject, Module, type OnApplicationShutdown } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { GraphEngine, ModelProvider } from "ezgraph";
+import { GraphEngine, ModelProvider } from "@picoflow/ezgraph";
 import { AiController } from "./controllers/ai-controller.js";
 import { AiLanggraphController } from "./controllers/ai-langgraph-controller.js";
 import { HealthController } from "./controllers/health-controller.js";

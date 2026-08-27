@@ -5,7 +5,7 @@ import {
   FastifyAdapter,
   type NestFastifyApplication,
 } from "@nestjs/platform-fastify";
-import { GraphEngine } from "ezgraph";
+import { GraphEngine } from "@picoflow/ezgraph";
 import { AppModule } from "../../src/app.module.js";
 import { QuoteLanggraph } from "../../src/graphs/quote-langgraph/quote-langgraph.js";
 import { quoteTestModelFactory } from "./quote-langgraph-test-model.js";

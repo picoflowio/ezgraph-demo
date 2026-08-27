@@ -16,7 +16,7 @@ import {
   ApiRunBodyDto,
   ApiRunResponseDto,
 } from "./api-types.js";
-import { GraphEngine } from "ezgraph";
+import { GraphEngine } from "@picoflow/ezgraph";
 
 const SESSION_ID = "SESSION_ID";
 

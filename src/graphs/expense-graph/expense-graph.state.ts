@@ -1,5 +1,5 @@
-import { createGraphStateAnnotation } from "ezgraph";
-import type { NodeStateValue } from "ezgraph";
+import { createGraphStateAnnotation } from "@picoflow/ezgraph";
+import type { NodeStateValue } from "@picoflow/ezgraph";
 import { ExtractExpenseNode } from "./nodes/extract-expense.node.js";
 
 export type ExpenseGraphNodes = {

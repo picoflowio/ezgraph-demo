@@ -8,7 +8,7 @@ import {
 import { Test } from "@nestjs/testing";
 import { AppModule } from "../../src/app.module.js";
 import type { ExpenseGraphStateType } from "../../src/graphs/expense-graph/expense-graph.state.js";
-import { GraphEngine } from "ezgraph";
+import { GraphEngine } from "@picoflow/ezgraph";
 
 type ExpenseLineItem = {
   date: string;

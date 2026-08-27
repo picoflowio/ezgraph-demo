@@ -6,7 +6,7 @@ import {
   type ConversationToolResult,
   type GraphNodeUpdate,
   type ToolDefinition,
-} from "ezgraph";
+} from "@picoflow/ezgraph";
 import { parseUtcDate, quoteNow, yearsBetween } from "../backend/quote-clock.js";
 import type {
   DriverProfile,
