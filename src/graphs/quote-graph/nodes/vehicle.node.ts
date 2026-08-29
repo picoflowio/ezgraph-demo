@@ -3,13 +3,14 @@ import { z } from "zod";
 import {
   ConversationNode,
   Tool,
-  type ConversationNodeRunResult,
-  type ConversationToolResult,
-  type GraphNodeUpdate,
+  go,
+  stay,
+  type ToolResponse,
   type ToolDefinition,
 } from "@picoflow/ezgraph";
 import { VehicleCatalog } from "../backend/vehicle-catalog.js";
 import type {
+  QuoteGraphNodeState,
   QuoteGraphStateType,
   VehicleUse,
 } from "../quote-graph.state.js";
@@ -34,23 +35,19 @@ type CaptureVehicleUseInput = {
   parking: "garage" | "driveway" | "street";
 };
 
-type VehicleContext = {
-  resolvedVehicleId?: string;
-  use?: VehicleUse;
-};
-
 /** Second stage: resolves the vehicle against the catalog and captures its use. */
-export class VehicleNode extends ConversationNode<
-  QuoteGraphStateType,
-  { resolvedVehicleId?: string; vehicle?: VehicleUse },
-  VehicleContext
-> {
+export class VehicleNode extends ConversationNode<QuoteGraphStateType> {
   getPrompt(state: QuoteGraphStateType): string {
-    const resolvedId = this.state(state).resolvedVehicleId;
+    const local = this.state(state) as QuoteGraphNodeState<"VehicleNode">;
+    const resolvedId = local.resolvedVehicleId;
     const resolved = resolvedId ? VehicleCatalog.fetch(resolvedId) : undefined;
+    const driver = state.nodes.DriverNode?.driver;
+    const transitionAcknowledgement = state.inputConsumed && driver
+      ? `This stage has just started after recording the driver's details. Your user-facing reply must begin by briefly confirming this saved record before asking any question: ${driver.fullName}, born ${driver.dateOfBirth}, has a ${driver.licenseStatus} ${driver.licenseState} license and ${driver.yearsLicensed} years licensed. Then ask for the vehicle's year, make, and model. Do not treat earlier messages as vehicle answers.`
+      : "";
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.vehicle, {
       RESOLVED_VEHICLE: JSON.stringify(resolved ?? null),
-    })}\n\n${endChatInstruction}`;
+    })}\n\n${transitionAcknowledgement}\n\n${endChatInstruction}`;
   }
 
   defineTool(): readonly (
@@ -86,8 +83,7 @@ export class VehicleNode extends ConversationNode<
   @Tool("resolve_vehicle")
   async resolveVehicle(
     input: ResolveVehicleInput,
-    context: VehicleContext,
-  ): Promise<ConversationToolResult> {
+  ): Promise<ToolResponse> {
     const matches = VehicleCatalog.search(input);
     if (matches.length === 0) {
       const years = VehicleCatalog.yearsFor(input.make, input.model);
@@ -101,73 +97,44 @@ export class VehicleNode extends ConversationNode<
       );
     }
     if (matches.length > 1) {
-      return {
-        output: {
-          accepted: false,
-          needsTrim: true,
-          candidates: matches.map((candidate) => ({
-            vehicleId: candidate.id,
-            trim: candidate.trim,
-          })),
-          error: "Several trims match; ask the customer which one.",
-        },
-      };
+      return stay(JSON.stringify({
+        accepted: false,
+        needsTrim: true,
+        candidates: matches.map((candidate) => ({
+          vehicleId: candidate.id,
+          trim: candidate.trim,
+        })),
+        error: "Several trims match; ask the customer which one.",
+      }));
     }
     const vehicle = matches[0]!;
-    context.resolvedVehicleId = vehicle.id;
-    return { output: { accepted: true, vehicle } };
+    this.saveState({ resolvedVehicleId: vehicle.id });
+    return stay(JSON.stringify({ accepted: true, vehicle }));
   }
 
   @Tool("capture_vehicle_use")
   async captureVehicleUse(
     input: CaptureVehicleUseInput,
-    context: VehicleContext,
-  ): Promise<ConversationToolResult> {
-    if (input.vehicleId !== context.resolvedVehicleId) {
+  ): Promise<ToolResponse> {
+    const local = this.getState() as QuoteGraphNodeState<"VehicleNode">;
+    if (input.vehicleId !== local.resolvedVehicleId) {
       return reject(
         "Resolve the vehicle with resolve_vehicle before capturing its use.",
       );
     }
-    context.use = {
+    const vehicle = {
       vehicleId: input.vehicleId,
       ownership: input.ownership,
       annualMileage: input.annualMileage,
       parking: input.parking,
     };
-    return { output: { accepted: true, use: context.use }, stopAfterBatch: true };
-  }
-
-  protected createContext(state: QuoteGraphStateType): VehicleContext {
-    const resolvedVehicleId = this.state(state).resolvedVehicleId;
-    return resolvedVehicleId ? { resolvedVehicleId } : {};
-  }
-
-  protected nextStep(
-    _state: QuoteGraphStateType,
-    context: VehicleContext,
-    conversation: ConversationNodeRunResult,
-  ): GraphNodeUpdate<QuoteGraphStateType> {
-    if (conversation.quitRequested) return this.quit(conversation);
-    if (context.use) {
-      return this.advance(HistoryNode, conversation)
-        .withState({
-          resolvedVehicleId: context.use.vehicleId,
-          vehicle: context.use,
-        })
-        .withHistory(
-          "quote-incidents",
-          new HumanMessage("Collect the driving and insurance history."),
-        );
-    }
-    if (context.resolvedVehicleId) {
-      return this.stay(conversation).withState({
-        resolvedVehicleId: context.resolvedVehicleId,
-      });
-    }
-    return this.stay(conversation);
+    this.saveState({ resolvedVehicleId: vehicle.vehicleId, vehicle });
+    return go(HistoryNode).withMessage(
+      new HumanMessage("Collect the driving and insurance history."),
+    );
   }
 }
 
-function reject(error: string): ConversationToolResult {
-  return { output: { accepted: false, error } };
+function reject(error: string): ToolResponse {
+  return stay(JSON.stringify({ accepted: false, error }));
 }

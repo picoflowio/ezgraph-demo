@@ -3,9 +3,9 @@ import { z } from "zod";
 import {
   ConversationNode,
   Tool,
-  type ConversationNodeRunResult,
-  type ConversationToolResult,
-  type GraphNodeUpdate,
+  go,
+  stay,
+  type ToolResponse,
   type ToolDefinition,
 } from "@picoflow/ezgraph";
 import {
@@ -29,22 +29,16 @@ type CaptureHistoryInput = {
   coverageLapse: boolean;
   incidents: {
     type:
-      | "at-fault-accident"
-      | "not-at-fault-accident"
-      | "violation"
-      | "comprehensive-claim";
+    | "at-fault-accident"
+    | "not-at-fault-accident"
+    | "violation"
+    | "comprehensive-claim";
     date: string;
   }[];
 };
 
-type HistoryContext = { history?: InsuranceHistory };
-
 /** Third stage: captures incidents and prior-insurance facts in its own history space. */
-export class HistoryNode extends ConversationNode<
-  QuoteGraphStateType,
-  { history?: InsuranceHistory },
-  HistoryContext
-> {
+export class HistoryNode extends ConversationNode<QuoteGraphStateType> {
   getPrompt(): string {
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.history, {
       CURRENT_DATE: quoteNow().toISOString().slice(0, 10),
@@ -81,8 +75,7 @@ export class HistoryNode extends ConversationNode<
   @Tool("capture_history")
   async captureHistory(
     input: CaptureHistoryInput,
-    context: HistoryContext,
-  ): Promise<ConversationToolResult> {
+  ): Promise<ToolResponse> {
     const now = quoteNow();
     for (const [index, incident] of input.incidents.entries()) {
       const month = parseUtcMonth(incident.date);
@@ -98,38 +91,20 @@ export class HistoryNode extends ConversationNode<
         );
       }
     }
-    context.history = {
+    const history = {
       currentlyInsured: input.currentlyInsured,
       coverageLapse: input.coverageLapse,
       incidents: input.incidents,
     };
-    return { output: { accepted: true }, stopAfterBatch: true };
-  }
-
-  protected createContext(): HistoryContext {
-    return {};
-  }
-
-  protected nextStep(
-    _state: QuoteGraphStateType,
-    context: HistoryContext,
-    conversation: ConversationNodeRunResult,
-  ): GraphNodeUpdate<QuoteGraphStateType> {
-    if (conversation.quitRequested) return this.quit(conversation);
-    if (context.history) {
-      return this.advance(CoverageNode, conversation)
-        .withState({ history: context.history })
-        .withHistory(
-          "quote-intake",
-          new HumanMessage(
-            "The history stage is complete. Collect the coverage preferences.",
-          ),
-        );
-    }
-    return this.stay(conversation);
+    this.saveState({ history });
+    return go(CoverageNode).withMessage(
+      new HumanMessage(
+        "The history stage is complete. Collect the coverage preferences.",
+      ),
+    );
   }
 }
 
-function reject(error: string): ConversationToolResult {
-  return { output: { accepted: false, error } };
+function reject(error: string): ToolResponse {
+  return stay(JSON.stringify({ accepted: false, error }));
 }

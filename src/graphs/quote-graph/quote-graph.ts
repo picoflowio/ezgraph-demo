@@ -22,15 +22,15 @@ const DEFAULT_IDLE_MS = 30 * 60_000;
 
 /**
  * Guided car-insurance quoting: driver, vehicle, history, coverage, and quote
- * stages. Collection runs on a small model (gpt-4o-mini); only the quote
- * presentation overrides to a stronger one (gpt-5.1).
+ * stages. Model authentication is owned by EZGraph's built-in openai-auth
+ * provider, which uses the local Codex OAuth session.
  */
 export class QuoteGraph extends BaseGraph<QuoteGraphStateType> {
   static getGraphDefinition(): GraphDefinition {
     return {
-      llmConfig: ModelCatalog.model("openai:gpt-4o-mini", {
+      llmConfig: ModelCatalog.model("openai-auth:gpt-5.4", {
         retries: 3,
-        temperature: 0.2,
+        reasoningEffort: "low",
       }),
       endNode: GRAPH_END_NODE,
       initialHistorySpace: "quote-intake",
@@ -69,7 +69,6 @@ export class QuoteGraph extends BaseGraph<QuoteGraphStateType> {
       QuoteNode,
       TerminateSessionNode,
     );
-    graph.configAutoRoute();
     graph.addEdge(TerminateSessionNode, END);
     return graph.compile();
   }

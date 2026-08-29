@@ -9,7 +9,11 @@ import {
   FastifyAdapter,
   type NestFastifyApplication,
 } from "@nestjs/platform-fastify";
-import { GraphEngine } from "@picoflow/ezgraph";
+import {
+  GraphEngine,
+  LangChainLlmGateway,
+  ModelCatalog,
+} from "@picoflow/ezgraph";
 import { AppModule } from "../../src/app.module.js";
 import { QuoteGraph } from "../../src/graphs/quote-graph/quote-graph.js";
 import type { QuoteGraphStateType } from "../../src/graphs/quote-graph/quote-graph.state.js";
@@ -65,25 +69,24 @@ const failureArtifactPath = join(
 process.env.QUOTE_GRAPH_CURRENT_DATE ??= "2027-06-01T00:00:00.000Z";
 
 const scenario = loadScenario();
-const judgeModel =
+const apiKeyJudgeModel =
   process.env.QUOTE_GRAPH_JUDGE_MODEL ?? scenario.judgeModel ?? "gpt-4o";
+const openAIAuthJudgeModel = "openai-auth:gpt-5.4";
 const testTimeoutMs = Number(
   process.env.QUOTE_GRAPH_TEST_TIMEOUT_MS ?? 900_000,
 );
-// Intake runs on gpt-4o-mini, the quote stage on gpt-5.1, the judge on gpt-4o.
-const missingLiveConfig = ["OPENAI_API_KEY"].filter(
-  (key) => !process.env[key]?.trim(),
-);
-const shouldRunLiveTest =
-  process.env.RUN_LIVE_QUOTE_GRAPH_TEST !== "0" &&
-  missingLiveConfig.length === 0;
-const skipReason =
-  process.env.RUN_LIVE_QUOTE_GRAPH_TEST === "0"
-    ? "RUN_LIVE_QUOTE_GRAPH_TEST=0"
-    : `Missing live QuoteGraph config: ${missingLiveConfig.join(", ")}`;
-const useEnvironmentSessionStore =
-  process.env.QUOTE_GRAPH_TEST_USE_ENV === "1";
-const keepSession = process.env.QUOTE_GRAPH_KEEP_SESSIONS === "1";
+const useEnvironmentSessionStore = process.env.USE_ENV === "1";
+const shouldRunLiveTest = useEnvironmentSessionStore;
+const skipReason = !shouldRunLiveTest
+  ? "Set USE_ENV=1 to run the live-provider evaluation"
+  : undefined;
+const keepSession = process.env.KEEP_SESSION === "1";
+
+// AppModule also creates QuoteLanggraph, so force its store to memory along with
+// QuoteGraph unless this test is explicitly exercising the configured store.
+if (!useEnvironmentSessionStore) {
+  process.env.SESSION_STORE = "memory";
+}
 
 test(
   "QuoteGraph completes a realistic guided car-insurance quote conversation",
@@ -243,6 +246,42 @@ async function judgeResponse(
   const message = response.message?.replace(/\s+/g, " ").trim();
   assert.ok(message, `${turn.label}: expected non-empty bot message`);
 
+  if (process.env.OPENAI_API_KEY?.trim()) {
+    return judgeWithOpenAIApiKey(turn, message);
+  }
+
+  return judgeWithOpenAIAuth(turn, message);
+}
+
+const judgeSystemPrompt = [
+  "You are a strict but fair evaluator for an AI car-insurance quoting graph test.",
+  "Compare the actual assistant response to the expected semantic behavior.",
+  "Ignore wording differences, formatting differences, currency formatting differences, and harmless extra politeness.",
+  "This assistant quotes personal car insurance for Sequoia Auto Insurance through staged intake: driver, vehicle, history, coverage, then quote tiers.",
+  "The test conversation date is June 1, 2027, so a start date of June 15 means June 15, 2027; do not mark 2027 dates as incorrect.",
+  "The assistant may batch its questions differently than expected: accept responses that ask for only part of the expected next details, and accept responses that ask for several related details of the current stage in a single message, as long as they ask for a correct next missing item and nothing wrong.",
+  "Accept responses that restate or confirm collected details before asking the next question.",
+  "Accept quote presentations when they include tier options with monthly premiums in dollars, even if tier naming or ordering differs slightly.",
+  "Fail if the response asks for information belonging to a wrong stage, skips a required behavior, proceeds with something the expected behavior says must be refused, contradicts the expected behavior, or is too vague to be useful.",
+  "Return only JSON with: pass boolean, score number from 0 to 1, reason string, missing string array, contradictions string array.",
+].join(" ");
+
+function judgeInput(
+  turn: ScenarioTurn,
+  actualAssistantResponse: string,
+): string {
+  return JSON.stringify({
+    turnLabel: turn.label,
+    userInput: turn.input,
+    expectedSemanticBehavior: turn.expectedResponse,
+    actualAssistantResponse,
+  });
+}
+
+async function judgeWithOpenAIApiKey(
+  turn: ScenarioTurn,
+  message: string,
+): Promise<JudgeResult> {
   const openAiResponse = await fetch(
     "https://api.openai.com/v1/chat/completions",
     {
@@ -252,33 +291,17 @@ async function judgeResponse(
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: judgeModel,
+        model: apiKeyJudgeModel,
         temperature: 0,
         response_format: { type: "json_object" },
         messages: [
           {
             role: "system",
-            content: [
-              "You are a strict but fair evaluator for an AI car-insurance quoting graph test.",
-              "Compare the actual assistant response to the expected semantic behavior.",
-              "Ignore wording differences, formatting differences, currency formatting differences, and harmless extra politeness.",
-              "This assistant quotes personal car insurance for Sequoia Auto Insurance through staged intake: driver, vehicle, history, coverage, then quote tiers.",
-              "The test conversation date is June 1, 2027, so a start date of June 15 means June 15, 2027; do not mark 2027 dates as incorrect.",
-              "The assistant may batch its questions differently than expected: accept responses that ask for only part of the expected next details, and accept responses that ask for several related details of the current stage in a single message, as long as they ask for a correct next missing item and nothing wrong.",
-              "Accept responses that restate or confirm collected details before asking the next question.",
-              "Accept quote presentations when they include tier options with monthly premiums in dollars, even if tier naming or ordering differs slightly.",
-              "Fail if the response asks for information belonging to a wrong stage, skips a required behavior, proceeds with something the expected behavior says must be refused, contradicts the expected behavior, or is too vague to be useful.",
-              "Return only JSON with: pass boolean, score number from 0 to 1, reason string, missing string array, contradictions string array.",
-            ].join(" "),
+            content: judgeSystemPrompt,
           },
           {
             role: "user",
-            content: JSON.stringify({
-              turnLabel: turn.label,
-              userInput: turn.input,
-              expectedSemanticBehavior: turn.expectedResponse,
-              actualAssistantResponse: message,
-            }),
+            content: judgeInput(turn, message),
           },
         ],
       }),
@@ -296,6 +319,25 @@ async function judgeResponse(
   };
   const content = result.choices?.[0]?.message?.content;
   assert.ok(content, `${turn.label}: judge returned empty response`);
+  return parseJudgeResult(turn, content);
+}
+
+async function judgeWithOpenAIAuth(
+  turn: ScenarioTurn,
+  message: string,
+): Promise<JudgeResult> {
+  const config = ModelCatalog.model(openAIAuthJudgeModel, {
+    retries: 3,
+    reasoningEffort: "low",
+  });
+  const result = await new LangChainLlmGateway(config).generate(
+    judgeSystemPrompt,
+    judgeInput(turn, message),
+  );
+  return parseJudgeResult(turn, result.value);
+}
+
+function parseJudgeResult(turn: ScenarioTurn, content: string): JudgeResult {
   try {
     return JSON.parse(content) as JudgeResult;
   } catch {
@@ -317,7 +359,14 @@ function expectSemanticMatch(
     writeFileSync(
       failureArtifactPath,
       JSON.stringify(
-        { failedTurn: turn.label, judgeModel, minScore, transcript },
+        {
+          failedTurn: turn.label,
+          judgeModel: process.env.OPENAI_API_KEY?.trim()
+            ? apiKeyJudgeModel
+            : openAIAuthJudgeModel,
+          minScore,
+          transcript,
+        },
         null,
         2,
       ),

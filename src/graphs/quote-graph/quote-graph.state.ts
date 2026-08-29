@@ -75,6 +75,12 @@ export type QuoteGraphNodes = {
   }>;
 };
 
+/** Domain state owned by one quote node, excluding framework metadata. */
+export type QuoteGraphNodeState<NodeName extends keyof QuoteGraphNodes> = Omit<
+  NonNullable<QuoteGraphNodes[NodeName]>,
+  "model"
+>;
+
 export const QuoteGraphState = createGraphStateAnnotation(
   DriverNode.name,
   () => ({} as QuoteGraphNodes),

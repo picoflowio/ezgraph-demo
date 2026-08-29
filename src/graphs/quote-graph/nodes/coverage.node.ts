@@ -3,9 +3,9 @@ import { z } from "zod";
 import {
   ConversationNode,
   Tool,
-  type ConversationNodeRunResult,
-  type ConversationToolResult,
-  type GraphNodeUpdate,
+  go,
+  stay,
+  type ToolResponse,
   type ToolDefinition,
 } from "@picoflow/ezgraph";
 import { quoteNow } from "../backend/quote-clock.js";
@@ -37,11 +37,6 @@ type SelectCoverageInput = {
   startDate: string;
 };
 
-type CoverageContext = {
-  coverage?: CoverageSelection;
-  tiers?: QuoteTier[];
-};
-
 const deductibleSchema = z.union([
   z.literal(250),
   z.literal(500),
@@ -50,11 +45,7 @@ const deductibleSchema = z.union([
 ]);
 
 /** Fourth stage: coverage selections, validated against ownership rules. */
-export class CoverageNode extends ConversationNode<
-  QuoteGraphStateType,
-  { coverage?: CoverageSelection },
-  CoverageContext
-> {
+export class CoverageNode extends ConversationNode<QuoteGraphStateType> {
   getPrompt(state: QuoteGraphStateType): string {
     const ownership = state.nodes.VehicleNode?.vehicle?.ownership ?? "own";
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.coverage, {
@@ -85,9 +76,8 @@ export class CoverageNode extends ConversationNode<
   @Tool("select_coverage")
   async selectCoverage(
     input: SelectCoverageInput,
-    context: CoverageContext,
-    state: QuoteGraphStateType,
-  ): Promise<ConversationToolResult> {
+  ): Promise<ToolResponse> {
+    const state = this.graph.graphState();
     const use = state.nodes.VehicleNode?.vehicle;
     if (!use) {
       return reject("Vehicle details are missing; complete the vehicle stage first.");
@@ -104,34 +94,15 @@ export class CoverageNode extends ConversationNode<
     if (error) return reject(error);
     const rating = buildRatingSubject(state.nodes);
     if ("error" in rating) return reject(rating.error);
-    context.coverage = coverage;
-    context.tiers = RatingEngine.quoteTiers(rating.subject, coverage, now);
-    return { output: { accepted: true }, stopAfterBatch: true };
-  }
-
-  protected createContext(): CoverageContext {
-    return {};
-  }
-
-  protected nextStep(
-    _state: QuoteGraphStateType,
-    context: CoverageContext,
-    conversation: ConversationNodeRunResult,
-  ): GraphNodeUpdate<QuoteGraphStateType> {
-    if (conversation.quitRequested) return this.quit(conversation);
-    if (context.coverage && context.tiers) {
-      return this.advance(QuoteNode, conversation)
-        .withState({ coverage: context.coverage })
-        .withStateFor(QuoteNode, { tiers: context.tiers })
-        .withHistory(
-          "quote-present",
-          new HumanMessage("Present the quote tiers."),
-        );
-    }
-    return this.stay(conversation);
+    const tiers = RatingEngine.quoteTiers(rating.subject, coverage, now);
+    this.saveState({ coverage });
+    this.graph.saveNodeState(QuoteNode, { tiers });
+    return go(QuoteNode).withMessage(
+      new HumanMessage("Present the quote tiers."),
+    );
   }
 }
 
-function reject(error: string): ConversationToolResult {
-  return { output: { accepted: false, error } };
+function reject(error: string): ToolResponse {
+  return stay(JSON.stringify({ accepted: false, error }));
 }

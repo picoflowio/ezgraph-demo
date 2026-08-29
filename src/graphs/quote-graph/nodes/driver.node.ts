@@ -2,9 +2,9 @@ import { z } from "zod";
 import {
   ConversationNode,
   Tool,
-  type ConversationNodeRunResult,
-  type ConversationToolResult,
-  type GraphNodeUpdate,
+  go,
+  stay,
+  type ToolResponse,
   type ToolDefinition,
 } from "@picoflow/ezgraph";
 import { parseUtcDate, quoteNow, yearsBetween } from "../backend/quote-clock.js";
@@ -27,8 +27,6 @@ type DriverInput = {
   yearsLicensed: number;
 };
 
-type DriverContext = { driver?: DriverProfile };
-
 const US_STATE_CODES = new Set([
   "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL",
   "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME",
@@ -38,11 +36,7 @@ const US_STATE_CODES = new Set([
 ]);
 
 /** First stage: identifies and validates the primary driver. */
-export class DriverNode extends ConversationNode<
-  QuoteGraphStateType,
-  { driver?: DriverProfile },
-  DriverContext
-> {
+export class DriverNode extends ConversationNode<QuoteGraphStateType> {
   getPrompt(): string {
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.driver, {
       CURRENT_DATE: quoteNow().toISOString().slice(0, 10),
@@ -71,8 +65,7 @@ export class DriverNode extends ConversationNode<
   @Tool("capture_driver")
   async captureDriver(
     input: DriverInput,
-    context: DriverContext,
-  ): Promise<ConversationToolResult> {
+  ): Promise<ToolResponse> {
     const licenseState = input.licenseState.toUpperCase();
     if (!US_STATE_CODES.has(licenseState)) {
       return reject(`'${input.licenseState}' is not a U.S. state code.`);
@@ -98,38 +91,18 @@ export class DriverNode extends ConversationNode<
         `${input.yearsLicensed} licensed years is inconsistent with a ${age}-year-old driver.`,
       );
     }
-    context.driver = {
+    const driver = {
       fullName: input.fullName.trim(),
       dateOfBirth: input.dateOfBirth,
       licenseState,
       licenseStatus: input.licenseStatus,
       yearsLicensed: input.yearsLicensed,
     };
-    return {
-      output: { accepted: true, driver: context.driver },
-      stopAfterBatch: true,
-    };
-  }
-
-  protected createContext(): DriverContext {
-    return {};
-  }
-
-  protected nextStep(
-    _state: QuoteGraphStateType,
-    context: DriverContext,
-    conversation: ConversationNodeRunResult,
-  ): GraphNodeUpdate<QuoteGraphStateType> {
-    if (conversation.quitRequested) return this.quit(conversation);
-    if (context.driver) {
-      return this.advance(VehicleNode, conversation).withState({
-        driver: context.driver,
-      });
-    }
-    return this.stay(conversation);
+    this.saveState({ driver });
+    return go(VehicleNode);
   }
 }
 
-function reject(error: string): ConversationToolResult {
-  return { output: { accepted: false, error } };
+function reject(error: string): ToolResponse {
+  return stay(JSON.stringify({ accepted: false, error }));
 }

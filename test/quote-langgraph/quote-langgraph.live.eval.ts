@@ -55,6 +55,12 @@ const scenario = JSON.parse(
 
 process.env.QUOTE_GRAPH_CURRENT_DATE ??= "2027-06-01T00:00:00.000Z";
 
+const useEnvironmentSessionStore = process.env.USE_ENV === "1";
+
+if (!useEnvironmentSessionStore) {
+  process.env.SESSION_STORE = "memory";
+}
+
 test(
   "QuoteLanggraph completes the live 15-turn car-insurance quote scenario",
   { timeout: Number(process.env.QUOTE_GRAPH_TEST_TIMEOUT_MS ?? 900_000) },
@@ -68,7 +74,7 @@ test(
     const app = await createApp();
     const server = app.getHttpAdapter().getInstance();
     const graph = app.get(QuoteLanggraph);
-    const keepSession = process.env.QUOTE_LANGGRAPH_KEEP_SESSIONS === "1";
+    const keepSession = process.env.KEEP_SESSION === "1";
     let sessionId: string | undefined;
 
     console.log(`[QuoteLanggraph Live] session store: ${graph.sessionStoreKind}`);

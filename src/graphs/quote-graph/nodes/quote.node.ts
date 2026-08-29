@@ -1,12 +1,15 @@
+import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
   ConversationNode,
   ModelCatalog,
   Tool,
-  type ConversationNodeRunResult,
-  type ConversationToolResult,
+  direct,
+  finish,
+  go,
+  stay,
+  type ToolResponse,
   type GraphLlmConfigOverride,
-  type GraphNodeUpdate,
   type ToolDefinition,
 } from "@picoflow/ezgraph";
 import { quoteNow } from "../backend/quote-clock.js";
@@ -20,6 +23,7 @@ import type {
   CoverageSelection,
   Deductible,
   LiabilityLevel,
+  QuoteGraphNodeState,
   QuoteGraphStateType,
   QuoteTier,
   QuoteTierName,
@@ -40,15 +44,6 @@ type AdjustQuoteInput = {
 
 type AcceptQuoteInput = { tier: QuoteTierName };
 type ReviseCoverageInput = { isRevise: boolean };
-
-type QuoteContext = {
-  tiers: QuoteTier[];
-  adjustedCoverage?: CoverageSelection;
-  adjustedTiers?: QuoteTier[];
-  response?: string;
-  accepted?: QuoteTier;
-  revise: boolean;
-};
 
 const deductibleSchema = z.union([
   z.literal(250),
@@ -75,23 +70,16 @@ const ACCEPTED_TIER_PHRASES: Record<QuoteTierName, string> = {
  * and locks in an accepted quote. Explaining tier trade-offs is the one place
  * this graph pays for a stronger model.
  */
-export class QuoteNode extends ConversationNode<
-  QuoteGraphStateType,
-  {
-    tiers?: QuoteTier[];
-    acceptedTier?: QuoteTierName;
-    referenceNumber?: string;
-  },
-  QuoteContext
-> {
+export class QuoteNode extends ConversationNode<QuoteGraphStateType> {
   getPrompt(state: QuoteGraphStateType): string {
+    const local = this.state(state) as QuoteGraphNodeState<"QuoteNode">;
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.quote, {
-      TIERS_JSON: JSON.stringify(this.state(state).tiers ?? []),
+      TIERS_JSON: JSON.stringify(local.tiers ?? []),
     })}\n\n${endChatInstruction}`;
   }
 
   getLlmConfig(): GraphLlmConfigOverride {
-    return ModelCatalog.model("openai:gpt-5.1", {
+    return ModelCatalog.model("openai-auth:gpt-5.4", {
       retries: 3,
       reasoningEffort: "low",
     });
@@ -132,9 +120,8 @@ export class QuoteNode extends ConversationNode<
   @Tool("adjust_quote")
   async adjustQuote(
     input: AdjustQuoteInput,
-    context: QuoteContext,
-    state: QuoteGraphStateType,
-  ): Promise<ConversationToolResult> {
+  ): Promise<ToolResponse> {
+    const state = this.graph.graphState();
     if (
       input.liability === undefined &&
       input.collisionDeductible === undefined &&
@@ -167,66 +154,39 @@ export class QuoteNode extends ConversationNode<
     const rating = buildRatingSubject(state.nodes);
     if ("error" in rating) return reject(rating.error);
     const tiers = RatingEngine.quoteTiers(rating.subject, next, now);
-    context.adjustedCoverage = next;
-    context.adjustedTiers = tiers;
-    context.response = `Here is the updated quote:\n${formatTiers(tiers)}\nAdjust anything else, accept a tier, or rework the coverage.`;
-    return { output: { accepted: true }, stopAfterBatch: true };
+    const response = `Here is the updated quote:\n${formatTiers(tiers)}\nAdjust anything else, accept a tier, or rework the coverage.`;
+    this.saveState({ tiers });
+    this.graph.saveNodeState(CoverageNode, { coverage: next });
+    return direct(response);
   }
 
   @Tool("accept_quote")
   async acceptQuote(
     input: AcceptQuoteInput,
-    context: QuoteContext,
-  ): Promise<ConversationToolResult> {
-    const tier = context.tiers.find((candidate) => candidate.tier === input.tier);
+  ): Promise<ToolResponse> {
+    const local = this.getState() as QuoteGraphNodeState<"QuoteNode">;
+    const tier = local.tiers?.find(
+      (candidate) => candidate.tier === input.tier,
+    );
     if (!tier) {
       return reject("That tier is not part of the current quote.");
     }
-    context.accepted = tier;
-    return { output: { accepted: true }, stopAfterBatch: true };
+    const referenceNumber = `QT-${Math.floor(100000 + Math.random() * 900000)}`;
+    const response = `You're all set — ${ACCEPTED_TIER_PHRASES[tier.tier]} (${TIER_LABELS[tier.tier]}) is locked in at ${usd(tier.monthlyPremium)}/month starting ${tier.coverage.startDate}. Your quote reference is ${referenceNumber}.`;
+    this.saveState({ acceptedTier: tier.tier, referenceNumber });
+    return finish(response);
   }
 
   @Tool("revise_coverage")
   async reviseCoverage(
     { isRevise }: ReviseCoverageInput,
-    context: QuoteContext,
-  ): Promise<ConversationToolResult> {
-    if (!isRevise) return { output: { accepted: false } };
-    context.revise = true;
-    return { output: { accepted: true }, stopAfterBatch: true };
-  }
-
-  protected createContext(state: QuoteGraphStateType): QuoteContext {
-    return { tiers: this.state(state).tiers ?? [], revise: false };
-  }
-
-  protected nextStep(
+    _context: Record<string, never>,
     state: QuoteGraphStateType,
-    context: QuoteContext,
-    conversation: ConversationNodeRunResult,
-  ): GraphNodeUpdate<QuoteGraphStateType> {
-    if (conversation.quitRequested) return this.quit(conversation);
-    if (context.accepted) {
-      const referenceNumber = `QT-${Math.floor(100000 + Math.random() * 900000)}`;
-      const tier = context.accepted;
-      const response = `You're all set — ${ACCEPTED_TIER_PHRASES[tier.tier]} (${TIER_LABELS[tier.tier]}) is locked in at ${usd(tier.monthlyPremium)}/month starting ${tier.coverage.startDate}. Your quote reference is ${referenceNumber}.`;
-      return this.finish(response, conversation).withState({
-        acceptedTier: tier.tier,
-        referenceNumber,
-      });
-    }
-    if (context.adjustedTiers && context.adjustedCoverage && context.response) {
-      return this.stay(conversation, context.response)
-        .withState({ tiers: context.adjustedTiers })
-        .withStateFor(CoverageNode, { coverage: context.adjustedCoverage });
-    }
-    if (context.revise) {
-      return this.advance(CoverageNode, conversation).forwardInput(
-        state,
-        "Review and update the coverage selections.",
-      );
-    }
-    return this.stay(conversation);
+  ): Promise<ToolResponse> {
+    if (!isRevise) return stay("Continue with the current quote tiers.");
+    return go(CoverageNode).withMessage(
+      new HumanMessage(this.graph.input(state)),
+    );
   }
 }
 
@@ -253,6 +213,6 @@ function usd(amount: number): string {
   return `$${amount.toFixed(2)}`;
 }
 
-function reject(error: string): ConversationToolResult {
-  return { output: { accepted: false, error } };
+function reject(error: string): ToolResponse {
+  return stay(JSON.stringify({ accepted: false, error }));
 }

@@ -3,14 +3,17 @@ import { fileURLToPath } from "node:url";
 import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
-  GraphNode,
+  ConversationNode,
   ModelCatalog,
   Tool,
   ProviderFileManager,
-  type ConversationToolResult,
+  finish,
+  stay,
+  type ToolResponse,
   type InvalidJsonResponseContext,
   type LlmGateway,
   type GraphNodeRuntime,
+  type GraphNodeResult,
   type GraphNodeUpdate,
   type ToolDefinition,
   type LlmFile,
@@ -22,15 +25,6 @@ const bundledReceipts = new Map([
   ["GrandSequoia.pdf", new URL("../data/GrandSequoia.pdf", import.meta.url)],
 ]);
 
-type ExtractExpenseContext = {
-  configuredFileName: string;
-  fetched: boolean;
-  expense?: Record<string, unknown>;
-};
-type ExtractExpenseNodeState = {
-  fileName?: string;
-  expense?: Record<string, unknown>;
-};
 type FetchReceiptFileInput = { name: string };
 type CaptureExpenseJsonInput = { json: string };
 
@@ -43,11 +37,7 @@ export type ReceiptFileUploader = {
  * PDF is uploaded to the provider, read visually, and captured as itemized
  * expense JSON before the graph completes.
  */
-export class ExtractExpenseNode extends GraphNode<
-  ExpenseGraphStateType,
-  ExtractExpenseNodeState,
-  ExtractExpenseContext
-> {
+export class ExtractExpenseNode extends ConversationNode<ExpenseGraphStateType> {
   constructor(
     llmGateway: LlmGateway,
     runtime: GraphNodeRuntime<ExpenseGraphStateType>,
@@ -88,25 +78,21 @@ The configured receipt is ${fileName}. Immediately call fetch_file with that exa
   @Tool("fetch_file")
   async fetchFile(
     { name }: FetchReceiptFileInput,
-    context: ExtractExpenseContext,
-  ): Promise<ConversationToolResult> {
-    if (name !== context.configuredFileName) {
-      return {
-        output: {
+  ): Promise<ToolResponse> {
+    const configuredFileName = this.configuredFileName(this.graph.graphState());
+    if (name !== configuredFileName) {
+      return stay(JSON.stringify({
           attached: false,
-          error: `Only the configured receipt '${context.configuredFileName}' may be fetched.`,
-        },
-      };
+          error: `Only the configured receipt '${configuredFileName}' may be fetched.`,
+        }));
     }
 
     const asset = bundledReceipts.get(name);
     if (!asset) {
-      return {
-        output: {
+      return stay(JSON.stringify({
           attached: false,
           error: `Receipt '${name}' is unavailable.`,
-        },
-      };
+        }));
     }
     const upload = await (
       this.uploader ??
@@ -114,11 +100,10 @@ The configured receipt is ${fileName}. Immediately call fetch_file with that exa
         ModelCatalog.resolveModelDescriptor(this.llmConfig()).provider,
       )
     ).uploadFile(fileURLToPath(asset));
-    context.fetched = true;
-    return {
-      output: { attached: true, fileName: name, fileId: upload.fileId },
-      cleanup: upload.cleanup,
-      messages: [
+    this.saveState({ fileName: name });
+    return stay(JSON.stringify({ attached: true, fileName: name, fileId: upload.fileId }))
+      .withCleanup(upload.cleanup)
+      .withMessages([
         new HumanMessage({
           content: [
             {
@@ -128,27 +113,33 @@ The configured receipt is ${fileName}. Immediately call fetch_file with that exa
             upload.contentPart as any,
           ],
         }),
-      ],
-    };
+      ]);
   }
 
   @Tool("capture_json")
   async captureJson(
     { json: encodedJson }: CaptureExpenseJsonInput,
-    context: ExtractExpenseContext,
-  ): Promise<ConversationToolResult> {
+  ): Promise<ToolResponse> {
     try {
       const json = JSON.parse(encodedJson);
-      if (!context.fetched) {
-        return {
-          output: {
+      if (this.getState().fileName !== this.configuredFileName(this.graph.graphState())) {
+        return stay(JSON.stringify({
             captured: false,
             error: "Fetch the configured receipt before submitting JSON.",
-          },
-        };
+          }));
       }
-      context.expense = json;
-      return { output: { captured: true }, stopAfterBatch: true };
+      if (!json || typeof json !== "object" || Array.isArray(json)) {
+        return stay(JSON.stringify({
+          captured: false,
+          error: "capture_json.json must encode an expense object.",
+        }));
+      }
+      const expense = json as Record<string, unknown>;
+      this.saveState({
+        fileName: this.configuredFileName(this.graph.graphState()),
+        expense,
+      });
+      return finish(JSON.stringify(expense, null, 2));
     } catch {
       throw new Error("capture_json.json must be a valid JSON object string.");
     }
@@ -156,26 +147,13 @@ The configured receipt is ${fileName}. Immediately call fetch_file with that exa
 
   async run(
     state: ExpenseGraphStateType,
-  ): Promise<GraphNodeUpdate<ExpenseGraphStateType>> {
+  ): Promise<GraphNodeResult<ExpenseGraphStateType>> {
     const savedExpense = this.state(state).expense;
     if (savedExpense) {
       return this.complete(JSON.stringify(savedExpense, null, 2));
     }
 
-    const context: ExtractExpenseContext = {
-      configuredFileName: this.configuredFileName(state),
-      fetched: false,
-    };
-    const conversation = await this.runConversation(state, context);
-    if (!context.expense) {
-      return this.stay(conversation);
-    }
-
-    const response = JSON.stringify(context.expense, null, 2);
-    return this.finish(response, conversation).withState({
-      fileName: context.configuredFileName,
-      expense: context.expense,
-    });
+    return super.run(state);
   }
 
   /** An invalid final JSON response fails the request rather than shipping junk. */

@@ -3,6 +3,7 @@ import {
   BaseGraph,
   GRAPH_END_NODE,
   ModelCatalog,
+  TerminateSessionNode,
   type GraphDefinition,
   type LlmGateway,
 } from "@picoflow/ezgraph";
@@ -45,9 +46,10 @@ export class ExpenseGraph extends BaseGraph<ExpenseGraphStateType> {
 
   protected buildGraph() {
     return this.createStateGraph(ExpenseGraphState)
-      .nodes(ExtractExpenseNode)
+      .nodes(ExtractExpenseNode, TerminateSessionNode)
       .addEdge(START, ExtractExpenseNode)
       .addEdge(ExtractExpenseNode, END)
+      .addEdge(TerminateSessionNode, END)
       .compile();
   }
 }

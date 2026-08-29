@@ -54,9 +54,12 @@ describe("ExpenseGraph hotel receipt extraction", () => {
   let baseUrl: string;
 
   before(async () => {
-    // Use AppModule's GraphEngine.create() so SESSION_STORE (mongodb in
-    // test:expense-graph) is honored. `new GraphEngine()` would silently
+    // Use AppModule's GraphEngine.create() so .env's SESSION_STORE is honored
+    // when USE_ENV=1. `new GraphEngine()` would silently
     // fall back to the in-memory SessionManager.
+    if (process.env.USE_ENV !== "1") {
+      process.env.SESSION_STORE = "memory";
+    }
     const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -133,7 +136,9 @@ describe("ExpenseGraph hotel receipt extraction", () => {
       assert.equal(stored.status, "completed");
       assert.equal(stored.graph.id, "ExpenseGraph");
       assert.equal(stored.graph.currentNode, "end");
-      assert.deepEqual(stored.graph.nodes.ExtractExpenseNode?.expense, body);
+      const nodes = stored.graph.nodes;
+      assert(nodes, "Expected ExpenseGraph node state");
+      assert.deepEqual(nodes.ExtractExpenseNode?.expense, body);
     },
   );
 });
