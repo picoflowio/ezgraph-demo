@@ -1,10 +1,15 @@
 import { Inject, Module, type OnApplicationShutdown } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { GraphEngine, ModelProvider } from "@picoflow/ezgraph";
+import {
+  DecisionProvider,
+  GraphEngine,
+  ModelProvider,
+} from "@picoflow/ezgraph";
 import { AiController } from "./controllers/ai-controller.js";
 import { AiLanggraphController } from "./controllers/ai-langgraph-controller.js";
 import { HealthController } from "./controllers/health-controller.js";
 import { ExpenseGraph } from "./graphs/expense-graph/expense-graph.js";
+import { DecisionHotelGraph } from "./graphs/decision-hotel-graph/decision-hotel-graph.js";
 import { QuoteGraph } from "./graphs/quote-graph/quote-graph.js";
 import { QuoteLanggraph } from "./graphs/quote-langgraph/quote-langgraph.js";
 
@@ -17,7 +22,10 @@ import { QuoteLanggraph } from "./graphs/quote-langgraph/quote-langgraph.js";
       inject: [ConfigService],
       useFactory: (config: ConfigService) =>
         GraphEngine.create({
-          graphs: [ExpenseGraph, QuoteGraph],
+          graphs: [DecisionHotelGraph, ExpenseGraph, QuoteGraph],
+          decisionProviders: DecisionProvider.create({
+            typesafe: { apiKey: config.get<string>("TYPESAFE_API_KEY") },
+          }),
           // Register built-in providers explicitly; only specify what the app uses.
           providers: [
             ...ModelProvider.createBuiltinAdapters({

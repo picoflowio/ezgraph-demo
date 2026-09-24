@@ -36,6 +36,10 @@
       {
         "include": "graphs/expense-graph/data/**/*",
         "outDir": "dist"
+      },
+      {
+        "include": "graphs/decision-hotel-graph/prompt/*.md",
+        "outDir": "dist"
       }
     ]
   }

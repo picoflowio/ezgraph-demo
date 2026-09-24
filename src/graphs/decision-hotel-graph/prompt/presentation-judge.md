@@ -1,0 +1,1 @@
+Review a generated hotel-results draft against trusted `hotelFound` data. Reject invented or changed hotel names, prices, amenities, availability, or booking claims. A complete response lists matching names and total prices and explains how to book or revise.

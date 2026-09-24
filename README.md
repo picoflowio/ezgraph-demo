@@ -9,7 +9,12 @@ contains the same Sequoia Auto Insurance conversation built twice:
 - `src/graphs/quote-langgraph/` — direct LangGraph control implementation:
   the same product, prompts, rating engine, and scenarios without EZGraph.
 
-It also includes `ExpenseGraph`, a one-shot receipt/folio extraction graph.
+It also includes:
+
+- `DecisionHotelGraph`, a mixed `DecisionNode` + `ConversationNode` hotel
+  workflow with deterministic policy, semantic routing/review, durable decision
+  audits, and graph-owned fallbacks.
+- `ExpenseGraph`, a one-shot receipt/folio extraction graph.
 
 ## What the comparison measures
 
@@ -55,6 +60,9 @@ conversation. The deterministic tests do not require a provider credential.
 # Deterministic QuoteGraph tests: validation, state, transitions, rating, and acceptance.
 npm run test:quote-graph
 
+# 23-turn DecisionHotelGraph contract through the real GraphEngine harness.
+npm run test:decision-hotel-graph
+
 # Opt-in live QuoteGraph replay and semantic evaluation.
 USE_ENV=1 npm run test2:quote-graph
 
@@ -95,6 +103,7 @@ Each node saves its validated state directly. A handler then returns one of:
 | `stay(feedback)` | Keep collecting in the current node. |
 | `go(TargetNode)` | Enter the target conversational node now. |
 | `direct(content)` | Return exact code-owned content while keeping the graph active. |
+| `directTo(TargetNode, content)` | Return exact content and make the target the next user-turn node. |
 | `finish(content)` | Return exact final content and complete the graph. |
 
 `QuoteGraph` registers its conversational topology explicitly:
@@ -125,7 +134,7 @@ without embedding graph-specific routing in the controller:
 | --- | --- |
 | `GET /healthcheck` | Health response. |
 | `GET /ai/graphs` | Registered EZGraph graph names. |
-| `POST /ai/run` | Run `QuoteGraph` or `ExpenseGraph`; pass a `SESSION_ID` header to resume. |
+| `POST /ai/run` | Run `DecisionHotelGraph`, `QuoteGraph`, or `ExpenseGraph`; pass a `SESSION_ID` header to resume. |
 | `POST /ai/end` | End an EZGraph session. |
 | `GET /ai-langgraph/graphs` | Direct-LangGraph comparison graph names. |
 | `POST /ai-langgraph/run` | Run the direct `QuoteLanggraph` control implementation. |
@@ -137,10 +146,12 @@ without embedding graph-specific routing in the controller:
 src/
   controllers/              HTTP adapters for EZGraph and the direct control graph
   graphs/
+    decision-hotel-graph/   Mixed decision/conversation DecisionHotelGraph
     quote-graph/            EZGraph QuoteGraph
     quote-langgraph/        Direct LangGraph comparison
     expense-graph/          Receipt and folio extraction
 test/
+  decision-hotel-graph/     23-turn deterministic GraphEngine acceptance test
   quote-graph/              Deterministic and opt-in live QuoteGraph tests
   quote-langgraph/          Control-implementation tests and live replay
 ```
