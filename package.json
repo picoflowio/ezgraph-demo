@@ -20,6 +20,7 @@
     "test:expense-graph": "USE_ENV=1 node --import tsx --test test/expense-graph/*.eval.ts",
     "test:quote-graph": "node --import tsx --test test/quote-graph/*.spec.ts",
     "test:decision-hotel-graph": "node --import tsx --test test/decision-hotel-graph/*.spec.ts",
+    "test2:decision-hotel-graph": "USE_ENV=1 KEEP_SESSION=1 node --import tsx --test test/decision-hotel-graph/decision-hotel-graph.e2e.spec.ts",
     "test2:quote-graph": "USE_ENV=1 KEEP_SESSION=1 node --import tsx --test test/quote-graph/quote-graph.e2e.spec.ts",
     "test:quote-langgraph": "node --import tsx --test test/quote-langgraph/quote-langgraph.live.eval.ts",
     "test2:quote-langgraph": "USE_ENV=1 KEEP_SESSION=1 node --import tsx --test test/quote-langgraph/quote-langgraph.live.eval.ts",

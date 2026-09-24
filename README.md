@@ -63,6 +63,9 @@ npm run test:quote-graph
 # 23-turn DecisionHotelGraph contract through the real GraphEngine harness.
 npm run test:decision-hotel-graph
 
+# Opt-in live DecisionHotelGraph replay with turn-by-turn output and semantic evaluation.
+USE_ENV=1 npm run test2:decision-hotel-graph
+
 # Opt-in live QuoteGraph replay and semantic evaluation.
 USE_ENV=1 npm run test2:quote-graph
 

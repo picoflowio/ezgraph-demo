@@ -1,0 +1,105 @@
+{
+  "graphName": "DecisionHotelGraph",
+  "judgeModel": "gpt-4o",
+  "judgeMinScore": 0.75,
+  "turns": [
+    {
+      "label": "date range prompt",
+      "input": "Hi",
+      "expectedResponse": "The assistant should invite the user to provide both hotel check-in and checkout dates.",
+      "completed": false
+    },
+    {
+      "label": "invalid calendar date",
+      "input": "February 30, 2027 through March 5, 2027",
+      "expectedResponse": "The assistant should reject February 30 as an invalid calendar date and ask for a corrected date or corrected date range while remaining in date collection.",
+      "completed": false
+    },
+    {
+      "label": "valid date range",
+      "input": "August 1 through August 8, 2027",
+      "expectedResponse": "August 1 through August 8, 2027 is a valid future range. The assistant should ask for the nightly hotel budget next; it does not need to repeat the dates.",
+      "completed": false
+    },
+    {
+      "label": "invalid inverted budget",
+      "input": "minimum 800 and maximum 500 per night",
+      "expectedResponse": "The assistant should explain that the minimum nightly budget cannot exceed the maximum and remain on budget collection.",
+      "completed": false
+    },
+    {
+      "label": "valid maximum budget",
+      "input": "maximum 700 per night, with no minimum",
+      "expectedResponse": "The assistant should ask for one bed, two beds, or a suite next. It does not need to restate the accepted maximum budget because persisted state is checked separately.",
+      "completed": false
+    },
+    {
+      "label": "suite selection",
+      "input": "a suite",
+      "expectedResponse": "The assistant should accept suite as the room type and ask which hotel amenities are required.",
+      "completed": false
+    },
+    {
+      "label": "cross-step date correction",
+      "input": "Actually change my dates to August 3 through August 9, 2027",
+      "expectedResponse": "The assistant should continue by asking for amenities. It does not need to restate the corrected dates because the test verifies the saved dates separately.",
+      "completed": false,
+      "minScore": 0.8
+    },
+    {
+      "label": "amenity selection",
+      "input": "free wifi and free parking",
+      "expectedResponse": "The assistant should accept free WiFi and free parking and ask whether the user has an airport or city-center distance limit.",
+      "completed": false
+    },
+    {
+      "label": "no distance preference",
+      "input": "distance does not matter",
+      "expectedResponse": "The assistant should record no distance preference, summarize all saved hotel criteria, and invite the user to search or revise a criterion.",
+      "completed": false
+    },
+    {
+      "label": "criteria review",
+      "input": "show my criteria",
+      "expectedResponse": "The assistant should show dates August 3 through August 9, 2027, maximum nightly budget 700 with no minimum, suite, free WiFi, free parking, and no distance preference, then offer search or revision.",
+      "completed": false
+    },
+    {
+      "label": "first grounded hotel search",
+      "input": "search",
+      "expectedResponse": "The assistant should search using the saved criteria and present a numbered list of matching Portland hotel names with total prices, explaining that the user may book or revise criteria.",
+      "completed": false
+    },
+    {
+      "label": "revise to restrictive budget",
+      "input": "change maximum budget to 500 per night",
+      "expectedResponse": "The assistant should route the revision to budget, save maximum 500 with no minimum, summarize the updated criteria, and invite search or another revision.",
+      "completed": false
+    },
+    {
+      "label": "empty hotel search",
+      "input": "search",
+      "expectedResponse": "The assistant should report that no hotels matched all current criteria and ask which criterion the user wants to revise, without ending the conversation.",
+      "completed": false
+    },
+    {
+      "label": "restore viable budget",
+      "input": "change maximum budget to 750 per night",
+      "expectedResponse": "The assistant should save a maximum nightly budget of 750 with no minimum, summarize the updated criteria, and invite a new search.",
+      "completed": false
+    },
+    {
+      "label": "second grounded hotel search",
+      "input": "search",
+      "expectedResponse": "The assistant should present a numbered list of matching Portland hotel names and total prices and explain how to book one or revise the criteria.",
+      "completed": false
+    },
+    {
+      "label": "validated hotel booking",
+      "input": "book hotel 1",
+      "expectedResponse": "The assistant should confirm that hotel number 1 from the current result list is booked, provide a six-digit confirmation number, and thank the user for choosing Hilton.",
+      "completed": true,
+      "minScore": 0.85
+    }
+  ]
+}
