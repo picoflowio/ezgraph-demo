@@ -79,7 +79,7 @@ export class QuoteNode extends ConversationNode<QuoteGraphStateType> {
   }
 
   getLlmConfig(): GraphLlmConfigOverride {
-    return ModelCatalog.model("openai-auth:gpt-5.4", {
+    return ModelCatalog.model("openai:gpt-5.4", {
       retries: 3,
       reasoningEffort: "low",
     });
@@ -96,10 +96,15 @@ export class QuoteNode extends ConversationNode<QuoteGraphStateType> {
         description:
           "Recompute the quote tiers after changing deductibles, liability, or extras.",
         schema: z.object({
-          liability: z.enum(["state-minimum", "standard", "premium"]).optional(),
+          liability: z
+            .enum(["state-minimum", "standard", "premium"])
+            .optional(),
           collisionDeductible: deductibleSchema.optional(),
           comprehensiveDeductible: deductibleSchema.optional(),
-          extras: z.array(z.enum(["rental", "roadside"])).max(2).optional(),
+          extras: z
+            .array(z.enum(["rental", "roadside"]))
+            .max(2)
+            .optional(),
         }),
       },
       {
@@ -118,9 +123,7 @@ export class QuoteNode extends ConversationNode<QuoteGraphStateType> {
   }
 
   @Tool("adjust_quote")
-  async adjustQuote(
-    input: AdjustQuoteInput,
-  ): Promise<ToolResponse> {
+  async adjustQuote(input: AdjustQuoteInput): Promise<ToolResponse> {
     const state = this.graph.graphState();
     if (
       input.liability === undefined &&
@@ -161,9 +164,7 @@ export class QuoteNode extends ConversationNode<QuoteGraphStateType> {
   }
 
   @Tool("accept_quote")
-  async acceptQuote(
-    input: AcceptQuoteInput,
-  ): Promise<ToolResponse> {
+  async acceptQuote(input: AcceptQuoteInput): Promise<ToolResponse> {
     const local = this.getState() as QuoteGraphNodeState<"QuoteNode">;
     const tier = local.tiers?.find(
       (candidate) => candidate.tier === input.tier,

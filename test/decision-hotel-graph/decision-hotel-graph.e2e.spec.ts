@@ -58,7 +58,12 @@ const scenarioPath = join(
   "decision-hotel-graph",
   "decision-hotel-graph.scenario.json",
 );
-const artifactDirectory = join(process.cwd(), "test", ".tmp", "decision-hotel-graph");
+const artifactDirectory = join(
+  process.cwd(),
+  "test",
+  ".tmp",
+  "decision-hotel-graph",
+);
 const failureArtifactPath = join(artifactDirectory, "semantic-failure.json");
 const successArtifactPath = join(artifactDirectory, "live.json");
 
@@ -69,7 +74,7 @@ const apiKeyJudgeModel =
   process.env.DECISION_HOTEL_GRAPH_JUDGE_MODEL ??
   scenario.judgeModel ??
   "gpt-4o";
-const openAIAuthJudgeModel = "openai-auth:gpt-5.4";
+const openAIAuthJudgeModel = "openai:gpt-5.4";
 const testTimeoutMs = Number(
   process.env.DECISION_HOTEL_GRAPH_TEST_TIMEOUT_MS ?? 900_000,
 );
@@ -137,7 +142,9 @@ test(
 
     try {
       for (const [index, turn] of scenario.turns.entries()) {
-        logProgress(`turn ${index + 1}/${scenario.turns.length}: ${turn.label}`);
+        logProgress(
+          `turn ${index + 1}/${scenario.turns.length}: ${turn.label}`,
+        );
         logProgress(`input: ${turn.input}`);
 
         const response = await send(turn.input);

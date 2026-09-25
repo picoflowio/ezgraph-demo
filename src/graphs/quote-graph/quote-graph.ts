@@ -22,13 +22,13 @@ const DEFAULT_IDLE_MS = 30 * 60_000;
 
 /**
  * Guided car-insurance quoting: driver, vehicle, history, coverage, and quote
- * stages. Model authentication is owned by EZGraph's built-in openai-auth
+ * stages. Model authentication is owned by EZGraph's built-in openai
  * provider, which uses the local Codex OAuth session.
  */
 export class QuoteGraph extends BaseGraph<QuoteGraphStateType> {
   static getGraphDefinition(): GraphDefinition {
     return {
-      llmConfig: ModelCatalog.model("openai-auth:gpt-5.4", {
+      llmConfig: ModelCatalog.model("openai:gpt-5.4", {
         retries: 3,
         reasoningEffort: "low",
       }),

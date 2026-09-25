@@ -71,7 +71,7 @@ process.env.QUOTE_GRAPH_CURRENT_DATE ??= "2027-06-01T00:00:00.000Z";
 const scenario = loadScenario();
 const apiKeyJudgeModel =
   process.env.QUOTE_GRAPH_JUDGE_MODEL ?? scenario.judgeModel ?? "gpt-4o";
-const openAIAuthJudgeModel = "openai-auth:gpt-5.4";
+const openAIAuthJudgeModel = "openai:gpt-5.4";
 const testTimeoutMs = Number(
   process.env.QUOTE_GRAPH_TEST_TIMEOUT_MS ?? 900_000,
 );
@@ -139,7 +139,9 @@ test(
 
     try {
       for (const [index, turn] of scenario.turns.entries()) {
-        logProgress(`turn ${index + 1}/${scenario.turns.length}: ${turn.label}`);
+        logProgress(
+          `turn ${index + 1}/${scenario.turns.length}: ${turn.label}`,
+        );
         logProgress(`input: ${turn.input}`);
 
         const response = await send(turn.input);
