@@ -40,6 +40,10 @@
       {
         "include": "graphs/decision-hotel-graph/prompt/*.md",
         "outDir": "dist"
+      },
+      {
+        "include": "graphs/decision-hotel-graph/data/**/*",
+        "outDir": "dist"
       }
     ]
   }

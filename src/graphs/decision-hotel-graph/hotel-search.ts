@@ -1,14 +1,68 @@
-import type { Amenity, HotelCriteriaSnapshot, RoomType } from './criteria.js';
+import { readFileSync } from 'node:fs';
+import { z } from 'zod';
+import {
+  AMENITIES,
+  ROOM_TYPES,
+  type Amenity,
+  type HotelCriteriaSnapshot,
+  type RoomType,
+} from './criteria.js';
 
-export type SearchHotelEntry = { hotelName: string; prices: number[]; total: number };
-type Hotel = { name: string; amenities: Amenity[]; level: number; roomTypes: RoomType[]; airport: number; cityCenter: number };
+export type SearchHotelEntry = {
+  hotelName: string;
+  address: string;
+  amenities: Amenity[];
+  roomType: RoomType;
+  distance: { airport: number; cityCenter: number };
+  prices: number[];
+  total: number;
+};
 
-const HOTELS: Hotel[] = [
-  { name: 'Hampton Inn & Suites Portland Tigard', amenities: ['freeWiFi', 'freeParking', 'freeBreakfast', 'indoorPool', 'fitnessCenter'], level: 116, roomTypes: ['one bed', 'two beds', 'suite'], airport: 19, cityCenter: 8.5 },
-  { name: 'Hilton Garden Inn Portland Airport', amenities: ['freeWiFi', 'freeParking', 'airportShuttle', 'onSiteRestaurant', 'fitnessCenter'], level: 128, roomTypes: ['one bed', 'two beds', 'suite'], airport: 3, cityCenter: 10.7 },
-  { name: 'Hilton Garden Inn Beaverton', amenities: ['freeWiFi', 'freeParking', 'onSiteRestaurant', 'fitnessCenter'], level: 102, roomTypes: ['one bed', 'two beds', 'suite'], airport: 22, cityCenter: 10 },
-  { name: 'The Porter Portland, Curio Collection by Hilton', amenities: ['freeWiFi', 'indoorPool', 'fitnessCenter', 'onSiteRestaurant'], level: 120, roomTypes: ['one bed', 'two beds', 'suite'], airport: 12.4, cityCenter: 0.5 },
-];
+type Hotel = {
+  name: string;
+  address: string;
+  amenities: Amenity[];
+  level: number;
+  roomTypes: RoomType[];
+  airport: number;
+  cityCenter: number;
+};
+
+const rawHotelSchema = z.object({
+  name: z.string().min(1),
+  address: z.string().min(1),
+  amenities: z.record(z.string(), z.boolean()).refine(
+    (amenities) => Object.keys(amenities).every((amenity) => AMENITIES.includes(amenity as Amenity)),
+    'Hotel catalog contains an unsupported amenity',
+  ),
+  level: z.number().positive(),
+  roomType: z.array(z.enum(ROOM_TYPES)).min(1),
+  nearby: z.object({
+    airport: z.number().nonnegative(),
+    cityCenter: z.number().nonnegative(),
+  }),
+});
+
+const HOTELS: Hotel[] = z
+  .array(rawHotelSchema)
+  .parse(
+    JSON.parse(
+      readFileSync(new URL('./data/hotels.json', import.meta.url), 'utf8'),
+    ),
+  )
+  .map((hotel) => ({
+    name: hotel.name,
+    address: hotel.address,
+    amenities: Object.entries(hotel.amenities).flatMap(([amenity, enabled]) =>
+      enabled && AMENITIES.includes(amenity as Amenity)
+        ? [amenity as Amenity]
+        : [],
+    ),
+    level: hotel.level,
+    roomTypes: hotel.roomType,
+    airport: hotel.nearby.airport,
+    cityCenter: hotel.nearby.cityCenter,
+  }));
 
 export function searchHotels(criteria: HotelCriteriaSnapshot): SearchHotelEntry[] {
   const start = new Date(`${criteria.dates.start}T00:00:00.000Z`);
@@ -25,7 +79,15 @@ export function searchHotels(criteria: HotelCriteriaSnapshot): SearchHotelEntry[
       const high = Math.max(...prices);
       if (criteria.budget.min !== null && low < criteria.budget.min) return [];
       if (criteria.budget.max !== null && high > criteria.budget.max) return [];
-      return [{ hotelName: hotel.name, prices, total: prices.reduce((sum, price) => sum + price, 0) }];
+      return [{
+        hotelName: hotel.name,
+        address: hotel.address,
+        amenities: hotel.amenities,
+        roomType,
+        distance: { airport: hotel.airport, cityCenter: hotel.cityCenter },
+        prices,
+        total: prices.reduce((sum, price) => sum + price, 0),
+      }];
     });
 }
 

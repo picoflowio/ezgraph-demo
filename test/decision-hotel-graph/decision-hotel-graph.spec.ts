@@ -223,6 +223,14 @@ function latestTool(history: readonly BaseMessage[]): string {
 }
 function groundedDraft(prompt: string): string {
   const match = prompt.match(/\[\{.*\}\]/s);
-  const hotels = match ? JSON.parse(match[0]) as Array<{ hotelName: string; total: number }> : [];
-  return ['Here are the matching Portland hotels:', ...hotels.map((hotel, index) => `${index + 1}. ${hotel.hotelName} — total $${hotel.total.toFixed(2)}`), 'Reply with a hotel name or number to book, or revise your criteria.'].join('\n');
+  const hotels = match ? JSON.parse(match[0]) as Array<{ hotelName: string; address: string; prices: number[]; total: number }> : [];
+  return [
+    'Here are the matching Portland hotels:',
+    ...hotels.map((hotel, index) => {
+      const low = Math.min(...hotel.prices);
+      const high = Math.max(...hotel.prices);
+      return `${index + 1}. ${hotel.hotelName} — ${hotel.address} — nightly $${low.toFixed(2)}–$${high.toFixed(2)} — total $${hotel.total.toFixed(2)}`;
+    }),
+    'Reply with a hotel name or number to book, or revise your criteria.',
+  ].join('\n');
 }

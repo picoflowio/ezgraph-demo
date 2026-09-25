@@ -67,7 +67,7 @@
     {
       "label": "first grounded hotel search",
       "input": "search",
-      "expectedResponse": "The assistant should search using the saved criteria and present a numbered list of matching Portland hotel names with total prices, explaining that the user may book or revise criteria.",
+      "expectedResponse": "The assistant should search using the saved criteria and present a numbered list of matching Portland hotel names, addresses, nightly price ranges, and total prices, explaining that the user may book or revise criteria.",
       "completed": false
     },
     {
@@ -91,7 +91,7 @@
     {
       "label": "second grounded hotel search",
       "input": "search",
-      "expectedResponse": "The assistant should present a numbered list of matching Portland hotel names and total prices and explain how to book one or revise the criteria.",
+      "expectedResponse": "The assistant should present a numbered list of matching Portland hotel names, addresses, nightly price ranges, and total prices and explain how to book one or revise the criteria.",
       "completed": false
     },
     {

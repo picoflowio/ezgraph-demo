@@ -14,11 +14,15 @@ import { PresentNode } from './present.node.js';
 export const PRESENTATION_QUESTIONS = {
   grounded: {
     type: 'noul',
-    instructions: 'Are all names and prices supported by hotelFound?',
+    instructions: 'Are all names, addresses, and prices supported by hotelFound?',
   },
   completeness: {
     type: 'score',
-    criteria: ['Missing results', 'Missing an action', 'Results plus booking or revision action'],
+    criteria: [
+      'Missing names, addresses, or prices',
+      'Hotel details without a next action',
+      'Complete hotel details plus booking or revision action',
+    ],
   },
   clarity: {
     type: 'score',

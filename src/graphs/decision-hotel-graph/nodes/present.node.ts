@@ -6,6 +6,7 @@ import {
   finish,
   go,
   stay,
+  type GraphLlmConfigOverride,
   type ToolDefinition,
   type ToolResponse,
 } from '@picoflow/ezgraph';
@@ -19,6 +20,10 @@ export class PresentNode extends ConversationNode<DecisionHotelGraphStateType> {
     return fillHotelPrompt(hotelPrompts.present, {
       HOTEL_FOUND_INFO: JSON.stringify(state.nodes.PresentNode?.hotelFound ?? []),
     });
+  }
+
+  getLlmConfig(): GraphLlmConfigOverride {
+    return { params: { forceToolCalls: true } };
   }
 
   defineTool(): readonly ToolDefinition[] {

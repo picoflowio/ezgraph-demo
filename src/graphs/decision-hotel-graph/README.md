@@ -13,7 +13,8 @@ state, named history spaces, provider-neutral `DecisionNode`, and real
   type, amenities, and distance through typed tools.
 - `CriteriaReadinessDecisionNode` semantically reviews the normalized record,
   while deterministic validation remains authoritative.
-- `SearchHotelsNode` runs a local deterministic catalog and pricing policy.
+- `SearchHotelsNode` loads the local JSON hotel catalog and applies the
+  deterministic filtering and pricing policy.
 - `PresentNode` drafts or acts on results through tools.
 - `PresentationDecisionNode` gates the draft against trusted result data.
 - `DecisionHotelGraph.onDecisionError()` owns bounded graph-wide fallbacks:
@@ -226,11 +227,27 @@ amenities question.
 
 **Bot**
 
-> 1. Hampton Inn & Suites Portland Tigard - Total Price: $3810.60
-> 2. Hilton Garden Inn Portland Airport - Total Price: $4204.80
-> 3. Hilton Garden Inn Beaverton - Total Price: $3350.70
+> 1. **Hampton Inn & Suites Portland Tigard**
+>    - **Address:** 11799 SW 69th Ave, Tigard, OR 97223
+>    - **Nightly Price Range:** $522 - $600.3
+>    - **Total Price:** $3810.60
 >
-> Please review the options and let me know if you would like to book one of these hotels or revise your search criteria.
+> 2. **Hilton Garden Inn Portland Airport**
+>    - **Address:** 12048 NE Airport Way, Portland, OR 97220
+>    - **Nightly Price Range:** $576 - $662.4
+>    - **Total Price:** $4204.80
+>
+> 3. **Hilton Garden Inn Beaverton**
+>    - **Address:** 15520 NW Gateway Ct, Beaverton, OR 97006
+>    - **Nightly Price Range:** $459 - $527.85
+>    - **Total Price:** $3350.70
+>
+> 4. **Hampton Inn Sherwood Portland**
+>    - **Address:** 22000 SW Meinecke Parkway Sherwood, Oregon 97140 USA
+>    - **Nightly Price Range:** $486 - $558.9
+>    - **Total Price:** $3547.80
+>
+> Please review the above options and let me know if you would like to book one of these hotels or revise your search criteria.
 
 ### 12. Revise to restrictive budget
 
@@ -284,11 +301,13 @@ amenities question.
 
 **Bot**
 
-> 1. Hampton Inn & Suites Portland Tigard - Total Price: $3810.60
-> 2. Hilton Garden Inn Portland Airport - Total Price: $4204.80
-> 3. Hilton Garden Inn Beaverton - Total Price: $3350.70
+> Here are the matching Portland hotels:
+> 1. Hampton Inn & Suites Portland Tigard — 11799 SW 69th Ave, Tigard, OR 97223 — nightly $522.00–$600.30 — total $3,810.60
+> 2. Hilton Garden Inn Portland Airport — 12048 NE Airport Way, Portland, OR 97220 — nightly $576.00–$662.40 — total $4,204.80
+> 3. Hilton Garden Inn Beaverton — 15520 NW Gateway Ct, Beaverton, OR 97006 — nightly $459.00–$527.85 — total $3,350.70
+> 4. Hampton Inn Sherwood Portland — 22000 SW Meinecke Parkway Sherwood, Oregon 97140 USA — nightly $486.00–$558.90 — total $3,547.80
 >
-> Please review the options and let me know if you would like to book one of these hotels or revise your search criteria.
+> Reply with a hotel name or number to book, or tell me which search criterion to revise.
 
 ### 16. Validated hotel booking
 
@@ -298,11 +317,11 @@ amenities question.
 
 **Bot**
 
-> Hampton Inn & Suites Portland Tigard is booked with confirmation #795405. Thank you for choosing Hilton.
+> Hampton Inn & Suites Portland Tigard is booked with confirmation #504557. Thank you for choosing Hilton.
 
 Every live response received a semantic-judge score of `1.0`. The final
-persisted session recorded 21 decision calls, 28,048 decision tokens, and
-8,648 chat-model tokens.
+persisted session recorded 22 decision calls, 30,693 decision tokens, and
+11,473 chat-model tokens.
 
 ## Verification contract
 

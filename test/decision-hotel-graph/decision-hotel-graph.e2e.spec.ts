@@ -254,7 +254,7 @@ const judgeSystemPrompt = [
   "When one supplied date is impossible, accept either asking only for that date to be corrected or asking the user to provide the valid date pair again, as long as date collection remains active.",
   "On the date-correction turn, the visible response only needs to continue by asking for amenities; the test separately verifies that the corrected dates were saved.",
   "A criteria summary may use normalized tool values such as freeWiFi and freeParking.",
-  "Hotel result responses must use actual search results, include hotel names and total prices, and explain booking or revision.",
+  "Hotel result responses must use actual search results, include hotel names, addresses, nightly price ranges, and total prices, and explain booking or revision.",
   "Fail responses that ask for the wrong criterion, contradict a saved correction, invent a result or booking, omit a required correction, or claim completion before booking.",
   "Return only JSON with: pass boolean, score number from 0 to 1, reason string, missing string array, contradictions string array.",
 ].join(" ");

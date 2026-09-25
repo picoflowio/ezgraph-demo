@@ -71,7 +71,16 @@ export function renderCriteriaSummary(criteria: HotelCriteriaSnapshot): string {
 
 export function renderHotelResults(hotels: readonly SearchHotelEntry[]): string {
   if (hotels.length === 0) return 'No hotels matched the current criteria. Tell me which criterion to revise.';
-  return ['Here are the matching Portland hotels:', ...hotels.map((hotel, index) => `${index + 1}. ${hotel.hotelName} — total ${usd(hotel.total)}`), '', 'Reply with a hotel name or number to book, or tell me which search criterion to revise.'].join('\n');
+  return [
+    'Here are the matching Portland hotels:',
+    ...hotels.map((hotel, index) => {
+      const low = Math.min(...hotel.prices);
+      const high = Math.max(...hotel.prices);
+      return `${index + 1}. ${hotel.hotelName} — ${hotel.address} — nightly ${usd(low)}–${usd(high)} — total ${usd(hotel.total)}`;
+    }),
+    '',
+    'Reply with a hotel name or number to book, or tell me which search criterion to revise.',
+  ].join('\n');
 }
 
 export function currentBusinessDate(): Date {
