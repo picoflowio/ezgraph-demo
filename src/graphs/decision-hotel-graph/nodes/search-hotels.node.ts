@@ -4,10 +4,9 @@ import {
   go,
   type GraphNodeResult,
 } from '@picoflow/ezgraph';
-import { readCriteria, validateCriteria } from '../criteria.js';
+import { CriteriaHelper } from '../criteria-helper.js';
 import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
 import { searchHotels } from '../hotel-search.js';
-import { criteriaNode } from '../routing.js';
 import { PresentNode } from './present.node.js';
 import { RouterDecisionNode } from './router-decision.node.js';
 
@@ -17,10 +16,10 @@ export class SearchHotelsNode extends GraphNode<DecisionHotelGraphStateType> {
   async run(
     state: DecisionHotelGraphStateType,
   ): Promise<GraphNodeResult<DecisionHotelGraphStateType>> {
-    const criteria = readCriteria(state);
-    const issues = validateCriteria(criteria);
+    const criteria = CriteriaHelper.readCriteria(state);
+    const issues = CriteriaHelper.validateCriteria(criteria);
     if (issues.length) {
-      return this.resolveNodeResponse(go(criteriaNode(issues[0]!.field)));
+      return this.resolveNodeResponse(go(CriteriaHelper.criteriaNode(issues[0]!.field)));
     }
 
     const hotels = searchHotels(criteria);

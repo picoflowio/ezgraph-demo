@@ -9,10 +9,9 @@ import {
   type DecisionQuestionMap,
   type GraphNodeResponse,
 } from '@picoflow/ezgraph';
-import { readCriteria, renderCriteriaSummary, validateCriteria } from '../criteria.js';
+import { CriteriaHelper } from '../criteria-helper.js';
 import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
 import { fillHotelPrompt, hotelPrompts } from '../prompt/hotel-prompts.js';
-import { criteriaNode, criteriaPrompt } from '../routing.js';
 import { CriteriaReadinessDecisionNode } from './criteria-readiness-decision.node.js';
 
 export const ROUTING_QUESTIONS = {
@@ -44,8 +43,8 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
   defineQuestions() { return ROUTING_QUESTIONS; }
 
   getPrompt(state: DecisionHotelGraphStateType): string {
-    const criteria = readCriteria(state);
-    const issues = validateCriteria(criteria);
+    const criteria = CriteriaHelper.readCriteria(state);
+    const issues = CriteriaHelper.validateCriteria(criteria);
     return fillHotelPrompt(hotelPrompts.router, {
       COLLECTED_CRITERIA: JSON.stringify(criteria, null, 2),
       UNRESOLVED_CRITERIA: issues.length
@@ -55,10 +54,10 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
   }
 
   protected getDecisionData(state: DecisionHotelGraphStateType) {
-    const criteria = readCriteria(state);
+    const criteria = CriteriaHelper.readCriteria(state);
     return {
       criteria,
-      unresolved: validateCriteria(criteria).map((issue) => issue.field),
+      unresolved: CriteriaHelper.validateCriteria(criteria).map((issue) => issue.field),
       notice: state.nodes.RouterDecisionNode?.notice ?? null,
     };
   }
@@ -68,8 +67,8 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
     context: DecisionContext,
     state: DecisionHotelGraphStateType,
   ): GraphNodeResponse<DecisionHotelGraphStateType> {
-    const criteria = readCriteria(state);
-    const issues = validateCriteria(criteria);
+    const criteria = CriteriaHelper.readCriteria(state);
+    const issues = CriteriaHelper.validateCriteria(criteria);
     const notice = state.nodes.RouterDecisionNode?.notice;
     if (notice) {
       this.saveState({ notice: null });
@@ -85,36 +84,23 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
       return finish('Thanks for considering Hilton hotels in Portland.');
     }
     if (route === 'review') {
-      return directTo(RouterDecisionNode, `${renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`);
+      return directTo(RouterDecisionNode, `${CriteriaHelper.renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`);
     }
     if (route === 'search') {
       if (context.request.trim().toLowerCase() !== 'search') {
         return issues.length
-          ? directTo(criteriaNode(issues[0]!.field), criteriaPrompt(issues[0]!.field))
+          ? directTo(CriteriaHelper.criteriaNode(issues[0]!.field), CriteriaHelper.criteriaPrompt(issues[0]!.field))
           : directTo(
               RouterDecisionNode,
-              `${renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`,
+              `${CriteriaHelper.renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`,
             );
       }
       return issues.length
-        ? go(criteriaNode(issues[0]!.field))
+        ? go(CriteriaHelper.criteriaNode(issues[0]!.field))
         : go(CriteriaReadinessDecisionNode);
     }
-    return answers.request_delivery.choice === 'apply_request' || criterionAnswered(criteria, route)
-      ? go(criteriaNode(route)).withMessage(new HumanMessage(context.request))
-      : directTo(criteriaNode(route), criteriaPrompt(route));
-  }
-}
-
-function criterionAnswered(
-  criteria: ReturnType<typeof readCriteria>,
-  field: 'dates' | 'budget' | 'room_type' | 'amenities' | 'distance',
-): boolean {
-  switch (field) {
-    case 'dates': return criteria.dates.answered;
-    case 'budget': return criteria.budget.answered;
-    case 'room_type': return criteria.roomType.answered;
-    case 'amenities': return criteria.amenities.answered;
-    case 'distance': return criteria.distance.answered;
+    return answers.request_delivery.choice === 'apply_request' || CriteriaHelper.criterionAnswered(criteria, route)
+      ? go(CriteriaHelper.criteriaNode(route)).withMessage(new HumanMessage(context.request))
+      : directTo(CriteriaHelper.criteriaNode(route), CriteriaHelper.criteriaPrompt(route));
   }
 }

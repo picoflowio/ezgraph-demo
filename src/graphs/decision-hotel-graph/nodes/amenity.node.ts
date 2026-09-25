@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ConversationNode, Tool, go, type ToolDefinition, type ToolResponse } from '@picoflow/ezgraph';
-import { AMENITIES } from '../criteria.js';
+import { CriteriaHelper, type Amenity } from '../criteria-helper.js';
 import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
 import { hotelPrompts } from '../prompt/hotel-prompts.js';
 import { RouterDecisionNode } from './router-decision.node.js';
@@ -13,7 +13,7 @@ export class AmenityNode extends ConversationNode<DecisionHotelGraphStateType> {
       {
         name: 'capture_amenities',
         description: 'Save one or more required hotel amenities.',
-        schema: z.object({ amenities: z.array(z.enum(AMENITIES)).min(1) }),
+        schema: z.object({ amenities: z.array(z.enum(CriteriaHelper.AMENITIES)).min(1) }),
       },
       {
         name: 'capture_no_amenity_preference',
@@ -24,7 +24,7 @@ export class AmenityNode extends ConversationNode<DecisionHotelGraphStateType> {
   }
 
   @Tool('capture_amenities')
-  async captureAmenities(input: { amenities: (typeof AMENITIES)[number][] }): Promise<ToolResponse> {
+  async captureAmenities(input: { amenities: Amenity[] }): Promise<ToolResponse> {
     this.saveState({ answered: true, amenities: [...new Set(input.amenities)] });
     return go(RouterDecisionNode);
   }

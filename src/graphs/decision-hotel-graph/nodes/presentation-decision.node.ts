@@ -6,7 +6,7 @@ import {
   type DecisionQuestionMap,
   type GraphNodeResponse,
 } from '@picoflow/ezgraph';
-import { renderHotelResults } from '../criteria.js';
+import { CriteriaHelper } from '../criteria-helper.js';
 import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
 import { hotelPrompts } from '../prompt/hotel-prompts.js';
 import { PresentNode } from './present.node.js';
@@ -56,6 +56,6 @@ export class PresentationDecisionNode extends DecisionNode<DecisionHotelGraphSta
       answers.clarity.score >= 1.5 &&
       answers.clarity.confidence >= 0.75;
     this.saveState({ review: answers, accepted });
-    return directTo(PresentNode, accepted ? draft : renderHotelResults(hotels));
+    return directTo(PresentNode, accepted ? draft : CriteriaHelper.renderHotelResults(hotels));
   }
 }

@@ -1,6 +1,6 @@
 import { createGraphStateAnnotation, type NodeStateValue } from '@picoflow/ezgraph';
 import { RouterDecisionNode } from './nodes/router-decision.node.js';
-import type { HotelCriteriaSnapshot } from './criteria.js';
+import type { HotelCriteriaSnapshot } from './criteria-helper.js';
 import type { SearchHotelEntry } from './hotel-search.js';
 
 export type DecisionHotelGraphNodes = {

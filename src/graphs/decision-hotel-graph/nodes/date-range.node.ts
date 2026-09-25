@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ConversationNode, Tool, go, stay, type ToolDefinition, type ToolResponse } from '@picoflow/ezgraph';
-import { currentBusinessDate, parseDate } from '../criteria.js';
+import { CriteriaHelper } from '../criteria-helper.js';
 import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
 import { fillHotelPrompt, hotelPrompts } from '../prompt/hotel-prompts.js';
 import { RouterDecisionNode } from './router-decision.node.js';
@@ -8,7 +8,7 @@ import { RouterDecisionNode } from './router-decision.node.js';
 export class DateRangeNode extends ConversationNode<DecisionHotelGraphStateType> {
   getPrompt(): string {
     return fillHotelPrompt(hotelPrompts.dates, {
-      CURRENT_DATE: currentBusinessDate().toISOString().slice(0, 10),
+      CURRENT_DATE: CriteriaHelper.currentBusinessDate().toISOString().slice(0, 10),
     });
   }
 
@@ -29,12 +29,12 @@ export class DateRangeNode extends ConversationNode<DecisionHotelGraphStateType>
 
   @Tool('capture_date_range')
   async captureDateRange(input: { start: string; end: string }): Promise<ToolResponse> {
-    const start = parseDate(input.start);
-    const end = parseDate(input.end);
+    const start = CriteriaHelper.parseDate(input.start);
+    const end = CriteriaHelper.parseDate(input.end);
     if (!start || !end) {
       return stay('Use valid calendar dates for both check-in and checkout.');
     }
-    if (start <= currentBusinessDate()) {
+    if (start <= CriteriaHelper.currentBusinessDate()) {
       return stay('Check-in must be after the current date.');
     }
     if (end <= start) return stay('Checkout must be after check-in.');

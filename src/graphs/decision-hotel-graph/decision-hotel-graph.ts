@@ -21,6 +21,15 @@ import { RouterDecisionNode } from './nodes/router-decision.node.js';
 import { SearchHotelsNode } from './nodes/search-hotels.node.js';
 import { DecisionHotelGraphState, type DecisionHotelGraphStateType } from './decision-hotel-graph.state.js';
 import { criteriaFallback, presentationFallback, routerFallback } from './decision-fallbacks.js';
+import { CriteriaHelper } from './criteria-helper.js';
+
+CriteriaHelper.registerCriteriaNodes({
+  dates: DateRangeNode,
+  budget: BudgetNode,
+  room_type: RoomTypeNode,
+  amenities: AmenityNode,
+  distance: DistanceNode,
+});
 
 export class DecisionHotelGraph extends BaseGraph<DecisionHotelGraphStateType> {
   static getGraphDefinition(): GraphDefinition {

@@ -1,12 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { z } from 'zod';
 import {
-  AMENITIES,
-  ROOM_TYPES,
+  CriteriaHelper,
   type Amenity,
   type HotelCriteriaSnapshot,
   type RoomType,
-} from './criteria.js';
+} from './criteria-helper.js';
 
 export type SearchHotelEntry = {
   hotelName: string;
@@ -32,11 +31,11 @@ const rawHotelSchema = z.object({
   name: z.string().min(1),
   address: z.string().min(1),
   amenities: z.record(z.string(), z.boolean()).refine(
-    (amenities) => Object.keys(amenities).every((amenity) => AMENITIES.includes(amenity as Amenity)),
+    (amenities) => Object.keys(amenities).every((amenity) => CriteriaHelper.AMENITIES.includes(amenity as Amenity)),
     'Hotel catalog contains an unsupported amenity',
   ),
   level: z.number().positive(),
-  roomType: z.array(z.enum(ROOM_TYPES)).min(1),
+  roomType: z.array(z.enum(CriteriaHelper.ROOM_TYPES)).min(1),
   nearby: z.object({
     airport: z.number().nonnegative(),
     cityCenter: z.number().nonnegative(),
@@ -54,7 +53,7 @@ const HOTELS: Hotel[] = z
     name: hotel.name,
     address: hotel.address,
     amenities: Object.entries(hotel.amenities).flatMap(([amenity, enabled]) =>
-      enabled && AMENITIES.includes(amenity as Amenity)
+      enabled && CriteriaHelper.AMENITIES.includes(amenity as Amenity)
         ? [amenity as Amenity]
         : [],
     ),
