@@ -67,7 +67,8 @@ test('DecisionHotelGraph completes the 23-turn correction, fallback, review, and
         const unresolved = state.unresolved as string[];
         let route: string;
         let delivery = 'none';
-        if (/weather/i.test(currentInput)) route = 'unclear';
+        if (/distance does not matter/i.test(currentInput) && unresolved.length === 0) route = 'search';
+        else if (/weather/i.test(currentInput)) route = 'unclear';
         else if (/show.*criteria|review/i.test(currentInput)) route = 'review';
         else if (/^search$/i.test(currentInput)) route = 'search';
         else if (/\b(exit|quit|stop)\b/i.test(currentInput)) route = 'exit';
@@ -75,7 +76,9 @@ test('DecisionHotelGraph completes the 23-turn correction, fallback, review, and
           const requested = requestedCriterion(currentInput);
           const needsApplication = requested !== undefined && !criterionIsReflected(requested, currentInput, criteria);
           route = needsApplication ? requested : (unresolved[0] ?? 'review');
-          delivery = needsApplication ? 'apply_request' : 'prompt_next';
+          delivery = /change my dates/i.test(currentInput)
+            ? 'prompt_next'
+            : needsApplication ? 'apply_request' : 'prompt_next';
         }
         return { model: 'jev-fixture', answers: { destination: choice(route, ['dates', 'budget', 'room_type', 'amenities', 'distance', 'review', 'search', 'exit', 'unclear']), request_delivery: choice(delivery, ['apply_request', 'prompt_next', 'none']) }, usage: { inputTokens: 20 } };
       }
@@ -153,7 +156,17 @@ class HotelGateway extends ScriptedGateway {
     } else if (systemPrompt.includes('exactly one supported room type')) {
       value = /suite/i.test(human) ? tool('capture_room_type', { roomType: 'suite' }) : new AIMessage('Choose one bed, two beds, or suite.');
     } else if (systemPrompt.includes('collect required hotel amenities')) {
-      value = /change my dates/i.test(human) ? tool('reroute_request') : /free wifi.*free parking/i.test(human) ? tool('capture_amenities', { amenities: ['freeWiFi', 'freeParking'] }) : new AIMessage('Which amenities do you require?');
+      value = /change my dates/i.test(human)
+        ? new AIMessage({
+            content: '',
+            tool_calls: [
+              { id: `hotel-${++this.callId}`, name: 'capture_amenities', args: { amenities: [] }, type: 'tool_call' },
+              { id: `hotel-${++this.callId}`, name: 'reroute_request', args: {}, type: 'tool_call' },
+            ],
+          })
+        : /free wifi.*free parking/i.test(human)
+          ? tool('capture_amenities', { amenities: ['freeWiFi', 'freeParking'] })
+          : new AIMessage('Which amenities do you require?');
     } else if (systemPrompt.includes('maximum distance in miles')) {
       if (feedback) value = new AIMessage(feedback);
       else if (/-5/.test(human)) value = tool('capture_distance', { airport: -5, cityCenter: null });

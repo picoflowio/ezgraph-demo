@@ -1,3 +1,4 @@
+import { HumanMessage } from '@langchain/core/messages';
 import {
   DecisionNode,
   directTo,
@@ -64,7 +65,7 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
 
   onDecision(
     answers: DecisionAnswers<typeof ROUTING_QUESTIONS>,
-    _context: DecisionContext,
+    context: DecisionContext,
     state: DecisionHotelGraphStateType,
   ): GraphNodeResponse<DecisionHotelGraphStateType> {
     const criteria = readCriteria(state);
@@ -87,12 +88,33 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
       return directTo(RouterDecisionNode, `${renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`);
     }
     if (route === 'search') {
+      if (context.request.trim().toLowerCase() !== 'search') {
+        return issues.length
+          ? directTo(criteriaNode(issues[0]!.field), criteriaPrompt(issues[0]!.field))
+          : directTo(
+              RouterDecisionNode,
+              `${renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`,
+            );
+      }
       return issues.length
         ? go(criteriaNode(issues[0]!.field))
         : go(CriteriaReadinessDecisionNode);
     }
-    return answers.request_delivery.choice === 'apply_request'
-      ? go(criteriaNode(route))
+    return answers.request_delivery.choice === 'apply_request' || criterionAnswered(criteria, route)
+      ? go(criteriaNode(route)).withMessage(new HumanMessage(context.request))
       : directTo(criteriaNode(route), criteriaPrompt(route));
+  }
+}
+
+function criterionAnswered(
+  criteria: ReturnType<typeof readCriteria>,
+  field: 'dates' | 'budget' | 'room_type' | 'amenities' | 'distance',
+): boolean {
+  switch (field) {
+    case 'dates': return criteria.dates.answered;
+    case 'budget': return criteria.budget.answered;
+    case 'room_type': return criteria.roomType.answered;
+    case 'amenities': return criteria.amenities.answered;
+    case 'distance': return criteria.distance.answered;
   }
 }
