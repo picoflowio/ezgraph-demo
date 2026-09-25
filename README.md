@@ -13,7 +13,8 @@ It also includes:
 
 - `DecisionHotelGraph`, a mixed `DecisionNode` + `ConversationNode` hotel
   workflow with deterministic policy, semantic routing/review, durable decision
-  audits, and graph-owned fallbacks.
+  audits, and graph-owned fallbacks. See the
+  [complete node-transition map and successful live transcript](src/graphs/decision-hotel-graph/README.md).
 - `ExpenseGraph`, a one-shot receipt/folio extraction graph.
 
 ## What the comparison measures
