@@ -19,7 +19,7 @@ export class SearchHotelsNode extends GraphNode<DecisionHotelGraphStateType> {
     const criteria = CriteriaHelper.readCriteria(state);
     const issues = CriteriaHelper.validateCriteria(criteria);
     if (issues.length) {
-      return this.resolveNodeResponse(go(CriteriaHelper.criteriaNode(issues[0]!.field)));
+      return this.resolveNodeResponse(go(CriteriaHelper.nextNode(issues[0]!)));
     }
 
     const hotels = searchHotels(criteria);

@@ -63,10 +63,10 @@ export class CriteriaReadinessDecisionNode extends DecisionNode<DecisionHotelGra
       outcome === 'ready' &&
       answers.faithful.noul >= 0.75;
     this.saveState({ review: answers, accepted });
-    if (issues.length) return go(CriteriaHelper.criteriaNode(issues[0]!.field));
+    if (issues.length) return go(CriteriaHelper.nextNode(issues[0]!));
     if (accepted) return go(SearchHotelsNode);
     if (outcome !== 'ready' && outcome !== 'unclear') {
-      return directTo(CriteriaHelper.criteriaNode(outcome), CriteriaHelper.criteriaPrompt(outcome));
+      return directTo(CriteriaHelper.nextNode(outcome), CriteriaHelper.criteriaPrompt(outcome));
     }
     return directTo(
       RouterDecisionNode,

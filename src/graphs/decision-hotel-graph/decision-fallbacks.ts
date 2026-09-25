@@ -15,7 +15,7 @@ export function presentationFallback(state: DecisionHotelGraphStateType) {
 export function criteriaFallback(state: DecisionHotelGraphStateType) {
   const issues = CriteriaHelper.validateCriteria(CriteriaHelper.readCriteria(state));
   return issues.length
-    ? directTo(CriteriaHelper.criteriaNode(issues[0]!.field), CriteriaHelper.criteriaPrompt(issues[0]!.field))
+    ? directTo(CriteriaHelper.nextNode(issues[0]!), CriteriaHelper.criteriaPrompt(issues[0]!.field))
     : go(SearchHotelsNode);
 }
 
@@ -26,7 +26,7 @@ export function routerFallback(state: DecisionHotelGraphStateType) {
   }
   const issues = CriteriaHelper.validateCriteria(CriteriaHelper.readCriteria(state));
   return issues.length
-    ? directTo(CriteriaHelper.criteriaNode(issues[0]!.field), CriteriaHelper.criteriaPrompt(issues[0]!.field))
+    ? directTo(CriteriaHelper.nextNode(issues[0]!), CriteriaHelper.criteriaPrompt(issues[0]!.field))
     : directTo(
         RouterDecisionNode,
         'Your saved criteria are ready. Say “search” to find hotels, or tell me what to revise.',

@@ -89,18 +89,18 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
     if (route === 'search') {
       if (context.request.trim().toLowerCase() !== 'search') {
         return issues.length
-          ? directTo(CriteriaHelper.criteriaNode(issues[0]!.field), CriteriaHelper.criteriaPrompt(issues[0]!.field))
+          ? directTo(CriteriaHelper.nextNode(issues[0]!), CriteriaHelper.criteriaPrompt(issues[0]!.field))
           : directTo(
               RouterDecisionNode,
               `${CriteriaHelper.renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`,
             );
       }
       return issues.length
-        ? go(CriteriaHelper.criteriaNode(issues[0]!.field))
+        ? go(CriteriaHelper.nextNode(issues[0]!))
         : go(CriteriaReadinessDecisionNode);
     }
     return answers.request_delivery.choice === 'apply_request' || CriteriaHelper.criterionAnswered(criteria, route)
-      ? go(CriteriaHelper.criteriaNode(route)).withMessage(new HumanMessage(context.request))
-      : directTo(CriteriaHelper.criteriaNode(route), CriteriaHelper.criteriaPrompt(route));
+      ? go(CriteriaHelper.nextNode(route)).withMessage(new HumanMessage(context.request))
+      : directTo(CriteriaHelper.nextNode(route), CriteriaHelper.criteriaPrompt(route));
   }
 }

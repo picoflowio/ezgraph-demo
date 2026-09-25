@@ -93,7 +93,10 @@ export class CriteriaHelper {
     this.criteriaNodes = nodes;
   }
 
-  static criteriaNode(field: CriteriaField): GraphNodeTarget {
+  static nextNode(field: CriteriaField): GraphNodeTarget;
+  static nextNode(issue: CriteriaIssue): GraphNodeTarget;
+  static nextNode(fieldOrIssue: CriteriaField | CriteriaIssue): GraphNodeTarget {
+    const field = typeof fieldOrIssue === 'string' ? fieldOrIssue : fieldOrIssue.field;
     const node = this.criteriaNodes?.[field];
     if (!node) throw new Error(`Criteria node is not registered for field: ${field}`);
     return node;
