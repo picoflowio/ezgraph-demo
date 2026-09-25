@@ -13,9 +13,51 @@ It also includes:
 
 - `DecisionHotelGraph`, a mixed `DecisionNode` + `ConversationNode` hotel
   workflow with deterministic policy, semantic routing/review, durable decision
-  audits, and graph-owned fallbacks. See the
+  audits, and node-owned fallbacks. See the
   [complete node-transition map and successful live transcript](src/graphs/decision-hotel-graph/README.md).
 - `ExpenseGraph`, a one-shot receipt/folio extraction graph.
+
+## Jev-backed decisions
+
+EZGraph now supports Jev through its provider-neutral `DecisionNode` contract.
+The [DecisionHotelGraph](src/graphs/decision-hotel-graph/README.md) demonstrates
+Jev in a mixed graph rather than replacing ordinary conversational nodes:
+
+- `RouterDecisionNode` classifies the requested destination and whether the
+  original request should be forwarded to a collector.
+- `CriteriaReadinessDecisionNode` judges whether normalized criteria faithfully
+  represent the conversation before deterministic search begins.
+- `PresentationDecisionNode` reviews grounding, completeness, and clarity before
+  a hotel response is published.
+
+Each decision node declares typed choice, score, or probability questions with
+`defineQuestions()`, supplies focused JSON evidence with
+`getDecisionEvidence()`, and handles the typed result in `onDecision()`.
+Thresholds, routing, deterministic validation, side effects, and failure
+fallbacks remain application-owned.
+
+The application registers the TypeSafe adapter explicitly at composition time:
+
+```ts
+decisionProviders: DecisionProvider.create({
+  typesafe: { apiKey: config.get<string>("TYPESAFE_API_KEY") },
+}),
+```
+
+The graph then selects Jev independently of its conversational model:
+
+```ts
+decisionConfig: {
+  provider: "typesafe",
+  model: "jev-latest",
+  timeoutMs: 15_000,
+  maxRetries: 2,
+},
+```
+
+The live `DecisionHotelGraph` evaluation requires both `TYPESAFE_API_KEY` for
+Jev and `OPENAI_API_KEY` for its conversational nodes. Its deterministic test
+uses an in-process decision-provider fixture and requires neither credential.
 
 ## What the comparison measures
 
@@ -53,9 +95,11 @@ npm install
 cp .env.example .env
 ```
 
-The default `.env.example` uses SQLite. Set one of `OPENAI_API_KEY`,
-`GOOGLE_API_KEY`, or `ANTHROPIC_API_KEY` before running a provider-backed
-conversation. The deterministic tests do not require a provider credential.
+The default `.env.example` uses SQLite. Set the credentials required by the
+graph you run; `DecisionHotelGraph` needs `TYPESAFE_API_KEY` and
+`OPENAI_API_KEY` for its live path. Other graphs may use `GOOGLE_API_KEY` or
+`ANTHROPIC_API_KEY`. The deterministic tests do not require provider
+credentials.
 
 ```bash
 # Deterministic QuoteGraph tests: validation, state, transitions, rating, and acceptance.

@@ -4,6 +4,7 @@ import {
   go,
   type DecisionAnswers,
   type DecisionContext,
+  type DecisionErrorContext,
   type DecisionQuestionMap,
   type GraphNodeResponse,
 } from "@picoflow/ezgraph";
@@ -39,11 +40,13 @@ export class CriteriaReadinessDecisionNode extends DecisionNode<
   DecisionHotelGraphStateType,
   typeof CRITERIA_REVIEW_QUESTIONS
 > {
-  defineQuestions() {
+  /** Declares the typed readiness and faithfulness judgments to request. */
+  override defineQuestions() {
     return CRITERIA_REVIEW_QUESTIONS;
   }
 
-  getPrompt(state: DecisionHotelGraphStateType): string {
+  /** Supplies shared judging guidance that is prepended to every question. */
+  override getPrompt(state: DecisionHotelGraphStateType): string {
     const criteria = CriteriaHelper.readCriteria(state);
     const issues = CriteriaHelper.validateCriteria(criteria);
     return fillHotelPrompt(hotelPrompts.criteriaJudge, {
@@ -54,7 +57,11 @@ export class CriteriaReadinessDecisionNode extends DecisionNode<
     });
   }
 
-  protected getDecisionData(state: DecisionHotelGraphStateType) {
+  /**
+   * Adds normalized criteria and deterministic validation results as evidence.
+   * Conversation input is added separately by the DecisionNode framework.
+   */
+  protected override getDecisionEvidence(state: DecisionHotelGraphStateType) {
     const criteria = CriteriaHelper.readCriteria(state);
     return {
       criteria,
@@ -62,7 +69,8 @@ export class CriteriaReadinessDecisionNode extends DecisionNode<
     };
   }
 
-  onDecision(
+  /** Keeps acceptance thresholds and resulting graph routes in application code. */
+  override onDecision(
     answers: DecisionAnswers<typeof CRITERIA_REVIEW_QUESTIONS>,
     _context: DecisionContext,
     state: DecisionHotelGraphStateType,
@@ -87,5 +95,20 @@ export class CriteriaReadinessDecisionNode extends DecisionNode<
       RouterDecisionNode,
       `${CriteriaHelper.renderCriteriaSummary(criteria)}\nI could not verify one clear correction. Tell me which single criterion to update.`,
     );
+  }
+
+  /** Falls back to deterministic validation when this decision call fails. */
+  protected override onDecisionError(
+    context: DecisionErrorContext<DecisionHotelGraphStateType>,
+  ): GraphNodeResponse<DecisionHotelGraphStateType> {
+    const issues = CriteriaHelper.validateCriteria(
+      CriteriaHelper.readCriteria(context.state),
+    );
+    return issues.length
+      ? directTo(
+          CriteriaHelper.nextNode(issues[0]!),
+          CriteriaHelper.criteriaPrompt(issues[0]!.field),
+        )
+      : go(SearchHotelsNode);
   }
 }

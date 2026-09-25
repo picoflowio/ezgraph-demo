@@ -2,7 +2,7 @@ import { HumanMessage } from "@langchain/core/messages";
 import { GraphNode, go, type GraphNodeResult } from "@picoflow/ezgraph";
 import { CriteriaHelper } from "../criteria-helper.js";
 import type { DecisionHotelGraphStateType } from "../decision-hotel-graph.state.js";
-import { searchHotels } from "../hotel-search.js";
+import { searchHotels } from "../data/hotel-search.js";
 import { PresentNode } from "./present.node.js";
 import { RouterDecisionNode } from "./router-decision.node.js";
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { HotelCriteriaSnapshot } from '../../src/graphs/decision-hotel-graph/criteria-helper.js';
-import { searchHotels } from '../../src/graphs/decision-hotel-graph/hotel-search.js';
+import { searchHotels } from '../../src/graphs/decision-hotel-graph/data/hotel-search.js';
 
 test('hotel search uses the full JSON catalog and returns grounded hotel details', () => {
   const criteria: HotelCriteriaSnapshot = {

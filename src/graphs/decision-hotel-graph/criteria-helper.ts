@@ -1,6 +1,6 @@
 import type { GraphNodeTarget } from "@picoflow/ezgraph";
 import type { DecisionHotelGraphStateType } from "./decision-hotel-graph.state.js";
-import type { SearchHotelEntry } from "./hotel-search.js";
+import type { SearchHotelEntry } from "./data/hotel-search.js";
 
 export class CriteriaHelper {
   private static criteriaNodes: Readonly<

@@ -6,6 +6,7 @@ import {
   go,
   type DecisionAnswers,
   type DecisionContext,
+  type DecisionErrorContext,
   type DecisionQuestionMap,
   type GraphNodeResponse,
 } from "@picoflow/ezgraph";
@@ -44,11 +45,13 @@ export class RouterDecisionNode extends DecisionNode<
   DecisionHotelGraphStateType,
   typeof ROUTING_QUESTIONS
 > {
-  defineQuestions() {
+  /** Declares the typed classifications the decision provider must answer. */
+  override defineQuestions() {
     return ROUTING_QUESTIONS;
   }
 
-  getPrompt(state: DecisionHotelGraphStateType): string {
+  /** Supplies shared guidance that the framework prepends to every question. */
+  override getPrompt(state: DecisionHotelGraphStateType): string {
     const criteria = CriteriaHelper.readCriteria(state);
     const issues = CriteriaHelper.validateCriteria(criteria);
     return fillHotelPrompt(hotelPrompts.router, {
@@ -64,7 +67,12 @@ export class RouterDecisionNode extends DecisionNode<
     });
   }
 
-  protected getDecisionData(state: DecisionHotelGraphStateType) {
+  /**
+   * Adds JSON-compatible application evidence to the provider input.
+   * The framework adds the current `request` and `priorRequests`; this hook
+   * must not replace either framework-owned field.
+   */
+  protected override getDecisionEvidence(state: DecisionHotelGraphStateType) {
     const criteria = CriteriaHelper.readCriteria(state);
     return {
       criteria,
@@ -75,7 +83,8 @@ export class RouterDecisionNode extends DecisionNode<
     };
   }
 
-  onDecision(
+  /** Applies application-owned routing policy to the provider's typed answers. */
+  override onDecision(
     answers: DecisionAnswers<typeof ROUTING_QUESTIONS>,
     context: DecisionContext,
     state: DecisionHotelGraphStateType,
@@ -129,6 +138,28 @@ export class RouterDecisionNode extends DecisionNode<
       : directTo(
           CriteriaHelper.nextNode(route),
           CriteriaHelper.criteriaPrompt(route),
+        );
+  }
+
+  /** Returns a deterministic route when this node's decision call fails. */
+  protected override onDecisionError(
+    context: DecisionErrorContext<DecisionHotelGraphStateType>,
+  ): GraphNodeResponse<DecisionHotelGraphStateType> {
+    const notice = context.state.nodes.RouterDecisionNode?.notice;
+    if (notice) {
+      return directTo(RouterDecisionNode, notice).withState({ notice: null });
+    }
+    const issues = CriteriaHelper.validateCriteria(
+      CriteriaHelper.readCriteria(context.state),
+    );
+    return issues.length
+      ? directTo(
+          CriteriaHelper.nextNode(issues[0]!),
+          CriteriaHelper.criteriaPrompt(issues[0]!.field),
+        )
+      : directTo(
+          RouterDecisionNode,
+          "Your saved criteria are ready. Say “search” to find hotels, or tell me what to revise.",
         );
   }
 }

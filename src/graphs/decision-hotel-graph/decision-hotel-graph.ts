@@ -4,9 +4,7 @@ import {
   GRAPH_END_NODE,
   ModelCatalog,
   TerminateSessionNode,
-  type DecisionErrorContext,
   type GraphDefinition,
-  type GraphNodeResponse,
   type LlmGateway,
 } from "@picoflow/ezgraph";
 import { AmenityNode } from "./nodes/amenity.node.js";
@@ -23,11 +21,6 @@ import {
   DecisionHotelGraphState,
   type DecisionHotelGraphStateType,
 } from "./decision-hotel-graph.state.js";
-import {
-  criteriaFallback,
-  presentationFallback,
-  routerFallback,
-} from "./decision-fallbacks.js";
 import { CriteriaHelper } from "./criteria-helper.js";
 
 CriteriaHelper.registerCriteriaNodes({
@@ -89,17 +82,5 @@ export class DecisionHotelGraph extends BaseGraph<DecisionHotelGraphStateType> {
     );
     graph.addEdge(TerminateSessionNode, END);
     return graph.compile();
-  }
-
-  protected override onDecisionError(
-    context: DecisionErrorContext<DecisionHotelGraphStateType>,
-  ): GraphNodeResponse<DecisionHotelGraphStateType> {
-    if (context.nodeId === RouterDecisionNode.id())
-      return routerFallback(context.state);
-    if (context.nodeId === CriteriaReadinessDecisionNode.id())
-      return criteriaFallback(context.state);
-    if (context.nodeId === PresentationDecisionNode.id())
-      return presentationFallback(context.state);
-    throw context.error;
   }
 }

@@ -3,6 +3,7 @@ import {
   directTo,
   type DecisionAnswers,
   type DecisionContext,
+  type DecisionErrorContext,
   type DecisionQuestionMap,
   type GraphNodeResponse,
 } from "@picoflow/ezgraph";
@@ -35,14 +36,21 @@ export class PresentationDecisionNode extends DecisionNode<
   DecisionHotelGraphStateType,
   typeof PRESENTATION_QUESTIONS
 > {
-  defineQuestions() {
+  /** Declares the typed quality judgments used to review a presentation. */
+  override defineQuestions() {
     return PRESENTATION_QUESTIONS;
   }
-  getPrompt(): string {
+
+  /** Supplies shared review guidance that is prepended to every question. */
+  override getPrompt(): string {
     return hotelPrompts.presentationJudge;
   }
 
-  protected getDecisionData(state: DecisionHotelGraphStateType) {
+  /**
+   * Exposes only the draft and its grounding data as provider evidence.
+   * The framework supplies conversation input without copying it into state.
+   */
+  protected override getDecisionEvidence(state: DecisionHotelGraphStateType) {
     return {
       draft: state.nodes.PresentNode?.draft ?? "",
       hotelFound: state.nodes.PresentNode?.hotelFound ?? [],
@@ -50,7 +58,8 @@ export class PresentationDecisionNode extends DecisionNode<
     };
   }
 
-  onDecision(
+  /** Applies application-owned quality thresholds and selects the safe response. */
+  override onDecision(
     answers: DecisionAnswers<typeof PRESENTATION_QUESTIONS>,
     _context: DecisionContext,
     state: DecisionHotelGraphStateType,
@@ -67,6 +76,18 @@ export class PresentationDecisionNode extends DecisionNode<
     return directTo(
       PresentNode,
       accepted ? draft : CriteriaHelper.renderHotelResults(hotels),
+    );
+  }
+
+  /** Returns grounded, code-rendered results when presentation review fails. */
+  protected override onDecisionError(
+    context: DecisionErrorContext<DecisionHotelGraphStateType>,
+  ): GraphNodeResponse<DecisionHotelGraphStateType> {
+    return directTo(
+      PresentNode,
+      CriteriaHelper.renderHotelResults(
+        context.state.nodes.PresentNode?.hotelFound ?? [],
+      ),
     );
   }
 }

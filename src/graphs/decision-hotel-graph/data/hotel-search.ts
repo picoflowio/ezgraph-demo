@@ -5,7 +5,7 @@ import {
   type Amenity,
   type HotelCriteriaSnapshot,
   type RoomType,
-} from "./criteria-helper.js";
+} from "../criteria-helper.js";
 
 export type SearchHotelEntry = {
   hotelName: string;
@@ -51,7 +51,7 @@ const HOTELS: Hotel[] = z
   .array(rawHotelSchema)
   .parse(
     JSON.parse(
-      readFileSync(new URL("./data/hotels.json", import.meta.url), "utf8"),
+      readFileSync(new URL("./hotels.json", import.meta.url), "utf8"),
     ),
   )
   .map((hotel) => ({

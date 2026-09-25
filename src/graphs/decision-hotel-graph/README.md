@@ -17,8 +17,8 @@ state, named history spaces, provider-neutral `DecisionNode`, and real
   deterministic filtering and pricing policy.
 - `PresentNode` drafts or acts on results through tools.
 - `PresentationDecisionNode` gates the draft against trusted result data.
-- `DecisionHotelGraph.onDecisionError()` owns bounded graph-wide fallbacks:
-  deterministic collection/search routing and grounded result rendering.
+- Each decision node owns its bounded `onDecisionError()` fallback:
+  deterministic collection/search routing or grounded result rendering.
 
 ## Persistence and histories
 
