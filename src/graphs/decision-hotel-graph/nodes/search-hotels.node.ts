@@ -1,17 +1,15 @@
-import { HumanMessage } from '@langchain/core/messages';
-import {
-  GraphNode,
-  go,
-  type GraphNodeResult,
-} from '@picoflow/ezgraph';
-import { CriteriaHelper } from '../criteria-helper.js';
-import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
-import { searchHotels } from '../hotel-search.js';
-import { PresentNode } from './present.node.js';
-import { RouterDecisionNode } from './router-decision.node.js';
+import { HumanMessage } from "@langchain/core/messages";
+import { GraphNode, go, type GraphNodeResult } from "@picoflow/ezgraph";
+import { CriteriaHelper } from "../criteria-helper.js";
+import type { DecisionHotelGraphStateType } from "../decision-hotel-graph.state.js";
+import { searchHotels } from "../hotel-search.js";
+import { PresentNode } from "./present.node.js";
+import { RouterDecisionNode } from "./router-decision.node.js";
 
 export class SearchHotelsNode extends GraphNode<DecisionHotelGraphStateType> {
-  getPrompt(): string { return ''; }
+  getPrompt(): string {
+    return "";
+  }
 
   async run(
     state: DecisionHotelGraphStateType,
@@ -26,7 +24,8 @@ export class SearchHotelsNode extends GraphNode<DecisionHotelGraphStateType> {
     if (!hotels.length) {
       return this.resolveNodeResponse(
         go(RouterDecisionNode).withState({
-          notice: 'No hotels matched all current criteria. Tell me whether to revise budget, room type, amenities, or distance.',
+          notice:
+            "No hotels matched all current criteria. Tell me whether to revise budget, room type, amenities, or distance.",
         }),
       );
     }
@@ -41,12 +40,14 @@ export class SearchHotelsNode extends GraphNode<DecisionHotelGraphStateType> {
         })
         .withMessage(
           new HumanMessage({
-            content: 'Present the current matching hotels.',
+            content: "Present the current matching hotels.",
             additional_kwargs: { ezgraphInternal: true },
           }),
         ),
     );
   }
 
-  protected usesChatModel(): boolean { return false; }
+  protected usesChatModel(): boolean {
+    return false;
+  }
 }

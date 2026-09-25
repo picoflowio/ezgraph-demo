@@ -83,7 +83,7 @@ export type QuoteGraphNodeState<NodeName extends keyof QuoteGraphNodes> = Omit<
 
 export const QuoteGraphState = createGraphStateAnnotation(
   DriverNode.name,
-  () => ({} as QuoteGraphNodes),
+  () => ({}) as QuoteGraphNodes,
 );
 
 export type QuoteGraphStateType = typeof QuoteGraphState.State;

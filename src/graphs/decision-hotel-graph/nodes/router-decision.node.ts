@@ -1,4 +1,4 @@
-import { HumanMessage } from '@langchain/core/messages';
+import { HumanMessage } from "@langchain/core/messages";
 import {
   DecisionNode,
   directTo,
@@ -8,39 +8,45 @@ import {
   type DecisionContext,
   type DecisionQuestionMap,
   type GraphNodeResponse,
-} from '@picoflow/ezgraph';
-import { CriteriaHelper } from '../criteria-helper.js';
-import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
-import { fillHotelPrompt, hotelPrompts } from '../prompt/hotel-prompts.js';
-import { CriteriaReadinessDecisionNode } from './criteria-readiness-decision.node.js';
+} from "@picoflow/ezgraph";
+import { CriteriaHelper } from "../criteria-helper.js";
+import type { DecisionHotelGraphStateType } from "../decision-hotel-graph.state.js";
+import { fillHotelPrompt, hotelPrompts } from "../prompt/hotel-prompts.js";
+import { CriteriaReadinessDecisionNode } from "./criteria-readiness-decision.node.js";
 
 export const ROUTING_QUESTIONS = {
   destination: {
-    type: 'choice',
+    type: "choice",
     criteria: {
-      dates: 'Set or revise dates',
-      budget: 'Set or revise nightly budget',
-      room_type: 'Set or revise room type',
-      amenities: 'Set or revise amenities',
-      distance: 'Set or revise distances',
-      review: 'Show saved criteria',
-      search: 'Execute a hotel search',
-      exit: 'End the conversation',
-      unclear: 'Ambiguous or outside this flow',
+      dates: "Set or revise dates",
+      budget: "Set or revise nightly budget",
+      room_type: "Set or revise room type",
+      amenities: "Set or revise amenities",
+      distance: "Set or revise distances",
+      review: "Show saved criteria",
+      search: "Execute a hotel search",
+      exit: "End the conversation",
+      unclear: "Ambiguous or outside this flow",
     },
   },
   request_delivery: {
-    type: 'choice',
+    type: "choice",
     criteria: {
-      apply_request: 'The latest request contains a new value or revision that the selected collector must apply',
-      prompt_next: 'The selected criterion is merely the next unresolved field',
-      none: 'The destination is not a criterion collector',
+      apply_request:
+        "The latest request contains a new value or revision that the selected collector must apply",
+      prompt_next: "The selected criterion is merely the next unresolved field",
+      none: "The destination is not a criterion collector",
     },
   },
 } as const satisfies DecisionQuestionMap;
 
-export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType, typeof ROUTING_QUESTIONS> {
-  defineQuestions() { return ROUTING_QUESTIONS; }
+export class RouterDecisionNode extends DecisionNode<
+  DecisionHotelGraphStateType,
+  typeof ROUTING_QUESTIONS
+> {
+  defineQuestions() {
+    return ROUTING_QUESTIONS;
+  }
 
   getPrompt(state: DecisionHotelGraphStateType): string {
     const criteria = CriteriaHelper.readCriteria(state);
@@ -48,8 +54,13 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
     return fillHotelPrompt(hotelPrompts.router, {
       COLLECTED_CRITERIA: JSON.stringify(criteria, null, 2),
       UNRESOLVED_CRITERIA: issues.length
-        ? issues.map((issue, index) => `${index + 1}. ${issue.field}: ${issue.message}`).join('\n')
-        : 'None.',
+        ? issues
+            .map(
+              (issue, index) =>
+                `${index + 1}. ${issue.field}: ${issue.message}`,
+            )
+            .join("\n")
+        : "None.",
     });
   }
 
@@ -57,7 +68,9 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
     const criteria = CriteriaHelper.readCriteria(state);
     return {
       criteria,
-      unresolved: CriteriaHelper.validateCriteria(criteria).map((issue) => issue.field),
+      unresolved: CriteriaHelper.validateCriteria(criteria).map(
+        (issue) => issue.field,
+      ),
       notice: state.nodes.RouterDecisionNode?.notice ?? null,
     };
   }
@@ -77,19 +90,28 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
 
     const route = answers.destination.choice;
     this.saveState({ lastRoute: route, lastDecision: answers });
-    if (route === 'unclear') {
-      return directTo(RouterDecisionNode, 'I can update dates, nightly budget, room type, amenities, or distance. You can also ask to review or search.');
+    if (route === "unclear") {
+      return directTo(
+        RouterDecisionNode,
+        "I can update dates, nightly budget, room type, amenities, or distance. You can also ask to review or search.",
+      );
     }
-    if (route === 'exit') {
-      return finish('Thanks for considering Hilton hotels in Portland.');
+    if (route === "exit") {
+      return finish("Thanks for considering Hilton hotels in Portland.");
     }
-    if (route === 'review') {
-      return directTo(RouterDecisionNode, `${CriteriaHelper.renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`);
+    if (route === "review") {
+      return directTo(
+        RouterDecisionNode,
+        `${CriteriaHelper.renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`,
+      );
     }
-    if (route === 'search') {
-      if (context.request.trim().toLowerCase() !== 'search') {
+    if (route === "search") {
+      if (context.request.trim().toLowerCase() !== "search") {
         return issues.length
-          ? directTo(CriteriaHelper.nextNode(issues[0]!), CriteriaHelper.criteriaPrompt(issues[0]!.field))
+          ? directTo(
+              CriteriaHelper.nextNode(issues[0]!),
+              CriteriaHelper.criteriaPrompt(issues[0]!.field),
+            )
           : directTo(
               RouterDecisionNode,
               `${CriteriaHelper.renderCriteriaSummary(criteria)}\n\nTell me what to revise, or say “search” when ready.`,
@@ -99,8 +121,14 @@ export class RouterDecisionNode extends DecisionNode<DecisionHotelGraphStateType
         ? go(CriteriaHelper.nextNode(issues[0]!))
         : go(CriteriaReadinessDecisionNode);
     }
-    return answers.request_delivery.choice === 'apply_request' || CriteriaHelper.criterionAnswered(criteria, route)
-      ? go(CriteriaHelper.nextNode(route)).withMessage(new HumanMessage(context.request))
-      : directTo(CriteriaHelper.nextNode(route), CriteriaHelper.criteriaPrompt(route));
+    return answers.request_delivery.choice === "apply_request" ||
+      CriteriaHelper.criterionAnswered(criteria, route)
+      ? go(CriteriaHelper.nextNode(route)).withMessage(
+          new HumanMessage(context.request),
+        )
+      : directTo(
+          CriteriaHelper.nextNode(route),
+          CriteriaHelper.criteriaPrompt(route),
+        );
   }
 }

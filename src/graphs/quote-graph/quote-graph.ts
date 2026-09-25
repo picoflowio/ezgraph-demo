@@ -53,7 +53,9 @@ export class QuoteGraph extends BaseGraph<QuoteGraphStateType> {
   protected override async onRestoreSessionDoc(
     sessionDoc: SessionDocument<QuoteGraphStateType>,
   ): Promise<SessionDocument<QuoteGraphStateType> | null> {
-    if (this.idleMs(sessionDoc) >= readMs("QUOTE_GRAPH_IDLE_MS", DEFAULT_IDLE_MS)) {
+    if (
+      this.idleMs(sessionDoc) >= readMs("QUOTE_GRAPH_IDLE_MS", DEFAULT_IDLE_MS)
+    ) {
       return null;
     }
     return sessionDoc;

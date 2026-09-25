@@ -6,33 +6,42 @@ import {
   type DecisionContext,
   type DecisionQuestionMap,
   type GraphNodeResponse,
-} from '@picoflow/ezgraph';
-import { CriteriaHelper } from '../criteria-helper.js';
-import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
-import { fillHotelPrompt, hotelPrompts } from '../prompt/hotel-prompts.js';
-import { RouterDecisionNode } from './router-decision.node.js';
-import { SearchHotelsNode } from './search-hotels.node.js';
+} from "@picoflow/ezgraph";
+import { CriteriaHelper } from "../criteria-helper.js";
+import type { DecisionHotelGraphStateType } from "../decision-hotel-graph.state.js";
+import { fillHotelPrompt, hotelPrompts } from "../prompt/hotel-prompts.js";
+import { RouterDecisionNode } from "./router-decision.node.js";
+import { SearchHotelsNode } from "./search-hotels.node.js";
 
 export const CRITERIA_REVIEW_QUESTIONS = {
   outcome: {
-    type: 'choice',
+    type: "choice",
     criteria: {
-      ready: 'Ready to search', dates: 'Dates conflict', budget: 'Budget conflicts',
-      room_type: 'Room type conflicts', amenities: 'Amenities conflict',
-      distance: 'Distance conflicts', unclear: 'Ambiguous',
+      ready: "Ready to search",
+      dates: "Dates conflict",
+      budget: "Budget conflicts",
+      room_type: "Room type conflicts",
+      amenities: "Amenities conflict",
+      distance: "Distance conflicts",
+      unclear: "Ambiguous",
     },
   },
   faithful: {
-    type: 'noul',
+    type: "noul",
     criteria: {
-      true: 'Saved criteria reflect requests',
-      false: 'Saved criteria contradict requests',
+      true: "Saved criteria reflect requests",
+      false: "Saved criteria contradict requests",
     },
   },
 } as const satisfies DecisionQuestionMap;
 
-export class CriteriaReadinessDecisionNode extends DecisionNode<DecisionHotelGraphStateType, typeof CRITERIA_REVIEW_QUESTIONS> {
-  defineQuestions() { return CRITERIA_REVIEW_QUESTIONS; }
+export class CriteriaReadinessDecisionNode extends DecisionNode<
+  DecisionHotelGraphStateType,
+  typeof CRITERIA_REVIEW_QUESTIONS
+> {
+  defineQuestions() {
+    return CRITERIA_REVIEW_QUESTIONS;
+  }
 
   getPrompt(state: DecisionHotelGraphStateType): string {
     const criteria = CriteriaHelper.readCriteria(state);
@@ -40,14 +49,17 @@ export class CriteriaReadinessDecisionNode extends DecisionNode<DecisionHotelGra
     return fillHotelPrompt(hotelPrompts.criteriaJudge, {
       NORMALIZED_CRITERIA: JSON.stringify(criteria, null, 2),
       DETERMINISTIC_ISSUES: issues.length
-        ? issues.map((issue) => `${issue.field}: ${issue.message}`).join('\n')
-        : 'None.',
+        ? issues.map((issue) => `${issue.field}: ${issue.message}`).join("\n")
+        : "None.",
     });
   }
 
   protected getDecisionData(state: DecisionHotelGraphStateType) {
     const criteria = CriteriaHelper.readCriteria(state);
-    return { criteria, deterministicIssues: CriteriaHelper.validateCriteria(criteria) };
+    return {
+      criteria,
+      deterministicIssues: CriteriaHelper.validateCriteria(criteria),
+    };
   }
 
   onDecision(
@@ -60,13 +72,16 @@ export class CriteriaReadinessDecisionNode extends DecisionNode<DecisionHotelGra
     const outcome = answers.outcome.choice;
     const accepted =
       issues.length === 0 &&
-      outcome === 'ready' &&
+      outcome === "ready" &&
       answers.faithful.noul >= 0.75;
     this.saveState({ review: answers, accepted });
     if (issues.length) return go(CriteriaHelper.nextNode(issues[0]!));
     if (accepted) return go(SearchHotelsNode);
-    if (outcome !== 'ready' && outcome !== 'unclear') {
-      return directTo(CriteriaHelper.nextNode(outcome), CriteriaHelper.criteriaPrompt(outcome));
+    if (outcome !== "ready" && outcome !== "unclear") {
+      return directTo(
+        CriteriaHelper.nextNode(outcome),
+        CriteriaHelper.criteriaPrompt(outcome),
+      );
     }
     return directTo(
       RouterDecisionNode,

@@ -1,28 +1,38 @@
-import { z } from 'zod';
-import { ConversationNode, Tool, go, type ToolDefinition, type ToolResponse } from '@picoflow/ezgraph';
-import { CriteriaHelper, type RoomType } from '../criteria-helper.js';
-import type { DecisionHotelGraphStateType } from '../decision-hotel-graph.state.js';
-import { hotelPrompts } from '../prompt/hotel-prompts.js';
-import { RouterDecisionNode } from './router-decision.node.js';
+import { z } from "zod";
+import {
+  ConversationNode,
+  Tool,
+  go,
+  type ToolDefinition,
+  type ToolResponse,
+} from "@picoflow/ezgraph";
+import { CriteriaHelper, type RoomType } from "../criteria-helper.js";
+import type { DecisionHotelGraphStateType } from "../decision-hotel-graph.state.js";
+import { hotelPrompts } from "../prompt/hotel-prompts.js";
+import { RouterDecisionNode } from "./router-decision.node.js";
 
 export class RoomTypeNode extends ConversationNode<DecisionHotelGraphStateType> {
-  getPrompt(): string { return hotelPrompts.roomType; }
-
-  defineTool(): readonly ToolDefinition[] {
-    return [{
-      name: 'capture_room_type',
-      description: 'Save one supported room type.',
-      schema: z.object({ roomType: z.enum(CriteriaHelper.ROOM_TYPES) }),
-    }];
+  getPrompt(): string {
+    return hotelPrompts.roomType;
   }
 
-  @Tool('capture_room_type')
+  defineTool(): readonly ToolDefinition[] {
+    return [
+      {
+        name: "capture_room_type",
+        description: "Save one supported room type.",
+        schema: z.object({ roomType: z.enum(CriteriaHelper.ROOM_TYPES) }),
+      },
+    ];
+  }
+
+  @Tool("capture_room_type")
   async captureRoomType(input: { roomType: RoomType }): Promise<ToolResponse> {
     this.saveState({ answered: true, roomType: input.roomType });
     return go(RouterDecisionNode);
   }
 
-  @Tool('reroute_request')
+  @Tool("reroute_request")
   async rerouteRequest(): Promise<ToolResponse> {
     return go(RouterDecisionNode);
   }
