@@ -9,26 +9,29 @@ export class AmenityNode extends ConversationNode<DecisionHotelGraphStateType> {
   getPrompt(): string { return hotelPrompts.amenities; }
 
   defineTool(): readonly ToolDefinition[] {
-    return [{
-      name: 'capture_amenities',
-      description: 'Save required amenities. An empty array is valid only when the user explicitly states no amenity preference.',
-      schema: z.object({ amenities: z.array(z.enum(AMENITIES)) }),
-    }];
+    return [
+      {
+        name: 'capture_amenities',
+        description: 'Save one or more required hotel amenities.',
+        schema: z.object({ amenities: z.array(z.enum(AMENITIES)).min(1) }),
+      },
+      {
+        name: 'capture_no_amenity_preference',
+        description: 'Record that the user explicitly has no amenity preference.',
+        schema: z.object({}),
+      },
+    ];
   }
 
   @Tool('capture_amenities')
-  async captureAmenities(
-    input: { amenities: (typeof AMENITIES)[number][] },
-    _context: unknown,
-    state: DecisionHotelGraphStateType,
-  ): Promise<ToolResponse> {
-    if (
-      input.amenities.length === 0 &&
-      !isExplicitNoPreference(this.graph.input(state))
-    ) {
-      return go(RouterDecisionNode);
-    }
+  async captureAmenities(input: { amenities: (typeof AMENITIES)[number][] }): Promise<ToolResponse> {
     this.saveState({ answered: true, amenities: [...new Set(input.amenities)] });
+    return go(RouterDecisionNode);
+  }
+
+  @Tool('capture_no_amenity_preference')
+  async captureNoAmenityPreference(): Promise<ToolResponse> {
+    this.saveState({ answered: true, amenities: [] });
     return go(RouterDecisionNode);
   }
 
@@ -36,10 +39,4 @@ export class AmenityNode extends ConversationNode<DecisionHotelGraphStateType> {
   async rerouteRequest(): Promise<ToolResponse> {
     return go(RouterDecisionNode);
   }
-}
-
-function isExplicitNoPreference(input: string): boolean {
-  return /\b(?:no amenit(?:y|ies)(?: preference)?|amenit(?:y|ies) (?:do not|don't|does not|doesn't) matter|any amenit(?:y|ies)(?: (?:is|are) fine)?|do not care about amenit(?:y|ies)|don't care about amenit(?:y|ies))\b/i.test(
-    input,
-  );
 }
