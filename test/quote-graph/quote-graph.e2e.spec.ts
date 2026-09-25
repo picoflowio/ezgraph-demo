@@ -59,12 +59,14 @@ const scenarioPath = join(
   "quote-graph",
   "quote-graph.scenario.json",
 );
-const failureArtifactPath = join(
+const artifactDirectory = join(
   process.cwd(),
   "test",
   ".tmp",
-  "quote-graph-semantic-failure.json",
+  "quote-graph",
 );
+const failureArtifactPath = join(artifactDirectory, "semantic-failure.json");
+const successArtifactPath = join(artifactDirectory, "live.json");
 
 process.env.QUOTE_GRAPH_CURRENT_DATE ??= "2027-06-01T00:00:00.000Z";
 
@@ -172,6 +174,14 @@ test(
       logProgress("checking final session state");
       await expectSessionState(app, sessionId);
       logProgress("final session state ok");
+
+      mkdirSync(artifactDirectory, { recursive: true });
+      writeFileSync(
+        successArtifactPath,
+        JSON.stringify({ transcript }, null, 2),
+        "utf8",
+      );
+      logProgress(`saved successful transcript: ${successArtifactPath}`);
     } finally {
       if (sessionId && keepSession) {
         logProgress(`retained session: ${sessionId}`);

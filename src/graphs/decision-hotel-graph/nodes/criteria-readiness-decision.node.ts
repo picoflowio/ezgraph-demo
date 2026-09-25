@@ -61,7 +61,7 @@ export class CriteriaReadinessDecisionNode extends DecisionNode<
    * Adds normalized criteria and deterministic validation results as evidence.
    * Conversation input is added separately by the DecisionNode framework.
    */
-  protected override getDecisionEvidence(state: DecisionHotelGraphStateType) {
+  protected override getDecisionFacts(state: DecisionHotelGraphStateType) {
     const criteria = CriteriaHelper.readCriteria(state);
     return {
       criteria,

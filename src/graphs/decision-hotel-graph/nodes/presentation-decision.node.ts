@@ -50,7 +50,7 @@ export class PresentationDecisionNode extends DecisionNode<
    * Exposes only the draft and its grounding data as provider evidence.
    * The framework supplies conversation input without copying it into state.
    */
-  protected override getDecisionEvidence(state: DecisionHotelGraphStateType) {
+  protected override getDecisionFacts(state: DecisionHotelGraphStateType) {
     return {
       draft: state.nodes.PresentNode?.draft ?? "",
       hotelFound: state.nodes.PresentNode?.hotelFound ?? [],

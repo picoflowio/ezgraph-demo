@@ -41,7 +41,7 @@
     "@nestjs/core": "11.1.28",
     "@nestjs/platform-fastify": "11.1.28",
     "@nestjs/swagger": "11.4.6",
-    "@picoflow/ezgraph": "0.0.8",
+    "@picoflow/ezgraph": "0.0.9",
     "dotenv": "17.4.2",
     "fastify": "5.10.0",
     "langchain": "1.5.12",

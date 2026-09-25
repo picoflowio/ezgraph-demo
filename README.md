@@ -32,7 +32,7 @@ Jev in a mixed graph rather than replacing ordinary conversational nodes:
 
 Each decision node declares typed choice, score, or probability questions with
 `defineQuestions()`, supplies focused JSON evidence with
-`getDecisionEvidence()`, and handles the typed result in `onDecision()`.
+`getDecisionFacts()`, and handles the typed result in `onDecision()`.
 Thresholds, routing, deterministic validation, side effects, and failure
 fallbacks remain application-owned.
 

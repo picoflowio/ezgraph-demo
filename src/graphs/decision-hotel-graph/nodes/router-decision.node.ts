@@ -72,7 +72,7 @@ export class RouterDecisionNode extends DecisionNode<
    * The framework adds the current `request` and `priorRequests`; this hook
    * must not replace either framework-owned field.
    */
-  protected override getDecisionEvidence(state: DecisionHotelGraphStateType) {
+  protected override getDecisionFacts(state: DecisionHotelGraphStateType) {
     const criteria = CriteriaHelper.readCriteria(state);
     return {
       criteria,
