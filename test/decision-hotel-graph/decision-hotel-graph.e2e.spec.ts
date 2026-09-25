@@ -394,6 +394,8 @@ async function expectSessionState(
   assert.equal(session.graph.currentNode, "end");
 
   const nodes = session.graph.nodes;
+  if (!nodes) throw new Error("Expected DecisionHotelGraph node state");
+
   assert.deepEqual(nodes.DateRangeNode, {
     answered: true,
     start: "2027-08-03",
