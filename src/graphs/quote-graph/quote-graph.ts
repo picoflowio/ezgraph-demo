@@ -33,7 +33,6 @@ export class QuoteGraph extends BaseGraph<QuoteGraphStateType> {
         reasoningEffort: "low",
       }),
       endNode: GRAPH_END_NODE,
-      initialHistorySpace: "quote-intake",
       historySpaces: [
         [DriverNode, "quote-intake"],
         [VehicleNode, "quote-intake"],

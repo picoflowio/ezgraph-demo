@@ -46,7 +46,6 @@ export class DecisionHotelGraph extends BaseGraph<DecisionHotelGraphStateType> {
       },
       endNode: GRAPH_END_NODE,
       llmTimeoutMs: 60_000,
-      initialHistorySpace: "hotel-intake",
       historySpaces: [
         [RouterDecisionNode, "hotel-intake"],
         [DateRangeNode, "hotel-intake"],
