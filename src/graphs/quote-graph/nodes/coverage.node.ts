@@ -1,7 +1,7 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   Tool,
   go,
   stay,
@@ -45,7 +45,7 @@ const deductibleSchema = z.union([
 ]);
 
 /** Fourth stage: coverage selections, validated against ownership rules. */
-export class CoverageNode extends ConversationNode<QuoteGraphStateType> {
+export class CoverageNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(state: QuoteGraphStateType): string {
     const ownership = state.nodes.VehicleNode?.vehicle?.ownership ?? "own";
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.coverage, {

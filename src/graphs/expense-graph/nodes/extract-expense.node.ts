@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   ModelCatalog,
   Tool,
   ProviderFileManager,
@@ -37,7 +37,7 @@ export type ReceiptFileUploader = {
  * PDF is uploaded to the provider, read visually, and captured as itemized
  * expense JSON before the graph completes.
  */
-export class ExtractExpenseNode extends ConversationNode<ExpenseGraphStateType> {
+export class ExtractExpenseNode extends LlmNode<ExpenseGraphStateType> {
   constructor(
     llmGateway: LlmGateway,
     runtime: GraphNodeRuntime<ExpenseGraphStateType>,

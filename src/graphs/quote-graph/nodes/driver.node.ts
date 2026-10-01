@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   Tool,
   go,
   stay,
@@ -36,7 +36,7 @@ const US_STATE_CODES = new Set([
 ]);
 
 /** First stage: identifies and validates the primary driver. */
-export class DriverNode extends ConversationNode<QuoteGraphStateType> {
+export class DriverNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(): string {
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.driver, {
       CURRENT_DATE: quoteNow().toISOString().slice(0, 10),

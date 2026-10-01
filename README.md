@@ -1,5 +1,8 @@
 # EZGraph demo
 
+Model-driven stages extend `LlmNode`, which supports both one-request extraction
+and multi-turn chat. Its response-validation and LLM error hooks apply to both.
+
 This is a public NestJS + Fastify consumer application for
 [`@picoflow/ezgraph`](https://www.npmjs.com/package/@picoflow/ezgraph). It
 contains the same Sequoia Auto Insurance conversation built twice:
@@ -11,7 +14,7 @@ contains the same Sequoia Auto Insurance conversation built twice:
 
 It also includes:
 
-- `DecisionHotelGraph`, a mixed `DecisionNode` + `ConversationNode` hotel
+- `DecisionHotelGraph`, a mixed `DecisionNode` + `LlmNode` hotel
   workflow with deterministic policy, semantic routing/review, durable decision
   audits, and node-owned fallbacks. See the
   [complete node-transition map and successful live transcript](src/graphs/decision-hotel-graph/README.md).
@@ -132,7 +135,7 @@ deterministic test path.
 The EZGraph implementation shows the current authoring contract:
 
 ```ts
-export class DriverNode extends ConversationNode<QuoteGraphStateType> {
+export class DriverNode extends LlmNode<QuoteGraphStateType> {
   @Tool("capture_driver")
   async captureDriver(input: DriverInput): Promise<ToolResponse> {
     const driver = validateDriver(input);

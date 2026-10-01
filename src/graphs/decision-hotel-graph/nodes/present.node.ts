@@ -1,7 +1,7 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   Tool,
   finish,
   go,
@@ -15,7 +15,7 @@ import { fillHotelPrompt, hotelPrompts } from "../prompt/hotel-prompts.js";
 import { PresentationDecisionNode } from "./presentation-decision.node.js";
 import { RouterDecisionNode } from "./router-decision.node.js";
 
-export class PresentNode extends ConversationNode<DecisionHotelGraphStateType> {
+export class PresentNode extends LlmNode<DecisionHotelGraphStateType> {
   getPrompt(state: DecisionHotelGraphStateType): string {
     return fillHotelPrompt(hotelPrompts.present, {
       HOTEL_FOUND_INFO: JSON.stringify(

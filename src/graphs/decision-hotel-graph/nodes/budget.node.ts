@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   Tool,
   go,
   stay,
@@ -11,7 +11,7 @@ import type { DecisionHotelGraphStateType } from "../decision-hotel-graph.state.
 import { hotelPrompts } from "../prompt/hotel-prompts.js";
 import { RouterDecisionNode } from "./router-decision.node.js";
 
-export class BudgetNode extends ConversationNode<DecisionHotelGraphStateType> {
+export class BudgetNode extends LlmNode<DecisionHotelGraphStateType> {
   getPrompt(): string {
     return hotelPrompts.budget;
   }

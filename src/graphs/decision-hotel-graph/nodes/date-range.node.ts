@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   Tool,
   go,
   stay,
@@ -12,7 +12,7 @@ import type { DecisionHotelGraphStateType } from "../decision-hotel-graph.state.
 import { fillHotelPrompt, hotelPrompts } from "../prompt/hotel-prompts.js";
 import { RouterDecisionNode } from "./router-decision.node.js";
 
-export class DateRangeNode extends ConversationNode<DecisionHotelGraphStateType> {
+export class DateRangeNode extends LlmNode<DecisionHotelGraphStateType> {
   getPrompt(): string {
     return fillHotelPrompt(hotelPrompts.dates, {
       CURRENT_DATE: CriteriaHelper.currentBusinessDate()

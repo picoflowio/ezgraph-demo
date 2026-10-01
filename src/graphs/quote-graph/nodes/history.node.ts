@@ -1,7 +1,7 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   Tool,
   go,
   stay,
@@ -38,7 +38,7 @@ type CaptureHistoryInput = {
 };
 
 /** Third stage: captures incidents and prior-insurance facts in its own history space. */
-export class HistoryNode extends ConversationNode<QuoteGraphStateType> {
+export class HistoryNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(): string {
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.history, {
       CURRENT_DATE: quoteNow().toISOString().slice(0, 10),

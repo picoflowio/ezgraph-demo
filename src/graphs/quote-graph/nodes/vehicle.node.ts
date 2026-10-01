@@ -1,7 +1,7 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   Tool,
   go,
   stay,
@@ -36,7 +36,7 @@ type CaptureVehicleUseInput = {
 };
 
 /** Second stage: resolves the vehicle against the catalog and captures its use. */
-export class VehicleNode extends ConversationNode<QuoteGraphStateType> {
+export class VehicleNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(state: QuoteGraphStateType): string {
     const local = this.state(state) as QuoteGraphNodeState<"VehicleNode">;
     const resolvedId = local.resolvedVehicleId;

@@ -9,7 +9,7 @@ state, named history spaces, provider-neutral `DecisionNode`, and real
 
 - `RouterDecisionNode` classifies the latest request; it never parses or saves
   hotel criteria.
-- Five `ConversationNode` collectors validate and save dates, budget, room
+- Five `LlmNode` collectors validate and save dates, budget, room
   type, amenities, and distance through typed tools.
 - `CriteriaReadinessDecisionNode` semantically reviews the normalized record,
   while deterministic validation remains authoritative.

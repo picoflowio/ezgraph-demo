@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   Tool,
   go,
   type ToolDefinition,
@@ -11,7 +11,7 @@ import type { DecisionHotelGraphStateType } from "../decision-hotel-graph.state.
 import { hotelPrompts } from "../prompt/hotel-prompts.js";
 import { RouterDecisionNode } from "./router-decision.node.js";
 
-export class AmenityNode extends ConversationNode<DecisionHotelGraphStateType> {
+export class AmenityNode extends LlmNode<DecisionHotelGraphStateType> {
   getPrompt(): string {
     return hotelPrompts.amenities;
   }

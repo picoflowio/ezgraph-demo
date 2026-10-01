@@ -1,7 +1,7 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
-  ConversationNode,
+  LlmNode,
   ModelCatalog,
   Tool,
   direct,
@@ -70,7 +70,7 @@ const ACCEPTED_TIER_PHRASES: Record<QuoteTierName, string> = {
  * and locks in an accepted quote. Explaining tier trade-offs is the one place
  * this graph pays for a stronger model.
  */
-export class QuoteNode extends ConversationNode<QuoteGraphStateType> {
+export class QuoteNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(state: QuoteGraphStateType): string {
     const local = this.state(state) as QuoteGraphNodeState<"QuoteNode">;
     return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.quote, {
