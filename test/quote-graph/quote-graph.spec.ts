@@ -176,6 +176,14 @@ describe("QuoteGraph", () => {
     assert.equal(state.completed, true);
     assert.equal(state.currentNode, "end");
     assert.equal(state.nodes.QuoteNode?.acceptedTier, "selected");
+    assert.deepEqual(state.context.rating, {
+      calculatedAt: QUOTE_DATE.toISOString(),
+      businessDate: "2027-06-01",
+    });
+    assert.deepEqual(state.context.acceptance, {
+      acceptedAt: QUOTE_DATE.toISOString(),
+      rating: state.context.rating,
+    });
     assert.match(String(state.nodes.QuoteNode?.referenceNumber), /^QT-\d{6}$/);
     assert.match(state.response, /QT-\d{6}/);
     assert.match(

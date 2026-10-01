@@ -157,6 +157,12 @@ export class QuoteNode extends LlmNode<QuoteGraphStateType> {
     const rating = buildRatingSubject(state.nodes);
     if ("error" in rating) return reject(rating.error);
     const tiers = RatingEngine.quoteTiers(rating.subject, next, now);
+    this.graph.saveContext({
+      rating: {
+        calculatedAt: now.toISOString(),
+        businessDate: now.toISOString().slice(0, 10),
+      },
+    });
     const response = `Here is the updated quote:\n${formatTiers(tiers)}\nAdjust anything else, accept a tier, or rework the coverage.`;
     this.saveState({ tiers });
     this.graph.saveNodeState(CoverageNode, { coverage: next });
@@ -175,6 +181,12 @@ export class QuoteNode extends LlmNode<QuoteGraphStateType> {
     const referenceNumber = `QT-${Math.floor(100000 + Math.random() * 900000)}`;
     const response = `You're all set — ${ACCEPTED_TIER_PHRASES[tier.tier]} (${TIER_LABELS[tier.tier]}) is locked in at ${usd(tier.monthlyPremium)}/month starting ${tier.coverage.startDate}. Your quote reference is ${referenceNumber}.`;
     this.saveState({ acceptedTier: tier.tier, referenceNumber });
+    this.graph.saveContext({
+      acceptance: {
+        acceptedAt: quoteNow().toISOString(),
+        rating: this.graph.getContext().rating ?? null,
+      },
+    });
     return finish(response);
   }
 

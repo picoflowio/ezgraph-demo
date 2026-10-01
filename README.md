@@ -20,6 +20,12 @@ It also includes:
   [complete node-transition map and successful live transcript](src/graphs/decision-hotel-graph/README.md).
 - `ExpenseGraph`, a one-shot receipt/folio extraction graph.
 
+QuoteGraph demonstrates shared runtime context: coverage calculation and quote
+adjustment call `this.graph.saveContext()` with rating timestamps; acceptance
+reads those timestamps through `getContext()` and records its own event.
+The session document persists them under `graph.context`, preserving unrelated
+branches across turns. Business facts continue to live in node state.
+
 ## Jev-backed decisions
 
 EZGraph now supports Jev through its provider-neutral `DecisionNode` contract.

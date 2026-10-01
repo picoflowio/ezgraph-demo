@@ -95,6 +95,12 @@ export class CoverageNode extends LlmNode<QuoteGraphStateType> {
     const rating = buildRatingSubject(state.nodes);
     if ("error" in rating) return reject(rating.error);
     const tiers = RatingEngine.quoteTiers(rating.subject, coverage, now);
+    this.graph.saveContext({
+      rating: {
+        calculatedAt: now.toISOString(),
+        businessDate: now.toISOString().slice(0, 10),
+      },
+    });
     this.saveState({ coverage });
     this.graph.saveNodeState(QuoteNode, { tiers });
     return go(QuoteNode).withMessage(
