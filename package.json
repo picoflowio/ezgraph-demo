@@ -41,13 +41,14 @@
     "@nestjs/core": "11.1.28",
     "@nestjs/platform-fastify": "11.1.28",
     "@nestjs/swagger": "11.4.6",
-    "@picoflow/ezgraph": "0.0.14",
+    "@picoflow/ezgraph": "0.0.15",
     "dotenv": "17.4.2",
     "fastify": "5.10.0",
     "langchain": "1.5.12",
     "mongodb": "6.21.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
+    "undici": "6.28.0",
     "zod": "4.4.3"
   },
   "devDependencies": {

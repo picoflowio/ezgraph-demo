@@ -939,10 +939,10 @@
   dependencies:
     tslib "2.8.1"
 
-"@picoflow/ezgraph@0.0.14":
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/@picoflow/ezgraph/-/ezgraph-0.0.14.tgz#f0ccde2fddb87dbda88375a2a2101897730272fc"
-  integrity sha512-j39vp3YIKKd9mnchrzfcG/WTucjst5DJ5vzbQ4JkijOApDzGg9U7EyAE2k/mzHwcv9Y8Udx3Cr77khCdJfL0Kw==
+"@picoflow/ezgraph@0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@picoflow/ezgraph/-/ezgraph-0.0.15.tgz#7f6af77fdb8583de9dbe103b0899b6a3b5cee31e"
+  integrity sha512-umpi0iFNoHw265+62ObR+AOG9so9d09NKbdLEMtbTvU52uLb3xrKr1Jt/Y66fpcJ6UHEcFSEreamMrcdZU8pmA==
   dependencies:
     "@anthropic-ai/sdk" "0.115.0"
     "@azure/cosmos" "4.10.0"
@@ -3105,6 +3105,11 @@ undici-types@~8.9.0:
   version "8.9.0"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-8.9.0.tgz#e240d97c8b5d85e5347ce73d25865c7906c1ec9f"
   integrity sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==
+
+undici@6.28.0:
+  version "6.28.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-6.28.0.tgz#9f0e385744fef5021d6596c5bccd783f61193c1c"
+  integrity sha512-LIY910g9TI13YS95lrMFrs8Rm/u/irgHeTWoKCoteeJ04CUJ92eEfj0rVn+7VKMPBpUPiUoBKfhNyLI23EE/KA==
 
 universalify@^2.0.0:
   version "2.0.1"

@@ -8,7 +8,17 @@ import {
   NestFastifyApplication,
 } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { Agent, setGlobalDispatcher } from "undici";
 import { AppModule } from "./app.module.js";
+
+// Long LLM calls can exceed fetch's 300s default.
+const llmHttpTimeoutMs = Number(process.env.LLM_HTTP_TIMEOUT_MS ?? 1_200_000);
+setGlobalDispatcher(
+  new Agent({
+    headersTimeout: llmHttpTimeoutMs,
+    bodyTimeout: llmHttpTimeoutMs,
+  }),
+);
 
 export async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
