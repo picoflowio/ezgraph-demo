@@ -5,6 +5,7 @@ import { z } from "zod";
 import {
   LlmNode,
   ModelCatalog,
+  Prompt,
   Tool,
   ProviderFileManager,
   finish,
@@ -19,7 +20,11 @@ import {
   type LlmFile,
 } from "@picoflow/ezgraph";
 import type { ExpenseGraphStateType } from "../expense-graph.state.js";
-import { extractExpensePrompt } from "../prompt/expense-prompt.js";
+
+const ExtractExpensePrompt = `${Prompt.file("../prompt/expense.md")}
+
+## Data Extraction JSON Example
+${Prompt.file("../prompt/expense-example.json")}`;
 
 const bundledReceipts = new Map([
   ["GrandSequoia.pdf", new URL("../data/GrandSequoia.pdf", import.meta.url)],
@@ -48,9 +53,9 @@ export class ExtractExpenseNode extends LlmNode<ExpenseGraphStateType> {
 
   getPrompt(state: ExpenseGraphStateType): string {
     const fileName = this.configuredFileName(state);
-    return `${extractExpensePrompt}
-
-The configured receipt is ${fileName}. Immediately call fetch_file with that exact name. Do not attempt to access any other local path. After the file is attached, extract its data and call capture_json exactly once, with its json argument set to a JSON-encoded string containing the complete expense object. Never return the expense JSON as normal chat text.`;
+    return Prompt.replace(ExtractExpensePrompt, {
+      FileName: fileName,
+    });
   }
 
   defineTool(): readonly (

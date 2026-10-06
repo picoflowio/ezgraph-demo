@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   LlmNode,
+  Prompt,
   Tool,
   go,
   stay,
@@ -12,12 +13,12 @@ import type {
   DriverProfile,
   QuoteGraphStateType,
 } from "../quote-graph.state.js";
-import {
-  endChatInstruction,
-  fillPrompt,
-  quotePrompt,
-} from "../prompt/quote-prompt.js";
 import { VehicleNode } from "./vehicle.node.js";
+
+const QuoteRolePrompt = Prompt.file("../prompt/role.md");
+const DriverPrompt = Prompt.file("../prompt/driver.md");
+const EndChatInstruction =
+  "If the user explicitly wants to end the conversation, call terminate_session immediately. Never mention internal tools, phases, schemas, or implementation details.";
 
 type DriverInput = {
   fullName: string;
@@ -38,9 +39,9 @@ const US_STATE_CODES = new Set([
 /** First stage: identifies and validates the primary driver. */
 export class DriverNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(): string {
-    return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.driver, {
+    return `${QuoteRolePrompt}\n\n${Prompt.replace(DriverPrompt, {
       CURRENT_DATE: quoteNow().toISOString().slice(0, 10),
-    })}\n\n${endChatInstruction}`;
+    })}\n\n${EndChatInstruction}`;
   }
 
   defineTool(): readonly ToolDefinition<DriverInput>[] {

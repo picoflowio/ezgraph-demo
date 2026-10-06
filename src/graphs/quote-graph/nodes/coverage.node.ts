@@ -2,6 +2,7 @@ import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
   LlmNode,
+  Prompt,
   Tool,
   go,
   stay,
@@ -22,12 +23,12 @@ import type {
   QuoteGraphStateType,
   QuoteTier,
 } from "../quote-graph.state.js";
-import {
-  endChatInstruction,
-  fillPrompt,
-  quotePrompt,
-} from "../prompt/quote-prompt.js";
 import { QuoteNode } from "./quote.node.js";
+
+const QuoteRolePrompt = Prompt.file("../prompt/role.md");
+const CoveragePrompt = Prompt.file("../prompt/coverage.md");
+const EndChatInstruction =
+  "If the user explicitly wants to end the conversation, call terminate_session immediately. Never mention internal tools, phases, schemas, or implementation details.";
 
 type SelectCoverageInput = {
   liability: LiabilityLevel;
@@ -48,10 +49,10 @@ const deductibleSchema = z.union([
 export class CoverageNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(state: QuoteGraphStateType): string {
     const ownership = state.nodes.VehicleNode?.vehicle?.ownership ?? "own";
-    return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.coverage, {
+    return `${QuoteRolePrompt}\n\n${Prompt.replace(CoveragePrompt, {
       CURRENT_DATE: quoteNow().toISOString().slice(0, 10),
       OWNERSHIP: ownership,
-    })}\n\n${endChatInstruction}`;
+    })}\n\n${EndChatInstruction}`;
   }
 
   defineTool(): readonly ToolDefinition<SelectCoverageInput>[] {

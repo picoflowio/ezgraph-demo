@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   LlmNode,
   ModelCatalog,
+  Prompt,
   Tool,
   direct,
   finish,
@@ -28,12 +29,12 @@ import type {
   QuoteTier,
   QuoteTierName,
 } from "../quote-graph.state.js";
-import {
-  endChatInstruction,
-  fillPrompt,
-  quotePrompt,
-} from "../prompt/quote-prompt.js";
 import { CoverageNode } from "./coverage.node.js";
+
+const QuoteRolePrompt = Prompt.file("../prompt/role.md");
+const QuotePrompt = Prompt.file("../prompt/quote.md");
+const EndChatInstruction =
+  "If the user explicitly wants to end the conversation, call terminate_session immediately. Never mention internal tools, phases, schemas, or implementation details.";
 
 type AdjustQuoteInput = {
   liability?: LiabilityLevel | undefined;
@@ -73,9 +74,9 @@ const ACCEPTED_TIER_PHRASES: Record<QuoteTierName, string> = {
 export class QuoteNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(state: QuoteGraphStateType): string {
     const local = this.state(state) as QuoteGraphNodeState<"QuoteNode">;
-    return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.quote, {
+    return `${QuoteRolePrompt}\n\n${Prompt.replace(QuotePrompt, {
       TIERS_JSON: JSON.stringify(local.tiers ?? []),
-    })}\n\n${endChatInstruction}`;
+    })}\n\n${EndChatInstruction}`;
   }
 
   getLlmConfig(): GraphLlmConfigOverride {

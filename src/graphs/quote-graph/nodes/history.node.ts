@@ -2,6 +2,7 @@ import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
   LlmNode,
+  Prompt,
   Tool,
   go,
   stay,
@@ -17,12 +18,12 @@ import type {
   InsuranceHistory,
   QuoteGraphStateType,
 } from "../quote-graph.state.js";
-import {
-  endChatInstruction,
-  fillPrompt,
-  quotePrompt,
-} from "../prompt/quote-prompt.js";
 import { CoverageNode } from "./coverage.node.js";
+
+const QuoteRolePrompt = Prompt.file("../prompt/role.md");
+const HistoryPrompt = Prompt.file("../prompt/history.md");
+const EndChatInstruction =
+  "If the user explicitly wants to end the conversation, call terminate_session immediately. Never mention internal tools, phases, schemas, or implementation details.";
 
 type CaptureHistoryInput = {
   currentlyInsured: boolean;
@@ -40,9 +41,9 @@ type CaptureHistoryInput = {
 /** Third stage: captures incidents and prior-insurance facts in its own history space. */
 export class HistoryNode extends LlmNode<QuoteGraphStateType> {
   getPrompt(): string {
-    return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.history, {
+    return `${QuoteRolePrompt}\n\n${Prompt.replace(HistoryPrompt, {
       CURRENT_DATE: quoteNow().toISOString().slice(0, 10),
-    })}\n\n${endChatInstruction}`;
+    })}\n\n${EndChatInstruction}`;
   }
 
   defineTool(): readonly ToolDefinition<CaptureHistoryInput>[] {

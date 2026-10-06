@@ -2,6 +2,7 @@ import { HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import {
   LlmNode,
+  Prompt,
   Tool,
   go,
   stay,
@@ -14,12 +15,12 @@ import type {
   QuoteGraphStateType,
   VehicleUse,
 } from "../quote-graph.state.js";
-import {
-  endChatInstruction,
-  fillPrompt,
-  quotePrompt,
-} from "../prompt/quote-prompt.js";
 import { HistoryNode } from "./history.node.js";
+
+const QuoteRolePrompt = Prompt.file("../prompt/role.md");
+const VehiclePrompt = Prompt.file("../prompt/vehicle.md");
+const EndChatInstruction =
+  "If the user explicitly wants to end the conversation, call terminate_session immediately. Never mention internal tools, phases, schemas, or implementation details.";
 
 type ResolveVehicleInput = {
   year: number;
@@ -45,9 +46,9 @@ export class VehicleNode extends LlmNode<QuoteGraphStateType> {
     const transitionAcknowledgement = state.inputConsumed && driver
       ? `This stage has just started after recording the driver's details. Your user-facing reply must begin by briefly confirming this saved record before asking any question: ${driver.fullName}, born ${driver.dateOfBirth}, has a ${driver.licenseStatus} ${driver.licenseState} license and ${driver.yearsLicensed} years licensed. Then ask for the vehicle's year, make, and model. Do not treat earlier messages as vehicle answers.`
       : "";
-    return `${quotePrompt.role}\n\n${fillPrompt(quotePrompt.vehicle, {
+    return `${QuoteRolePrompt}\n\n${Prompt.replace(VehiclePrompt, {
       RESOLVED_VEHICLE: JSON.stringify(resolved ?? null),
-    })}\n\n${transitionAcknowledgement}\n\n${endChatInstruction}`;
+    })}\n\n${transitionAcknowledgement}\n\n${EndChatInstruction}`;
   }
 
   defineTool(): readonly (
