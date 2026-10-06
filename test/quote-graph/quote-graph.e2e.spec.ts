@@ -16,6 +16,7 @@ import {
 } from "@picoflow/ezgraph";
 import { AppModule } from "../../src/app.module.js";
 import { QuoteGraph } from "../../src/graphs/quote-graph/quote-graph.js";
+import { QuoteLanggraph } from "../../src/graphs/quote-langgraph/quote-langgraph.js";
 import type { QuoteGraphStateType } from "../../src/graphs/quote-graph/quote-graph.state.js";
 
 type RunResponse = {
@@ -83,12 +84,6 @@ const skipReason = !shouldRunLiveTest
   ? "Set USE_ENV=1 to run the live-provider evaluation"
   : undefined;
 const keepSession = process.env.KEEP_SESSION === "1";
-
-// AppModule also creates QuoteLanggraph, so force its store to memory along with
-// QuoteGraph unless this test is explicitly exercising the configured store.
-if (!useEnvironmentSessionStore) {
-  process.env.SESSION_STORE = "memory";
-}
 
 test(
   "QuoteGraph completes a realistic guided car-insurance quote conversation",
@@ -195,6 +190,11 @@ test(
 
 async function createApp(): Promise<NestFastifyApplication> {
   const moduleBuilder = Test.createTestingModule({ imports: [AppModule] });
+  // This test exercises QuoteGraph persistence only. Keep the unrelated
+  // LangGraph provider independent of SESSION_STORE (including Cosmos).
+  moduleBuilder
+    .overrideProvider(QuoteLanggraph)
+    .useFactory({ factory: () => new QuoteLanggraph() });
   if (!useEnvironmentSessionStore) {
     moduleBuilder
       .overrideProvider(GraphEngine)

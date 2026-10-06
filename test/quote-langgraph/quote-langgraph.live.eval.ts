@@ -209,6 +209,8 @@ async function judge(
             "Accept responses that ask for the correct next quoting field even when they include acknowledgement or harmless extra explanation.",
             "Asking for several related details of the same stage in one message is acceptable.",
             "Accept quote tiers presented as a numbered list or a table when the premiums and coverage details are present.",
+            "The quote tier labels are Saver, Your selection, and Shield. Your selection, your selected coverage, and selected option all identify the customer's selected tier.",
+            "For acceptance, require identification of the accepted tier, confirmation it is locked in, the monthly premium in U.S. dollars, the coverage start date, and a QT- quote reference. The confirmation does not need to repeat coverage details or list the other tiers.",
             "Return only JSON with pass boolean, score number 0 to 1, reason string, missing string array, and contradictions string array.",
           ].join(" "),
         },

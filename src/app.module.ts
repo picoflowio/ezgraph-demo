@@ -1,5 +1,8 @@
 import { Inject, Module, type OnApplicationShutdown } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { CosmosClient } from "@azure/cosmos";
+import { ClientSecretCredential, DefaultAzureCredential } from "@azure/identity";
+import { MongoClient } from "mongodb";
 import {
   DecisionProvider,
   GraphEngine,
@@ -22,6 +25,35 @@ import { QuoteLanggraph } from "./graphs/quote-langgraph/quote-langgraph.js";
       inject: [ConfigService],
       useFactory: (config: ConfigService) =>
         GraphEngine.create({
+          configManager: config,
+          sessionClients: {
+            // Customize MongoDB / DocumentDB credentials, TLS, and connection options here.
+            mongodb: () => {
+              const url = config.getOrThrow<string>("MONGODB_URL");
+              const tlsCAFile = config.get<string>("MONGODB_TLS_CA_FILE");
+              return new MongoClient(url, tlsCAFile ? { tlsCAFile } : {});
+            },
+            cosmos: () => {
+              const endpoint = config.get<string>("COSMO_ENDPOINT")
+                || config.get<string>("COSMOS_ENDPOINT") || config.get<string>("COSMODB_URL");
+              if (!endpoint) throw new Error("COSMODB_URL, COSMO_ENDPOINT, or COSMOS_ENDPOINT is required.");
+              const key = config.get<string>("COSMODB_KEY") || config.get<string>("COSMOS_KEY");
+              if (key) return new CosmosClient({ endpoint, key });
+              const tenantId = config.get<string>("AZURE_TENANT_ID");
+              const clientId = config.get<string>("COSMO_DB_CLIENT_ID");
+              const clientSecret = config.get<string>("COSMO_DB_CLIENT_SECRET");
+              if (clientId || clientSecret) {
+                if (!tenantId || !clientId || !clientSecret) {
+                  throw new Error("Cosmos service principal requires AZURE_TENANT_ID, COSMO_DB_CLIENT_ID, and COSMO_DB_CLIENT_SECRET.");
+                }
+                return new CosmosClient({
+                  endpoint,
+                  aadCredentials: new ClientSecretCredential(tenantId, clientId, clientSecret),
+                });
+              }
+              return new CosmosClient({ endpoint, aadCredentials: new DefaultAzureCredential() });
+            },
+          },
           graphs: [DecisionHotelGraph, ExpenseGraph, QuoteGraph],
           decisionProviders: DecisionProvider.create({
             typesafe: { apiKey: config.get<string>("TYPESAFE_API_KEY") },

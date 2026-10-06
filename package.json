@@ -27,6 +27,8 @@
     "test:quote-langgraph:unit": "node --import tsx --test test/quote-langgraph/quote-langgraph.spec.ts test/quote-langgraph/quote-langgraph.e2e.spec.ts"
   },
   "dependencies": {
+    "@azure/cosmos": "4.10.0",
+    "@azure/identity": "4.13.1",
     "@anthropic-ai/sdk": "0.115.0",
     "@fastify/static": "9.3.0",
     "@google/genai": "2.14.0",
@@ -41,7 +43,7 @@
     "@nestjs/core": "11.1.28",
     "@nestjs/platform-fastify": "11.1.28",
     "@nestjs/swagger": "11.4.6",
-    "@picoflow/ezgraph": "^0.0.20",
+    "@picoflow/ezgraph": "0.0.21",
     "dotenv": "17.4.2",
     "fastify": "5.10.0",
     "langchain": "1.5.12",

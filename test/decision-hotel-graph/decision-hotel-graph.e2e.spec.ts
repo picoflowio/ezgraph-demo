@@ -15,6 +15,7 @@ import {
   ModelCatalog,
 } from "@picoflow/ezgraph";
 import { AppModule } from "../../src/app.module.js";
+import { QuoteLanggraph } from "../../src/graphs/quote-langgraph/quote-langgraph.js";
 import type { DecisionHotelGraphStateType } from "../../src/graphs/decision-hotel-graph/decision-hotel-graph.state.js";
 
 type RunResponse = {
@@ -203,9 +204,14 @@ test(
 );
 
 async function createApp(): Promise<NestFastifyApplication> {
+  // This test exercises DecisionHotelGraph persistence only. Keep the unrelated
+  // LangGraph provider independent of SESSION_STORE (including Cosmos).
   const moduleRef = await Test.createTestingModule({
     imports: [AppModule],
-  }).compile();
+  })
+    .overrideProvider(QuoteLanggraph)
+    .useFactory({ factory: () => new QuoteLanggraph() })
+    .compile();
   const app = moduleRef.createNestApplication<NestFastifyApplication>(
     new FastifyAdapter(),
   );

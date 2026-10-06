@@ -7,6 +7,7 @@ import {
 } from "@nestjs/platform-fastify";
 import { Test } from "@nestjs/testing";
 import { AppModule } from "../../src/app.module.js";
+import { QuoteLanggraph } from "../../src/graphs/quote-langgraph/quote-langgraph.js";
 import type { ExpenseGraphStateType } from "../../src/graphs/expense-graph/expense-graph.state.js";
 import { GraphEngine } from "@picoflow/ezgraph";
 
@@ -60,9 +61,14 @@ describe("ExpenseGraph hotel receipt extraction", () => {
     if (process.env.USE_ENV !== "1") {
       process.env.SESSION_STORE = "memory";
     }
+    // ExpenseGraph uses the configured store; the unrelated LangGraph
+    // provider uses memory so it cannot reject SESSION_STORE=cosmos.
     const module = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(QuoteLanggraph)
+      .useFactory({ factory: () => new QuoteLanggraph() })
+      .compile();
     app = module.createNestApplication<NestFastifyApplication>(
       new FastifyAdapter(),
     );

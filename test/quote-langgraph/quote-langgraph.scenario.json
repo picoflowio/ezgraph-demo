@@ -90,7 +90,7 @@
     {
       "label": "acceptance completes the quote",
       "input": "Accept my selected option, please.",
-      "expectedResponse": "The assistant should confirm the selected tier is locked in, state the monthly premium in U.S. dollars and the coverage start date, and provide a quote reference number starting with QT-.",
+      "expectedResponse": "The assistant should identify the accepted tier as Your selection, your selected coverage, or the selected option and confirm it is locked in, state the monthly premium in U.S. dollars and the coverage start date, and provide a quote reference number starting with QT-. It does not need to repeat the coverage details or list the other tiers.",
       "completed": true
     }
   ]

@@ -26,6 +26,39 @@ reads those timestamps through `getContext()` and records its own event.
 The session document persists them under `graph.context`, preserving unrelated
 branches across turns. Business facts continue to live in node state.
 
+## Application-owned persistence
+
+`src/app.module.ts` passes inline `sessionClients.mongodb` and
+`sessionClients.cosmos` factories to `GraphEngine.create()`, alongside
+graphs and model providers. Only the selected backend factory runs.
+The callbacks receive no arguments and explicitly read their URL/endpoint
+and credentials from `ConfigService`. Customize them for company settings,
+TLS, or other SDK options; no separate persistence file or provider is required.
+
+- Memory and SQLite preserve the existing `SESSION_STORE` settings.
+- MongoDB uses `MONGODB_URL`, `MONGODB_NAME`, and `MONGODB_COLLECTION`.
+  Optional `MONGODB_TLS_CA_FILE` supplies a CA file. For AWS DocumentDB, configure
+  its URI, authentication, and TLS settings in this application factory.
+- Cosmos uses `COSMO_ENDPOINT` (also `COSMOS_ENDPOINT` or `COSMODB_URL`).
+  `COSMODB_KEY` / `COSMOS_KEY` selects key authentication. Otherwise,
+  `AZURE_TENANT_ID`, `COSMO_DB_CLIENT_ID`, and `COSMO_DB_CLIENT_SECRET` select
+  an explicit service principal. Without those custom client credentials,
+  the factory uses `DefaultAzureCredential`; configure its credential sources
+  for the deployment.
+- Set `COSMOS_CREATE_IF_NOT_EXISTS=false` to use resources already provisioned
+  by deployment tooling. The default retains automatic database/container
+  creation and `COSMOS_THROUGHPUT` configuration.
+
+EZGraph's adapters enforce the unique Mongo session-ID index and validate
+Cosmos's `/id` partition key. The factory manages the demo's dedicated
+clients, including cleanup on initialization failure and application shutdown
+through `GraphEngine.close()`. For a shared application client, pass
+`ownsClients: false` alongside the callbacks and close it once in its owning
+provider.
+
+The demos use the sibling package at `../ezgraph/npmlib/staging/lib`.
+After changing EZGraph, run `npm run build:locallib` in `../ezgraph`.
+
 ## Jev-backed decisions
 
 EZGraph now supports Jev through its provider-neutral `DecisionNode` contract.
