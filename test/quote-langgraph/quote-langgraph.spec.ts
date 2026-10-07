@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { QuoteLanggraph } from "../../src/graphs/quote-langgraph/quote-langgraph.js";
+import { QuoteLanggraph, LazyQuoteLanggraph } from "../../src/graphs/quote-langgraph/quote-langgraph.js";
 import { RatingEngine } from "../../src/graphs/quote-langgraph/backend/rating-engine.js";
 import { VehicleCatalog } from "../../src/graphs/quote-langgraph/backend/vehicle-catalog.js";
 import type { CoverageSelection } from "../../src/graphs/quote-langgraph/quote-types.js";
@@ -206,5 +206,41 @@ describe("QuoteLanggraph pure LangGraph", () => {
     assert(first.session);
     await new Promise((resolve) => setTimeout(resolve, 5));
     assert.equal(await graph.hasSession(first.session), false);
+  });
+});
+
+
+describe("LazyQuoteLanggraph", () => {
+  it("does not initialize an unused graph during startup or shutdown", async () => {
+    let calls = 0;
+    const graph = new LazyQuoteLanggraph(async () => {
+      calls++;
+      throw new Error("Unsupported session store");
+    });
+    assert.equal(graph.name, "QuoteLanggraph");
+    assert.equal(graph.sessionStoreKind, undefined);
+    await graph.close();
+    assert.equal(calls, 0);
+    await assert.rejects(graph.hasSession("test"), /Unsupported session store/);
+    assert.equal(calls, 1);
+  });
+
+  it("shares initialization across concurrent operations and closes the initialized graph", async () => {
+    let calls = 0;
+    let closes = 0;
+    const instance = new QuoteLanggraph(quoteTestModelFactory);
+    instance.close = async () => { closes++; };
+    const graph = new LazyQuoteLanggraph(async () => {
+      calls++;
+      return instance;
+    });
+    assert.deepEqual(await Promise.all([
+      graph.hasSession("missing-one"),
+      graph.hasSession("missing-two"),
+    ]), [false, false]);
+    assert.equal(calls, 1);
+    assert.equal(graph.sessionStoreKind, "memory");
+    await graph.close();
+    assert.equal(closes, 1);
   });
 });

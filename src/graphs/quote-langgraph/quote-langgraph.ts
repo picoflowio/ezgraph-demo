@@ -284,6 +284,12 @@ export class QuoteLanggraph {
     );
   }
 
+  static createLazyFromEnvironment(
+    modelFactory: QuoteModelFactory = createOpenAiModel,
+  ): LazyQuoteLanggraph {
+    return new LazyQuoteLanggraph(() => QuoteLanggraph.createFromEnvironment(modelFactory));
+  }
+
   get sessionStoreKind(): QuoteSessionStore["kind"] {
     return this.sessionStore.kind;
   }
@@ -930,6 +936,50 @@ export class QuoteLanggraph {
       route: "end",
     };
   };
+}
+
+export class LazyQuoteLanggraph implements Pick<
+  QuoteLanggraph,
+  "name" | "run" | "hasSession" | "getSessionState" | "deleteSession" | "close"
+> {
+  readonly name = "QuoteLanggraph";
+  private instancePromise?: Promise<QuoteLanggraph>;
+  private instance?: QuoteLanggraph;
+
+  constructor(private readonly create: () => Promise<QuoteLanggraph>) {}
+
+  /** Available after the first operation initializes the graph. */
+  get sessionStoreKind(): QuoteSessionStore["kind"] | undefined {
+    return this.instance?.sessionStoreKind;
+  }
+
+  private getInstance(): Promise<QuoteLanggraph> {
+    this.instancePromise ??= this.create().then((instance) => {
+      this.instance = instance;
+      return instance;
+    });
+    return this.instancePromise;
+  }
+
+  async run(input: QuoteLanggraphRunInput): Promise<QuoteLanggraphRunResult> {
+    return (await this.getInstance()).run(input);
+  }
+
+  async hasSession(sessionId: string): Promise<boolean> {
+    return (await this.getInstance()).hasSession(sessionId);
+  }
+
+  async getSessionState(sessionId: string): Promise<QuoteLanggraphStateType | undefined> {
+    return (await this.getInstance()).getSessionState(sessionId);
+  }
+
+  async deleteSession(sessionId?: string): Promise<QuoteLanggraphDeleteSessionResult> {
+    return (await this.getInstance()).deleteSession(sessionId);
+  }
+
+  async close(): Promise<void> {
+    if (this.instancePromise) await (await this.instancePromise).close();
+  }
 }
 
 function createOpenAiModel(

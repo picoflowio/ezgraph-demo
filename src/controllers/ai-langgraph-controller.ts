@@ -16,11 +16,11 @@ import {
   ApiRunBodyDto,
   ApiRunResponseDto,
 } from "./api-types.js";
-import { QuoteLanggraph } from "../graphs/quote-langgraph/quote-langgraph.js";
+import { QuoteLanggraph, type LazyQuoteLanggraph } from "../graphs/quote-langgraph/quote-langgraph.js";
 
 const SESSION_ID = "SESSION_ID";
 
-type PureLanggraph = QuoteLanggraph;
+type PureLanggraph = QuoteLanggraph | LazyQuoteLanggraph;
 
 /** HTTP boundary for the direct-LangGraph comparison graphs only. */
 @ApiTags("ai-langgraph")
@@ -28,7 +28,7 @@ type PureLanggraph = QuoteLanggraph;
 export class AiLanggraphController {
   private readonly graphs: readonly PureLanggraph[];
 
-  constructor(@Inject(QuoteLanggraph) quoteLanggraph: QuoteLanggraph) {
+  constructor(@Inject(QuoteLanggraph) quoteLanggraph: QuoteLanggraph | LazyQuoteLanggraph) {
     this.graphs = [quoteLanggraph];
   }
 

@@ -14,7 +14,7 @@ import { HealthController } from "./controllers/health-controller.js";
 import { ExpenseGraph } from "./graphs/expense-graph/expense-graph.js";
 import { DecisionHotelGraph } from "./graphs/decision-hotel-graph/decision-hotel-graph.js";
 import { QuoteGraph } from "./graphs/quote-graph/quote-graph.js";
-import { QuoteLanggraph } from "./graphs/quote-langgraph/quote-langgraph.js";
+import { QuoteLanggraph, type LazyQuoteLanggraph } from "./graphs/quote-langgraph/quote-langgraph.js";
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true })],
@@ -89,14 +89,14 @@ import { QuoteLanggraph } from "./graphs/quote-langgraph/quote-langgraph.js";
     },
     {
       provide: QuoteLanggraph,
-      useFactory: () => QuoteLanggraph.createFromEnvironment(),
+      useFactory: () => QuoteLanggraph.createLazyFromEnvironment(),
     },
   ],
 })
 export class AppModule implements OnApplicationShutdown {
   constructor(
     @Inject(GraphEngine) private readonly graphEngine: GraphEngine,
-    @Inject(QuoteLanggraph) private readonly quoteLanggraph: QuoteLanggraph,
+    @Inject(QuoteLanggraph) private readonly quoteLanggraph: QuoteLanggraph | LazyQuoteLanggraph,
   ) {}
 
   async onApplicationShutdown(): Promise<void> {
