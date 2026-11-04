@@ -939,10 +939,10 @@
   dependencies:
     tslib "2.8.1"
 
-"@picoflow/ezgraph@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@picoflow/ezgraph/-/ezgraph-1.0.0.tgz#017485d4617032c716454f02a7195e003b353b0f"
-  integrity sha512-Ji52cpoz9iKZ6sgvxG0fG7H2O2oqZD94uD2cCA/sviAe3fBMVPLB8Pkjg0IuJvxJ/hKKoIVw9KdpH83lDtGzPg==
+"@picoflow/ezgraph@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@picoflow/ezgraph/-/ezgraph-1.0.2.tgz#0ab0c106e8510a1d8671982566756b73e1de8c72"
+  integrity sha512-aiXmNMMi8rAPieYWjHv/T2JAIKqDdT3Oh7r+WpwUnUJ3ttDcf6zR2lAbAGUYDLsm7V8AXjjE1vJOSX82QFYJQg==
   dependencies:
     "@anthropic-ai/sdk" "0.115.0"
     "@azure/cosmos" "4.10.0"
