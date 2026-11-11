@@ -63,6 +63,10 @@ import { QuoteLanggraph, type LazyQuoteLanggraph } from "./graphs/quote-langgrap
             ...ModelProvider.createBuiltinAdapters({
               openai: { apiKey: config.get<string>("OPENAI_API_KEY") },
               google: { apiKey: config.get<string>("GEMINI_API_KEY") },
+              bedrock: {
+                arn: config.get<string>("BEDROCK_ARN"),
+                apiKey: config.get<string>("BEDROCK_API_KEY"),
+              },
               anthropic: {
                 apiKey: config.get<string>("ANTHROPIC_API_KEY"),
               },

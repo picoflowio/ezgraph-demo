@@ -56,8 +56,34 @@ through `GraphEngine.close()`. For a shared application client, pass
 `ownsClients: false` alongside the callbacks and close it once in its owning
 provider.
 
-The demos use the sibling package at `../ezgraph/npmlib/staging/lib`.
-After changing EZGraph, run `npm run build:locallib` in `../ezgraph`.
+The demos use the sibling package at `../ezgraph/npmlib/staging/npm`.
+After changing EZGraph, run `npm run build:npmlib` in `../ezgraph`.
+
+## AWS Bedrock
+
+Bedrock uses the official LangChain AWS integration. Set `BEDROCK_ARN` and
+`BEDROCK_API_KEY` in this application's `.env`; its region is derived from the
+ARN. The library repository's `.env` is not automatically loaded by the demo.
+`src/app.module.ts` registers these settings without requiring them for other
+providers. Build the updated sibling EZGraph library before using its new
+Bedrock catalog entries here.
+
+```ts
+ModelCatalog.model("bedrock:configured", { retries: 2, maxOutputTokens: 2048 });
+ModelCatalog.model("bedrock:us.anthropic.claude-sonnet-4-6", { retries: 2 });
+ModelCatalog.model("bedrock:openai.gpt-6.1-sol", { retries: 2 });
+ModelCatalog.model("bedrock:google.gemma-4-31b", { retries: 2 });
+```
+
+`bedrock:configured` invokes the supplied ARN through Converse. Named models
+use the ARN's region but select their own model target and compatible AWS API.
+The current graph defaults retain their existing models; set `llmConfig` to a
+Bedrock entry to use it, including QuoteNode's override for a full QuoteGraph
+run. ExpenseGraph's provider-uploaded PDFs need additional attachment support.
+
+`npm run test:bedrock` is an opt-in live check through the installed EZGraph
+package. It requires a Converse-compatible ARN and its actual Bedrock API-key
+value. Regular deterministic tests require neither credential.
 
 ## Jev-backed decisions
 
@@ -130,7 +156,7 @@ git clone https://github.com/picoflowio/ezgraph.git
 git clone https://github.com/picoflowio/ezgraph-demo.git
 
 cd ezgraph
-npm run build:locallib
+npm run build:npmlib
 
 cd ../ezgraph-demo
 npm install
